@@ -1,0 +1,19 @@
+[
+  {
+    "id": "skill_internal_001_huntuan",
+    "name": "混元功",
+    "category": "internal",
+    "tier": "low",
+    "description": "平稳运气，提升续战能力。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_huntuan_01",
+        "name": "混元运气",
+        "cd": 5,
+        "qiCost": 8,
+        "powerRatio": 0.8
+      }
+    ]
+  }
+]

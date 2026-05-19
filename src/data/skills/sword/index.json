@@ -1,0 +1,19 @@
+[
+  {
+    "id": "skill_sword_010_qingmang",
+    "name": "青蟒剑法",
+    "category": "sword",
+    "tier": "low",
+    "description": "华山入门剑法，重在基础身法与连刺。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_qingmang_01",
+        "name": "青蟒出洞",
+        "cd": 3,
+        "qiCost": 10,
+        "powerRatio": 1.35
+      }
+    ]
+  }
+]
