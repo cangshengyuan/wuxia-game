@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "id": "enemy_001_bandit_grunt",
+    "name": "山贼喽啰",
+    "level": 1,
+    "hp": 96,
+    "maxHp": 96,
+    "qi": 30,
+    "maxQi": 30,
+    "attributes": {
+      "armStrength": 10,
+      "agility": 9,
+      "constitution": 10
+    },
+    "equippedSkillIds": ["skill_sword_013_songfeng"],
+    "speed": 9
+  },
+  {
+    "id": "enemy_002_bandit_boss",
+    "name": "山贼头目",
+    "level": 2,
+    "hp": 140,
+    "maxHp": 140,
+    "qi": 45,
+    "maxQi": 45,
+    "attributes": {
+      "armStrength": 14,
+      "agility": 11,
+      "constitution": 12
+    },
+    "equippedSkillIds": ["skill_sword_010_qingmang", "skill_sword_011_baihong"],
+    "speed": 11
+  },
+  {
+    "id": "enemy_003_wild_wolf",
+    "name": "野狼",
+    "level": 1,
+    "hp": 72,
+    "maxHp": 72,
+    "qi": 20,
+    "maxQi": 20,
+    "attributes": {
+      "armStrength": 12,
+      "agility": 14,
+      "constitution": 8
+    },
+    "equippedSkillIds": ["skill_sword_013_songfeng"],
+    "speed": 14
+  }
+]

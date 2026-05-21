@@ -1,7 +1,15 @@
+import type { SkillId } from './id'
+
 export interface CharacterAttributes {
   armStrength: number
   agility: number
   constitution: number
+}
+
+export interface SkillRuntime {
+  skillId: SkillId
+  proficiency: number
+  unlockedMoveIds: string[]
 }
 
 export interface CharacterState {
@@ -13,5 +21,7 @@ export interface CharacterState {
   qi: number
   maxQi: number
   attributes: CharacterAttributes
-  equippedSkillIds: string[]
+  learnedSkills: SkillRuntime[]
+  speed: number
+  equippedSkillIds: SkillId[]
 }

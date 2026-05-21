@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "id": "npc_001_village_swordsman",
+    "name": "村口剑客",
+    "sceneId": "scene_001_village",
+    "description": "曾在江湖行走的老剑客，愿意指点新人。"
+  }
+]

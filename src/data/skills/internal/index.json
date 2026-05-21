@@ -12,7 +12,78 @@
         "name": "混元运气",
         "cd": 5,
         "qiCost": 8,
-        "powerRatio": 0.8
+        "powerRatio": 0.8,
+        "unlockProficiency": 0
+      }
+    ]
+  },
+  {
+    "id": "skill_internal_002_tuna",
+    "name": "吐纳诀",
+    "category": "internal",
+    "tier": "low",
+    "description": "以呼吸调息，缓慢恢复内力。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_tuna_01",
+        "name": "深长吐纳",
+        "cd": 6,
+        "qiCost": 5,
+        "powerRatio": 0.6,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_tuna_02",
+        "name": "气海充盈",
+        "cd": 8,
+        "qiCost": 12,
+        "powerRatio": 0.9,
+        "unlockProficiency": 12
+      }
+    ]
+  },
+  {
+    "id": "skill_internal_003_xiaozhou",
+    "name": "小周天功",
+    "category": "internal",
+    "tier": "low",
+    "description": "引导内力沿任督二脉小循环。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_xiaozhou_01",
+        "name": "周天导引",
+        "cd": 5,
+        "qiCost": 10,
+        "powerRatio": 0.75,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_xiaozhou_02",
+        "name": "气脉贯通",
+        "cd": 7,
+        "qiCost": 14,
+        "powerRatio": 1.0,
+        "unlockProficiency": 15
+      }
+    ]
+  },
+  {
+    "id": "skill_internal_004_jingang",
+    "name": "金刚诀",
+    "category": "internal",
+    "tier": "low",
+    "description": "锤炼筋骨，提升抗击打能力。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_jingang_01",
+        "name": "金刚护体",
+        "cd": 4,
+        "qiCost": 6,
+        "powerRatio": 0.7,
+        "unlockProficiency": 0
       }
     ]
   }

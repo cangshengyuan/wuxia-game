@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { asSkillId } from '../types/id'
 import type { CharacterState } from '../types/character'
 
 interface GameStoreState {
@@ -18,7 +19,20 @@ export const defaultPlayer: CharacterState = {
     agility: 12,
     constitution: 13,
   },
-  equippedSkillIds: ['skill_sword_010_qingmang'],
+  learnedSkills: [
+    {
+      skillId: asSkillId('skill_sword_010_qingmang'),
+      proficiency: 0,
+      unlockedMoveIds: ['move_qingmang_01'],
+    },
+    {
+      skillId: asSkillId('skill_internal_001_huntuan'),
+      proficiency: 0,
+      unlockedMoveIds: ['move_huntuan_01'],
+    },
+  ],
+  speed: 12,
+  equippedSkillIds: [asSkillId('skill_sword_010_qingmang')],
 }
 
 export const useGameStore = create<GameStoreState>(() => ({

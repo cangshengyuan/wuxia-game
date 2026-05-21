@@ -1,15 +1,20 @@
+import type { MoveId, SkillId } from './id'
+
 export type SkillCategory = 'internal' | 'external' | 'hard' | 'qinggong' | 'sword'
 
 export interface SkillMove {
-  id: string
+  id: MoveId
   name: string
   cd: number
   qiCost: number
   powerRatio: number
+  unlockProficiency: number
+  element?: string
+  tag?: string
 }
 
 export interface SkillDefinition {
-  id: `skill_${string}_${string}_${string}`
+  id: SkillId
   name: string
   category: SkillCategory
   tier: 'low' | 'mid' | 'high'

@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "quest_main_001_first_blood",
+    "name": "初战告捷",
+    "description": "离开新手村，在村外野径击败山贼喽啰，证明你有行走江湖的资格。",
+    "objectives": [
+      {
+        "type": "reach_scene",
+        "targetId": "scene_002_outskirts",
+        "description": "前往村外野径"
+      },
+      {
+        "type": "defeat_enemy",
+        "targetId": "enemy_001_bandit_grunt",
+        "description": "击败山贼喽啰"
+      }
+    ]
+  }
+]

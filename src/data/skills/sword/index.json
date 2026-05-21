@@ -12,7 +12,110 @@
         "name": "青蟒出洞",
         "cd": 3,
         "qiCost": 10,
-        "powerRatio": 1.35
+        "powerRatio": 1.35,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_qingmang_02",
+        "name": "蟒尾横扫",
+        "cd": 5,
+        "qiCost": 12,
+        "powerRatio": 1.1,
+        "unlockProficiency": 10
+      },
+      {
+        "id": "move_qingmang_03",
+        "name": "青蟒缠身",
+        "cd": 6,
+        "qiCost": 15,
+        "powerRatio": 1.25,
+        "unlockProficiency": 18
+      }
+    ]
+  },
+  {
+    "id": "skill_sword_011_baihong",
+    "name": "白虹剑法",
+    "category": "sword",
+    "tier": "low",
+    "description": "剑光如虹，以快制胜。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_baihong_01",
+        "name": "白虹贯日",
+        "cd": 3,
+        "qiCost": 9,
+        "powerRatio": 1.2,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_baihong_02",
+        "name": "长虹落日",
+        "cd": 5,
+        "qiCost": 13,
+        "powerRatio": 1.15,
+        "unlockProficiency": 12
+      }
+    ]
+  },
+  {
+    "id": "skill_sword_012_liushui",
+    "name": "流水剑法",
+    "category": "sword",
+    "tier": "low",
+    "description": "剑势连绵不绝，如江河奔涌。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_liushui_01",
+        "name": "流水不息",
+        "cd": 4,
+        "qiCost": 8,
+        "powerRatio": 1.0,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_liushui_02",
+        "name": "惊涛拍岸",
+        "cd": 6,
+        "qiCost": 14,
+        "powerRatio": 1.3,
+        "unlockProficiency": 14
+      },
+      {
+        "id": "move_liushui_03",
+        "name": "怒涛裂岸",
+        "cd": 7,
+        "qiCost": 16,
+        "powerRatio": 1.4,
+        "unlockProficiency": 22
+      }
+    ]
+  },
+  {
+    "id": "skill_sword_013_songfeng",
+    "name": "松风剑法",
+    "category": "sword",
+    "tier": "low",
+    "description": "剑意如松风徐来，轻灵飘逸。",
+    "maxProficiency": 30,
+    "moves": [
+      {
+        "id": "move_songfeng_01",
+        "name": "松风初起",
+        "cd": 3,
+        "qiCost": 7,
+        "powerRatio": 0.95,
+        "unlockProficiency": 0
+      },
+      {
+        "id": "move_songfeng_02",
+        "name": "风过松林",
+        "cd": 4,
+        "qiCost": 11,
+        "powerRatio": 1.05,
+        "unlockProficiency": 8
       }
     ]
   }
