@@ -8,7 +8,9 @@
 export type {
   BattleEndedEvent,
   BattleEvent,
+  BattleResult,
   DamageDealtEvent,
+  ProficiencyGain,
   SkillExecutedEvent,
   SkillReadyEvent,
 } from './battle'

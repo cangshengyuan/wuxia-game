@@ -1,0 +1,110 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`combat_runner > runs a deterministic battle with fixed seed and player vs bandit grunt 1`] = `
+[
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "triggerAt": 25,
+    "type": "SkillReady",
+  },
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "type": "SkillExecuted",
+  },
+  {
+    "amount": 38,
+    "moveId": "move_qingmang_01",
+    "sourceId": "player_001",
+    "targetId": "enemy_001_bandit_grunt",
+    "type": "DamageDealt",
+  },
+  {
+    "actorId": "enemy_001_bandit_grunt",
+    "moveId": "move_songfeng_01",
+    "skillId": "skill_sword_013_songfeng",
+    "triggerAt": 33.33333333333333,
+    "type": "SkillReady",
+  },
+  {
+    "actorId": "enemy_001_bandit_grunt",
+    "moveId": "move_songfeng_01",
+    "skillId": "skill_sword_013_songfeng",
+    "type": "SkillExecuted",
+  },
+  {
+    "amount": 19,
+    "moveId": "move_songfeng_01",
+    "sourceId": "enemy_001_bandit_grunt",
+    "targetId": "player_001",
+    "type": "DamageDealt",
+  },
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "triggerAt": 50,
+    "type": "SkillReady",
+  },
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "type": "SkillExecuted",
+  },
+  {
+    "amount": 38,
+    "moveId": "move_qingmang_01",
+    "sourceId": "player_001",
+    "targetId": "enemy_001_bandit_grunt",
+    "type": "DamageDealt",
+  },
+  {
+    "actorId": "enemy_001_bandit_grunt",
+    "moveId": "move_songfeng_01",
+    "skillId": "skill_sword_013_songfeng",
+    "triggerAt": 66.66666666666666,
+    "type": "SkillReady",
+  },
+  {
+    "actorId": "enemy_001_bandit_grunt",
+    "moveId": "move_songfeng_01",
+    "skillId": "skill_sword_013_songfeng",
+    "type": "SkillExecuted",
+  },
+  {
+    "amount": 19,
+    "moveId": "move_songfeng_01",
+    "sourceId": "enemy_001_bandit_grunt",
+    "targetId": "player_001",
+    "type": "DamageDealt",
+  },
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "triggerAt": 75,
+    "type": "SkillReady",
+  },
+  {
+    "actorId": "player_001",
+    "moveId": "move_qingmang_01",
+    "skillId": "skill_sword_010_qingmang",
+    "type": "SkillExecuted",
+  },
+  {
+    "amount": 38,
+    "moveId": "move_qingmang_01",
+    "sourceId": "player_001",
+    "targetId": "enemy_001_bandit_grunt",
+    "type": "DamageDealt",
+  },
+  {
+    "type": "BattleEnded",
+    "winnerId": "player_001",
+  },
+]
+`;

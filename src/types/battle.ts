@@ -48,3 +48,21 @@ export type BattleEvent =
   | SkillExecutedEvent
   | DamageDealtEvent
   | BattleEndedEvent
+
+export interface DamageResult {
+  amount: number
+  isCritical?: boolean
+}
+
+export interface ProficiencyGain {
+  skillId: SkillId
+  amount: number
+}
+
+export interface BattleResult {
+  winnerId: string
+  events: BattleEvent[]
+  finalPlayerHp: number
+  finalEnemyHp: number
+  proficiencyGains: ProficiencyGain[]
+}
