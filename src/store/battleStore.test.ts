@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { asMoveId, asSkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'
+import { defaultPlayer, useGameStore } from './gameStore'
 import { useBattleStore } from './battleStore'
 
 const mockEvents: BattleResult['events'] = [
@@ -33,7 +34,9 @@ const mockBattleResult: BattleResult = {
   winnerId: 'player_001',
   events: mockEvents,
   finalPlayerHp: 120,
+  finalPlayerQi: 30,
   finalEnemyHp: 76,
+  finalEnemyQi: 10,
   proficiencyGains: [{ skillId: asSkillId('skill_sword_010_qingmang'), amount: 1 }],
 }
 
@@ -43,6 +46,7 @@ vi.mock('../engine/combat/combat_runner', () => ({
 
 describe('battleStore', () => {
   beforeEach(() => {
+    useGameStore.setState({ player: structuredClone(defaultPlayer), recentUnlocks: [] })
     useBattleStore.getState().prepareBattle('enemy_001_bandit_grunt')
   })
 
@@ -89,5 +93,17 @@ describe('battleStore', () => {
     expect(state.status).toBe('finished')
     expect(state.result?.winnerId).toBe('player_001')
     expect(state.result?.proficiencyGains).toEqual(mockBattleResult.proficiencyGains)
+  })
+
+  it('endBattle applies battle result to gameStore', () => {
+    useBattleStore.getState().startBattle()
+
+    for (let index = 0; index < mockEvents.length; index += 1) {
+      useBattleStore.getState().tickPlayback()
+    }
+
+    expect(useGameStore.getState().player.hp).toBe(120)
+    expect(useGameStore.getState().player.qi).toBe(30)
+    expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(1)
   })
 })

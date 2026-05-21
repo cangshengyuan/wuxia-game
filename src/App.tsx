@@ -1,5 +1,6 @@
 import './App.css'
 import { useUiStore } from './store/uiStore'
+import { UnlockToast } from './ui/components/UnlockToast'
 import { BattlePage } from './ui/pages/BattlePage'
 import { HomePage } from './ui/pages/HomePage'
 
@@ -10,6 +11,7 @@ function App() {
     <main className="app-shell">
       {currentPage === 'home' ? <HomePage /> : null}
       {currentPage === 'battle' ? <BattlePage /> : null}
+      <UnlockToast />
     </main>
   )
 }

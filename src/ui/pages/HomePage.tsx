@@ -1,11 +1,10 @@
-import { listAllSkills } from '../../engine/skillEngine'
 import { useGameStore } from '../../store/gameStore'
 import { useUiStore } from '../../store/uiStore'
+import { SkillPanel } from '../panels/SkillPanel'
 
 export function HomePage() {
   const player = useGameStore((state) => state.player)
   const setPage = useUiStore((state) => state.setPage)
-  const skills = listAllSkills()
 
   return (
     <>
@@ -26,16 +25,7 @@ export function HomePage() {
         </button>
       </section>
 
-      <section className="panel">
-        <h2>技能目录</h2>
-        <ul>
-          {skills.map((skill) => (
-            <li key={skill.id}>
-              {skill.name} ({skill.id})
-            </li>
-          ))}
-        </ul>
-      </section>
+      <SkillPanel />
     </>
   )
 }

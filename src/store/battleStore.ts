@@ -131,14 +131,20 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
       return
     }
 
+    const result: BattleResult = {
+      ...pendingResult,
+      finalPlayerHp: playerSnapshot.hp,
+      finalPlayerQi: pendingResult.finalPlayerQi,
+      finalEnemyHp: enemySnapshot.hp,
+      finalEnemyQi: pendingResult.finalEnemyQi,
+    }
+
     set({
       status: 'finished',
-      result: {
-        ...pendingResult,
-        finalPlayerHp: playerSnapshot.hp,
-        finalEnemyHp: enemySnapshot.hp,
-      },
+      result,
     })
+
+    useGameStore.getState().applyBattleResult(result)
   },
 
   reset: () => {

@@ -50,8 +50,7 @@ describe('combat_runner', () => {
     expect(result.finalEnemyHp).toBe(0)
     expect(result.events.at(-1)).toEqual({ type: 'BattleEnded', winnerId: 'player_001' })
     expect(result.proficiencyGains).toEqual([
-      { skillId: asSkillId('skill_sword_010_qingmang'), amount: 3 },
-      { skillId: asSkillId('skill_sword_013_songfeng'), amount: 2 },
+      { skillId: asSkillId('skill_sword_010_qingmang'), amount: 4 },
     ])
     expect(result.events).toMatchSnapshot()
   })

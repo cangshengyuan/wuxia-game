@@ -8,7 +8,7 @@ describe('App skeleton', () => {
 
     expect(screen.getByRole('heading', { name: 'Wuxia Game Skeleton' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '玩家信息' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '技能目录' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '已学功法' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '进入战斗' })).toBeInTheDocument()
   })
 })

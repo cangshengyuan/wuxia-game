@@ -38,6 +38,7 @@ export type {
   SkillId,
 } from './id'
 export type { ItemDefinition } from './item'
+export type { UnlockNotice } from './notice'
 export type { SkillCategory, SkillDefinition, SkillMove } from './skill'
 export type {
   EncounterEntry,

@@ -35,7 +35,9 @@ const mockBattleResult: BattleResult = {
   winnerId: 'player_001',
   events: mockEvents,
   finalPlayerHp: 120,
+  finalPlayerQi: 30,
   finalEnemyHp: 81,
+  finalEnemyQi: 10,
   proficiencyGains: [],
 }
 

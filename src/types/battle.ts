@@ -70,6 +70,8 @@ export interface BattleResult {
   winnerId: string
   events: BattleEvent[]
   finalPlayerHp: number
+  finalPlayerQi: number
   finalEnemyHp: number
+  finalEnemyQi: number
   proficiencyGains: ProficiencyGain[]
 }

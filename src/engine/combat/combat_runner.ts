@@ -248,7 +248,9 @@ export function startBattle({
     winnerId,
     events,
     finalPlayerHp: finalPlayer.hp,
+    finalPlayerQi: finalPlayer.qi,
     finalEnemyHp: finalEnemy.hp,
-    proficiencyGains: calcProficiencyGains(events),
+    finalEnemyQi: finalEnemy.qi,
+    proficiencyGains: calcProficiencyGains(events, player.id, winnerId),
   }
 }
