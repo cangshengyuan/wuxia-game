@@ -13,8 +13,8 @@
 | 里程碑 | 主题 | 交付物（用户可感知） | 工程闸 |
 |--------|------|----------------------|--------|
 | M0 | 基线（已完成） | 骨架 + 1 内功 + 1 剑法 + 单回合占位战斗 | ✅ lint/typecheck/test/build 绿 |
-| M1 | 类型与数据契约对齐 | 4 内功 + 4 剑法 + 3 敌人 + 1 教学场景的可读 JSON | 全部 JSON 通过 zod/类型守卫校验 |
-| M2 | 时间轴战斗引擎 | 用动态优先队列 + 事件总线打完一场战斗 | 战斗可分出胜负，事件流可日志化 |
+| M1 | 类型与数据契约对齐 ✅ | 4 内功 + 4 剑法 + 3 敌人 + 1 教学场景的可读 JSON | ✅ 全部 JSON 通过 zod/类型守卫校验 |
+| M2 | 时间轴战斗引擎 | 用动态优先队列 + 事件总线打完一场战斗 | ✅ 战斗可分出胜负，事件流可日志化 |
 | M3 | 战斗 UI 与战斗 store | 玩家点击"开战"看到时间轴推进与战报 | 战斗页可视化，无业务逻辑泄漏到 .tsx |
 | M4 | 功法成长闭环 | 战斗后获得熟练度，达到阈值解锁新招式 | 熟练度门槛由 engine 计算，UI 仅读取 |
 | M5 | 场景探索与战斗触发 | 主城/野外两个场景，野外可遇敌 | 场景切换走 store action，战斗在场景内触发 |
@@ -76,42 +76,44 @@
 
 ---
 
-## M2 · 时间轴战斗引擎（核心）
+## M2 · 时间轴战斗引擎（核心）✅
 
 **目标**：把当前 `simulateOneTurn` 占位实现替换为 `ARCHITECTURE.md §6.4` 规定的**动态优先队列 + 事件总线**双层架构。战斗对人类玩家是"自动播放"的，玩家只决定出战阵容与战前装备。
 
+> **说明**：`combat_runner.startBattle` 已落地；`battleStore` 仍调用旧 `simulateOneTurn`，接入新引擎留待 **M3**。
+
 ### 2.1 事件总线
-- [ ] `engine/event_bus.ts`：
+- [x] `engine/event_bus.ts`：
   - 支持类型化订阅 `on<TEvent>(type, listener) => unsubscribe`
   - 支持 `emit(event)`，递归深度 ≤ 5（超过强制中断并 console.warn）
   - 提供 `createScopedBus()`：返回独立实例（战斗结束时丢弃）
-- [ ] 单测：递归深度限制、unsubscribe 生效、scoped bus 隔离
+- [x] 单测：递归深度限制、unsubscribe 生效、scoped bus 隔离
 
 ### 2.2 优先队列
-- [ ] `engine/combat/priority_queue.ts`：
+- [x] `engine/combat/priority_queue.ts`：
   - 基于二叉堆，节点带 `id / triggerAt / payload`
   - 暴露 `push / pop / peek / update_time(id, newTime) / invalidate(id)`
   - **不允许外部直接修改堆数组**（封装为类，私有字段）
-- [ ] 单测：覆盖 `update_time`、`invalidate`、堆序正确性
+- [x] 单测：覆盖 `update_time`、`invalidate`、堆序正确性
 
 ### 2.3 战斗主循环
-- [ ] `engine/combat/damage_calc.ts`（纯函数）：`calcDamage({ attacker, defender, move })` → `DamageResult`
-- [ ] `engine/combat/combat_runner.ts`：
+- [x] `engine/combat/damage_calc.ts`（纯函数）：`calcDamage({ attacker, defender, move })` → `DamageResult`
+- [x] `engine/combat/combat_runner.ts`：
   - `startBattle({ player, enemy, rng? }) → BattleResult`（同步跑完，返回事件流与胜负）
   - 内部使用本地 scoped 事件总线 + 优先队列
   - 招式入队仅占位时间槽，**资源检查在 `SkillReady` 触发时执行**（§6.4）
   - 任一方 HP ≤ 0 时 emit `BattleEnded` 并 break
-- [ ] `engine/combat/README.md`：写清队列与事件交互、禁止事项
+- [x] `engine/combat/README.md`：写清队列与事件交互、禁止事项
 
 ### 2.4 战斗结果契约
-- [ ] `types/battle.ts`：新增 `BattleResult { winnerId, events: BattleEvent[], finalPlayerHp, finalEnemyHp, proficiencyGains: { skillId, amount }[] }`
-- [ ] `engine/combat/loot.ts`（占位，M4 再扩展）：`calcProficiencyGains(events) → ProficiencyGain[]`，简单按"招式被执行次数 × 1"返回
+- [x] `types/battle.ts`：新增 `BattleResult { winnerId, events: BattleEvent[], finalPlayerHp, finalEnemyHp, proficiencyGains: { skillId, amount }[] }`
+- [x] `engine/combat/loot.ts`（占位，M4 再扩展）：`calcProficiencyGains(events) → ProficiencyGain[]`，简单按"招式被执行次数 × 1"返回
 
 **完成标准**：
-- 给定固定输入与种子 RNG，`startBattle` 返回事件流稳定可复现（写一个快照测试）
-- `engine/` 内任何文件均无 `import React` 或 `useGameStore(...)` 调用
-- 任一战斗引擎文件未超过 300 行硬上限
-- `npm run test:run` 绿，且至少 3 个战斗相关测试
+- [x] 给定固定输入与种子 RNG，`startBattle` 返回事件流稳定可复现（写一个快照测试）
+- [x] `engine/` 内任何文件均无 `import React` 或 `useGameStore(...)` 调用
+- [x] 任一战斗引擎文件未超过 300 行硬上限（`combat_runner.ts` 255 行、`priority_queue.ts` 149 行）
+- [x] `npm run test:run` 绿，且至少 3 个战斗相关测试（当前 8 个：`event_bus` 3 + `priority_queue` 3 + `combat_runner` 2）✅
 
 ---
 
