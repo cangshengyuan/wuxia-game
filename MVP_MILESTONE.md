@@ -16,7 +16,7 @@
 | M1 | 类型与数据契约对齐 ✅ | 4 内功 + 4 剑法 + 3 敌人 + 1 教学场景的可读 JSON | ✅ 全部 JSON 通过 zod/类型守卫校验 |
 | M2 | 时间轴战斗引擎 ✅ | 用动态优先队列 + 事件总线打完一场战斗 | ✅ 战斗可分出胜负，事件流可日志化 |
 | M3 | 战斗 UI 与战斗 store ✅ | 玩家点击"开战"看到时间轴推进与战报 | ✅ 战斗页可视化，无业务逻辑泄漏到 .tsx |
-| M4 | 功法成长闭环 | 战斗后获得熟练度，达到阈值解锁新招式 | 熟练度门槛由 engine 计算，UI 仅读取 |
+| M4 | 功法成长闭环 ✅ | 战斗后获得熟练度，达到阈值解锁新招式 | ✅ 熟练度门槛由 engine 计算，UI 仅读取 |
 | M5 | 场景探索与战斗触发 | 主城/野外两个场景，野外可遇敌 | 场景切换走 store action，战斗在场景内触发 |
 | M6 | 存档持久化 | 关闭网页再打开，进度（角色、功法、场景）保留 | gameStore 持久化到 localStorage，可清档 |
 | M7 | 教学任务串联 | 一条"出村 → 击败山贼 → 习得新招"的主线任务 | 从新建角色到完成教学任务全流程可玩 |
@@ -143,32 +143,32 @@
 
 ---
 
-## M4 · 功法成长闭环
+## M4 · 功法成长闭环 ✅
 
 **目标**：让战斗"有意义"——战胜后获得功法熟练度，达到阈值解锁新招式。这是养成游戏的最小成长循环。
 
 ### 4.1 引擎
-- [ ] `engine/skill/proficiency.ts`：
+- [x] `engine/skill/proficiency.ts`：
   - `applyProficiencyGain(runtime, gain) → SkillRuntime`（纯函数，不变更入参）
   - `checkUnlocks(runtime, skillDef) → { newlyUnlockedMoveIds }`
-- [ ] `engine/character/skill_runtime.ts`：`grantSkill / upgradeSkill / canUseMove` 等纯查询
-- [ ] 完善 `engine/combat/loot.ts`：按"该功法被使用次数 + 战斗胜利系数"返回熟练度增益
+- [x] `engine/character/skill_runtime.ts`：`grantSkill / upgradeSkill / canUseMove` 等纯查询
+- [x] 完善 `engine/combat/loot.ts`：按"该功法被使用次数 + 战斗胜利系数"返回熟练度增益
 
 ### 4.2 store
-- [ ] `gameStore.ts` 新增 action：`applyBattleResult(result: BattleResult)`
+- [x] `gameStore.ts` 新增 action：`applyBattleResult(result: BattleResult)`
   - 写入玩家 HP/Qi 终值
   - 调用 `applyProficiencyGain` 与 `checkUnlocks` 更新 `learnedSkills`
   - 解锁新招式时 push 到 `recentUnlocks: UnlockNotice[]`（M5 可用于 toast）
-- [ ] `gameStore.canUpgradeSkill(skillId) / upgradeSkill(skillId)` 占位（M5/M6 不强求 UI）
+- [x] `gameStore.canUpgradeSkill(skillId) / upgradeSkill(skillId)` 占位（M5/M6 不强求 UI）
 
 ### 4.3 UI
-- [ ] `ui/panels/SkillPanel.tsx`：列出 `learnedSkills`，每条显示当前熟练度 / 上限 / 已解锁招式（仅展示，按钮逻辑走 store action）
-- [ ] `ui/components/UnlockToast.tsx`：监听 `recentUnlocks`，3 秒后通过 store action 自行消除
+- [x] `ui/panels/SkillPanel.tsx`：列出 `learnedSkills`，每条显示当前熟练度 / 上限 / 已解锁招式（仅展示，按钮逻辑走 store action）
+- [x] `ui/components/UnlockToast.tsx`：监听 `recentUnlocks`，3 秒后通过 store action 自行消除
 
 **完成标准**：
-- 跑一场胜利战斗后，对应功法熟练度 +N，达到阈值时 `unlockedMoveIds` 增加
-- 单测覆盖：阈值未达不解锁、刚达阈值解锁、熟练度封顶不再增长
-- `.tsx` 中无业务判断（"能否解锁"全部从 store selector 读）
+- [x] 跑一场胜利战斗后，对应功法熟练度 +N，达到阈值时 `unlockedMoveIds` 增加
+- [x] 单测覆盖：阈值未达不解锁、刚达阈值解锁、熟练度封顶不再增长
+- [x] `.tsx` 中无业务判断（"能否解锁"全部从 store selector 读） ✅
 
 ---
 
