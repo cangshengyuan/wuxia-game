@@ -42,10 +42,10 @@ triggerAt = currentTime + move.cd * (100 / actor.speed)
 - 禁止在 `engine/` 内 `import React` 或调用 `useGameStore`
 - 单场战斗必须使用 `createScopedBus()`，战斗结束随 runner 丢弃
 
-## M3 对接
+## Store 对接（M3 已完成）
 
 `startBattle({ player, enemy, rng? })` 同步跑完，返回 `BattleResult`：
 
-- `events`：完整事件流，供 battleStore 回放
+- `events`：完整事件流，由 `battleStore.startBattle` 写入并按 `tickPlayback` 回放
 - `winnerId` / `finalPlayerHp` / `finalEnemyHp`
 - `proficiencyGains`：M4 写入 gameStore

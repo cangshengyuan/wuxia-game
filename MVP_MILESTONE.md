@@ -14,8 +14,8 @@
 |--------|------|----------------------|--------|
 | M0 | 基线（已完成） | 骨架 + 1 内功 + 1 剑法 + 单回合占位战斗 | ✅ lint/typecheck/test/build 绿 |
 | M1 | 类型与数据契约对齐 ✅ | 4 内功 + 4 剑法 + 3 敌人 + 1 教学场景的可读 JSON | ✅ 全部 JSON 通过 zod/类型守卫校验 |
-| M2 | 时间轴战斗引擎 | 用动态优先队列 + 事件总线打完一场战斗 | ✅ 战斗可分出胜负，事件流可日志化 |
-| M3 | 战斗 UI 与战斗 store | 玩家点击"开战"看到时间轴推进与战报 | 战斗页可视化，无业务逻辑泄漏到 .tsx |
+| M2 | 时间轴战斗引擎 ✅ | 用动态优先队列 + 事件总线打完一场战斗 | ✅ 战斗可分出胜负，事件流可日志化 |
+| M3 | 战斗 UI 与战斗 store ✅ | 玩家点击"开战"看到时间轴推进与战报 | ✅ 战斗页可视化，无业务逻辑泄漏到 .tsx |
 | M4 | 功法成长闭环 | 战斗后获得熟练度，达到阈值解锁新招式 | 熟练度门槛由 engine 计算，UI 仅读取 |
 | M5 | 场景探索与战斗触发 | 主城/野外两个场景，野外可遇敌 | 场景切换走 store action，战斗在场景内触发 |
 | M6 | 存档持久化 | 关闭网页再打开，进度（角色、功法、场景）保留 | gameStore 持久化到 localStorage，可清档 |
@@ -78,9 +78,9 @@
 
 ## M2 · 时间轴战斗引擎（核心）✅
 
-**目标**：把当前 `simulateOneTurn` 占位实现替换为 `ARCHITECTURE.md §6.4` 规定的**动态优先队列 + 事件总线**双层架构。战斗对人类玩家是"自动播放"的，玩家只决定出战阵容与战前装备。
+**目标**：把 M0 的 `simulateOneTurn` 占位实现替换为 `ARCHITECTURE.md §6.4` 规定的**动态优先队列 + 事件总线**双层架构。战斗对人类玩家是"自动播放"的，玩家只决定出战阵容与战前装备。
 
-> **说明**：`combat_runner.startBattle` 已落地；`battleStore` 仍调用旧 `simulateOneTurn`，接入新引擎留待 **M3**。
+> **说明**：M2 仅交付 `engine/combat/*` 与 `event_bus.ts`，**不修改** `battleStore` / UI。`combat_runner.startBattle` 返回完整 `BattleResult.events`；store 接入与时间轴回放已在 **M3** 完成（`battleStore.startBattle` → `tickPlayback`）。
 
 ### 2.1 事件总线
 - [x] `engine/event_bus.ts`：
@@ -113,32 +113,33 @@
 - [x] 给定固定输入与种子 RNG，`startBattle` 返回事件流稳定可复现（写一个快照测试）
 - [x] `engine/` 内任何文件均无 `import React` 或 `useGameStore(...)` 调用
 - [x] 任一战斗引擎文件未超过 300 行硬上限（`combat_runner.ts` 255 行、`priority_queue.ts` 149 行）
-- [x] `npm run test:run` 绿，且至少 3 个战斗相关测试（当前 8 个：`event_bus` 3 + `priority_queue` 3 + `combat_runner` 2）✅
+- [x] `npm run test:run` 绿，且至少 3 个战斗相关测试（当前 8 个：`event_bus` 3 + `priority_queue` 3 + `combat_runner` 2）
+- [x] M2 范围内不改动 `battleStore` / UI；下游通过 `BattleResult.events` 对接（M3 已接入）✅
 
 ---
 
-## M3 · 战斗 store 与战斗 UI
+## M3 · 战斗 store 与战斗 UI ✅
 
 **目标**：把 M2 的引擎接入 store，并提供一个能播放时间轴的战斗页。`.tsx` 中**禁止**出现任何伤害/CD/概率计算。
 
 ### 3.1 battleStore 重构
-- [ ] `store/battleStore.ts`：
+- [x] `store/battleStore.ts`：
   - 字段：`status: 'idle' | 'running' | 'finished'`、`events: BattleEvent[]`、`playbackIndex: number`、`enemy / playerSnapshot / result?`
   - actions：`prepareBattle(enemyId)`、`startBattle()`（调用 `combat_runner.startBattle`）、`tickPlayback()`（按固定时间步推进 `playbackIndex`）、`endBattle()`、`reset()`
   - 通过 `useGameStore.getState()` 读玩家，不在 store 中嵌套订阅 hook（§5.2）
 
 ### 3.2 战斗 UI
-- [ ] `ui/pages/BattlePage.tsx`（≤ 250 行）：上方对阵双方血/气条，中部滚动战报，下部"开战 / 重来"按钮
-- [ ] `ui/components/HpBar.tsx`、`ui/components/EventLogItem.tsx`：纯展示
-- [ ] `ui/panels/BattleControls.tsx`：调用 `startBattle / reset`
-- [ ] `App.tsx`：根据 `uiStore.currentPage` 在主城页与战斗页之间切换（最简单的条件渲染即可，M5 再做正式路由）
-- [ ] `store/uiStore.ts`（新增）：`currentPage: 'home' | 'battle' | 'scene'`、`setPage(page)`
+- [x] `ui/pages/BattlePage.tsx`（≤ 250 行）：上方对阵双方血/气条，中部滚动战报，下部"开战 / 重来"按钮
+- [x] `ui/components/HpBar.tsx`、`ui/components/EventLogItem.tsx`：纯展示
+- [x] `ui/panels/BattleControls.tsx`：调用 `startBattle / reset`
+- [x] `App.tsx`：根据 `uiStore.currentPage` 在主城页与战斗页之间切换（最简单的条件渲染即可，M5 再做正式路由）
+- [x] `store/uiStore.ts`（新增）：`currentPage: 'home' | 'battle' | 'scene'`、`setPage(page)`
 
 **完成标准**：
-- 点击"开战" → 战报按时间步逐条出现 → 战斗结束显示胜负
-- 用 RTL 写一个测试：mock `startBattle` 返回固定事件流，断言 UI 按顺序渲染至少 3 条事件
-- 任一 `.tsx` 内**不出现** `Math.` / 伤害公式 / `qiCost` 计算
-- 任一 `.tsx` 文件未超过 250 行
+- [x] 点击"开战" → 战报按时间步逐条出现 → 战斗结束显示胜负
+- [x] 用 RTL 写一个测试：mock `startBattle` 返回固定事件流，断言 UI 按顺序渲染至少 3 条事件
+- [x] 任一 `.tsx` 内**不出现** `Math.` / 伤害公式 / `qiCost` 计算
+- [x] 任一 `.tsx` 文件未超过 250 行 ✅
 
 ---
 
