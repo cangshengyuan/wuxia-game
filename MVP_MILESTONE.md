@@ -40,39 +40,39 @@
 
 ---
 
-## M1 · 类型与数据契约对齐
+## M1 · 类型与数据契约对齐 ✅
 
 **目标**：把 `ARCHITECTURE.md §7、§8` 要求的"类型即契约 + 纯数据"落实，给后续战斗与成长准备好 JSON 内容与运行时校验。
 
 ### 1.1 完善类型契约
-- [ ] `types/skill.ts`：补 `unlockProficiency`（每个 `SkillMove` 的解锁熟练度阈值）、`element?`/`tag?`（占位即可）
-- [ ] `types/character.ts`：拆出 `SkillRuntime { skillId, proficiency, unlockedMoveIds }`；`CharacterState` 增加 `learnedSkills: SkillRuntime[]`、`speed: number`（用于战斗优先队列）
-- [ ] `types/battle.ts`：新增判别联合 `BattleEvent`（`SkillReady` / `SkillExecuted` / `DamageDealt` / `BattleEnded`）
-- [ ] `types/world.ts`（新增）：`SceneDefinition`、`EncounterEntry`
-- [ ] `types/item.ts`（新增占位）：`ItemDefinition`（M1 内只占位，不实现）
-- [ ] `types/event.ts`（新增）：导出 `BattleEvent` 等所有引擎事件类型
-- [ ] `types/id.ts`（新增）：定义 branded `SkillId / SceneId / EnemyId / ItemId / NpcId / QuestId`
-- [ ] `types/index.ts`：统一导出新增类型
+- [x] `types/skill.ts`：补 `unlockProficiency`（每个 `SkillMove` 的解锁熟练度阈值）、`element?`/`tag?`（占位即可）
+- [x] `types/character.ts`：拆出 `SkillRuntime { skillId, proficiency, unlockedMoveIds }`；`CharacterState` 增加 `learnedSkills: SkillRuntime[]`、`speed: number`（用于战斗优先队列）
+- [x] `types/battle.ts`：新增判别联合 `BattleEvent`（`SkillReady` / `SkillExecuted` / `DamageDealt` / `BattleEnded`）
+- [x] `types/world.ts`（新增）：`SceneDefinition`、`EncounterEntry`
+- [x] `types/item.ts`（新增占位）：`ItemDefinition`（M1 内只占位，不实现）
+- [x] `types/event.ts`（新增）：导出 `BattleEvent` 等所有引擎事件类型
+- [x] `types/id.ts`（新增）：定义 branded `SkillId / SceneId / EnemyId / ItemId / NpcId / QuestId`
+- [x] `types/index.ts`：统一导出新增类型
 
-**完成标准**：`npm run typecheck` 绿；现有 `gameStore.defaultPlayer` 升级使用 `learnedSkills` 而非 `equippedSkillIds`（保留 `equippedSkillIds` 但语义为"已装备的"招式或功法的子集）。
+**完成标准**：`npm run typecheck` 绿；现有 `gameStore.defaultPlayer` 升级使用 `learnedSkills` 而非 `equippedSkillIds`（保留 `equippedSkillIds` 但语义为"已装备的"招式或功法的子集）。 ✅
 
 ### 1.2 数据内容扩充（每个 JSON ≤ 200 行硬上限）
-- [ ] `data/skills/internal/index.json`：新增至 **4 个内功**（保留混元功，新增 3 个低阶内功，每个含 1~2 招式 + `unlockProficiency`）
-- [ ] `data/skills/sword/index.json`：新增至 **4 个剑法**（保留青蟒剑法，新增 3 个低阶剑法，每个含 2~3 招式）
-- [ ] `data/enemies/index.json`：新增 **3 个敌人**（山贼喽啰 / 山贼头目 / 野狼），每个含 `equippedSkillIds`、`attributes`、`speed`
-- [ ] `data/scenes/index.json`：新增 **2 个场景**（`scene_001_village` 主城新手村、`scene_002_outskirts` 村外野径），含 `encounters` 字段引用敌人 ID
-- [ ] `data/npcs/index.json`：新增 **1 个教学 NPC**（村口剑客，用于触发教学任务）
-- [ ] `data/quests/index.json`：新增 **1 条主线任务**（`quest_main_001_first_blood`：出村 → 击败山贼）
-- [ ] `INDEX.md`（新增）：登记本次所有新 ID（ARCHITECTURE.md §11 要求）
+- [x] `data/skills/internal/index.json`：新增至 **4 个内功**（保留混元功，新增 3 个低阶内功，每个含 1~2 招式 + `unlockProficiency`）
+- [x] `data/skills/sword/index.json`：新增至 **4 个剑法**（保留青蟒剑法，新增 3 个低阶剑法，每个含 2~3 招式）
+- [x] `data/enemies/index.json`：新增 **3 个敌人**（山贼喽啰 / 山贼头目 / 野狼），每个含 `equippedSkillIds`、`attributes`、`speed`
+- [x] `data/scenes/index.json`：新增 **2 个场景**（`scene_001_village` 主城新手村、`scene_002_outskirts` 村外野径），含 `encounters` 字段引用敌人 ID
+- [x] `data/npcs/index.json`：新增 **1 个教学 NPC**（村口剑客，用于触发教学任务）
+- [x] `data/quests/index.json`：新增 **1 条主线任务**（`quest_main_001_first_blood`：出村 → 击败山贼）
+- [x] `INDEX.md`（新增）：登记本次所有新 ID（ARCHITECTURE.md §11 要求）
 
 ### 1.3 运行时校验
-- [ ] `engine/skillEngine.ts`：扩展类型守卫覆盖 `unlockProficiency`；新增 `getSkillsByCategory` / `getMoveById`
-- [ ] `engine/world/sceneEngine.ts`（新增）：`getSceneById` / `listScenes`
-- [ ] `engine/world/enemyEngine.ts`（新增）：`getEnemyById` / `buildEnemyState`（从 JSON 构建 `CharacterState`）
-- [ ] 为 `engine/skillEngine.ts`、`engine/world/*` 各加一个 vitest 单测，断言能加载并校验 JSON
-- [ ] 所有新增 `.ts` 文件包含 `@module / @layer / @forbidden` 头部注释
+- [x] `engine/skillEngine.ts`：扩展类型守卫覆盖 `unlockProficiency`；新增 `getSkillsByCategory` / `getMoveById`
+- [x] `engine/world/sceneEngine.ts`（新增）：`getSceneById` / `listScenes`
+- [x] `engine/world/enemyEngine.ts`（新增）：`getEnemyById` / `buildEnemyState`（从 JSON 构建 `CharacterState`）
+- [x] 为 `engine/skillEngine.ts`、`engine/world/*` 各加一个 vitest 单测，断言能加载并校验 JSON
+- [x] 所有新增 `.ts` 文件包含 `@module / @layer / @forbidden` 头部注释
 
-**完成标准**：`npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿；JSON 文件均未超过 200 行硬上限；`INDEX.md` 记录了所有新 ID。
+**完成标准**：`npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿；JSON 文件均未超过 200 行硬上限；`INDEX.md` 记录了所有新 ID。 ✅
 
 ---
 
