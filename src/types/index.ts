@@ -11,6 +11,7 @@ export type {
   BattleEvent,
   BattleResult,
   BattleSnapshot,
+  CombatantSnapshot,
   DamageDealtEvent,
   DamageResult,
   ProficiencyGain,

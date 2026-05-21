@@ -34,3 +34,95 @@
 .counter:hover {
   filter: brightness(1.06);
 }
+
+.counter--secondary {
+  margin-left: 8px;
+}
+
+.battle-layout__subtitle {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.battle-layout__combatants {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.battle-layout__outcome {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+
+.hp-bar__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.hp-bar__label {
+  font-weight: 600;
+}
+
+.hp-bar__values {
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.hp-bar__track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.hp-bar__track--qi {
+  height: 6px;
+  margin-top: 4px;
+}
+
+.hp-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.25s ease;
+}
+
+.hp-bar__fill--hp {
+  background: linear-gradient(90deg, #8b1e1e, #d64545);
+}
+
+.hp-bar__fill--qi {
+  background: linear-gradient(90deg, #1e4a8b, #4586d6);
+}
+
+.event-log {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.event-log__item {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 14px;
+}
+
+.event-log__item:last-child {
+  border-bottom: none;
+}
+
+.battle-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

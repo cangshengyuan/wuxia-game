@@ -1,40 +1,147 @@
 import { create } from 'zustand'
-import { createInitialBattleState, simulateOneTurn } from '../engine/battleEngine'
+import { startBattle as runCombat } from '../engine/combat/combat_runner'
+import {
+  applyEventToSnapshots,
+  createSnapshotsFromCombatants,
+} from '../engine/combat/playback'
 import { buildEnemyState } from '../engine/world/enemyEngine'
-import type { BattleSnapshot } from '../types/battle'
+import type { BattleEvent, BattleResult, CombatantSnapshot } from '../types/battle'
 import type { CharacterState } from '../types/character'
-import { defaultPlayer } from './gameStore'
+import { useGameStore } from './gameStore'
+
+export type BattleStatus = 'idle' | 'running' | 'finished'
 
 interface BattleStoreState {
+  status: BattleStatus
+  events: BattleEvent[]
+  playbackIndex: number
   enemy: CharacterState
-  snapshot: BattleSnapshot
-  runOneTurn: (player: CharacterState) => void
+  playerSnapshot: CombatantSnapshot
+  enemySnapshot: CombatantSnapshot
+  result?: BattleResult
+  pendingResult?: BattleResult
+  prepareBattle: (enemyId: string) => void
+  startBattle: () => void
+  tickPlayback: () => void
+  endBattle: () => void
+  reset: () => void
 }
 
-const initialEnemy =
-  buildEnemyState('enemy_001_bandit_grunt') ?? {
-    id: 'enemy_001_bandit_grunt',
-    name: '山贼喽啰',
-    level: 1,
-    hp: 96,
-    maxHp: 96,
-    qi: 30,
-    maxQi: 30,
-    attributes: {
-      armStrength: 10,
-      agility: 9,
-      constitution: 10,
-    },
-    learnedSkills: [],
-    speed: 9,
-    equippedSkillIds: [],
-  }
+const fallbackEnemy: CharacterState = {
+  id: 'enemy_001_bandit_grunt',
+  name: '山贼喽啰',
+  level: 1,
+  hp: 96,
+  maxHp: 96,
+  qi: 30,
+  maxQi: 30,
+  attributes: {
+    armStrength: 10,
+    agility: 9,
+    constitution: 10,
+  },
+  learnedSkills: [],
+  speed: 9,
+  equippedSkillIds: [],
+}
 
-export const useBattleStore = create<BattleStoreState>((set) => ({
-  enemy: initialEnemy,
-  snapshot: createInitialBattleState(defaultPlayer, initialEnemy),
-  runOneTurn: (player) =>
-    set((state) => ({
-      snapshot: simulateOneTurn(state.snapshot, player, state.enemy),
-    })),
+const defaultEnemy = buildEnemyState('enemy_001_bandit_grunt') ?? fallbackEnemy
+const initialSnapshots = createSnapshotsFromCombatants(
+  useGameStore.getState().player,
+  defaultEnemy,
+)
+
+export const useBattleStore = create<BattleStoreState>((set, get) => ({
+  status: 'idle',
+  events: [],
+  playbackIndex: -1,
+  enemy: defaultEnemy,
+  playerSnapshot: initialSnapshots.player,
+  enemySnapshot: initialSnapshots.enemy,
+  result: undefined,
+  pendingResult: undefined,
+
+  prepareBattle: (enemyId) => {
+    const player = useGameStore.getState().player
+    const enemy = buildEnemyState(enemyId) ?? fallbackEnemy
+    const snapshots = createSnapshotsFromCombatants(player, enemy)
+
+    set({
+      status: 'idle',
+      events: [],
+      playbackIndex: -1,
+      enemy,
+      playerSnapshot: snapshots.player,
+      enemySnapshot: snapshots.enemy,
+      result: undefined,
+      pendingResult: undefined,
+    })
+  },
+
+  startBattle: () => {
+    const { enemy } = get()
+    const player = useGameStore.getState().player
+    const battleResult = runCombat({ player, enemy })
+
+    set({
+      status: 'running',
+      events: battleResult.events,
+      playbackIndex: -1,
+      result: undefined,
+      pendingResult: battleResult,
+    })
+  },
+
+  tickPlayback: () => {
+    const state = get()
+    if (state.status !== 'running' || state.events.length === 0) {
+      return
+    }
+
+    const nextIndex = state.playbackIndex + 1
+    if (nextIndex >= state.events.length) {
+      return
+    }
+
+    const event = state.events[nextIndex]
+    const player = useGameStore.getState().player
+    const snapshots = applyEventToSnapshots(
+      event,
+      player.id,
+      state.enemy.id,
+      state.playerSnapshot,
+      state.enemySnapshot,
+    )
+
+    set({
+      playbackIndex: nextIndex,
+      playerSnapshot: snapshots.player,
+      enemySnapshot: snapshots.enemy,
+    })
+
+    if (event.type === 'BattleEnded') {
+      get().endBattle()
+    }
+  },
+
+  endBattle: () => {
+    const { pendingResult, playerSnapshot, enemySnapshot } = get()
+
+    if (!pendingResult) {
+      return
+    }
+
+    set({
+      status: 'finished',
+      result: {
+        ...pendingResult,
+        finalPlayerHp: playerSnapshot.hp,
+        finalEnemyHp: enemySnapshot.hp,
+      },
+    })
+  },
+
+  reset: () => {
+    get().prepareBattle(get().enemy.id)
+  },
 }))

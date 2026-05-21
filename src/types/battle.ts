@@ -15,6 +15,13 @@ export interface BattleSnapshot {
   lastAction?: BattleAction
 }
 
+export interface CombatantSnapshot {
+  hp: number
+  maxHp: number
+  qi: number
+  maxQi: number
+}
+
 export interface SkillReadyEvent {
   type: 'SkillReady'
   actorId: string
