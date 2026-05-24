@@ -61,7 +61,7 @@
 
 | ID | 名称 | 文件 |
 |----|------|------|
-| quest_main_001_first_blood | 初战告捷 | data/quests/index.json |
+| quest_main_001_first_blood | 初战告捷（奖励：白虹剑法） | data/quests/index.json |
 
 ## 玩家 (player_*)
 

@@ -40,7 +40,11 @@ export interface NpcDefinition {
   description?: string
 }
 
-export type QuestObjectiveType = 'reach_scene' | 'defeat_enemy'
+export type QuestObjectiveType =
+  | 'talk_to_npc'
+  | 'reach_scene'
+  | 'defeat_enemy'
+  | 'return_to_npc'
 
 export interface QuestObjective {
   type: QuestObjectiveType
@@ -48,9 +52,21 @@ export interface QuestObjective {
   description?: string
 }
 
+export interface QuestRewards {
+  skillIds: SkillId[]
+}
+
 export interface QuestDefinition {
   id: QuestId
   name: string
   description: string
   objectives: QuestObjective[]
+  giverNpcId?: NpcId
+  rewards?: QuestRewards
+}
+
+export interface ActiveQuest {
+  questId: QuestId
+  currentStepIndex: number
+  status: 'active' | 'ready_to_complete'
 }

@@ -4,12 +4,13 @@ import { useGameStore } from '../../store/gameStore'
 
 export function SaveControls() {
   const handleSave = () => {
-    const { player, currentSceneId, completedQuests } = useGameStore.getState()
+    const { player, currentSceneId, completedQuests, activeQuests } = useGameStore.getState()
     saveToStorage({
       version: SAVE_VERSION,
       player,
       currentSceneId,
       completedQuests,
+      activeQuests,
     })
   }
 

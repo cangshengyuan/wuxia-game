@@ -15,4 +15,22 @@ export type {
   SkillReadyEvent,
 } from './battle'
 
-// 后续引擎事件（如 BuffApplied、ItemUsed）在此扩展并 re-export
+import type { EnemyId, NpcId, SceneId } from './id'
+
+export interface SceneEnteredEvent {
+  type: 'SceneEntered'
+  sceneId: SceneId
+}
+
+export interface DialogClosedEvent {
+  type: 'DialogClosed'
+  npcId: NpcId
+}
+
+export interface BattleEndedWorldEvent {
+  type: 'BattleEnded'
+  winnerId: string
+  enemyId: EnemyId
+}
+
+export type GameEvent = SceneEnteredEvent | DialogClosedEvent | BattleEndedWorldEvent

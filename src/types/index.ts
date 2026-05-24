@@ -41,11 +41,19 @@ export type { ItemDefinition } from './item'
 export type { UnlockNotice } from './notice'
 export type { SkillCategory, SkillDefinition, SkillMove } from './skill'
 export type {
+  DialogClosedEvent,
+  BattleEndedWorldEvent,
+  GameEvent,
+  SceneEnteredEvent,
+} from './event'
+export type {
+  ActiveQuest,
   EncounterEntry,
   EnemyDefinition,
   NpcDefinition,
   QuestDefinition,
   QuestObjective,
   QuestObjectiveType,
+  QuestRewards,
   SceneDefinition,
 } from './world'

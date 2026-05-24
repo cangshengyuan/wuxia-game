@@ -5,7 +5,9 @@ import {
   applyEventToSnapshots,
   createSnapshotsFromCombatants,
 } from '../engine/combat/playback'
+import { gameEventBus } from '../engine/game_event_bus'
 import { buildEnemyState } from '../engine/world/enemyEngine'
+import { asEnemyId } from '../types/id'
 import type { BattleEvent, BattleResult, CombatantSnapshot } from '../types/battle'
 import type { CharacterState } from '../types/character'
 import { defaultPlayer, useGameStore } from './gameStore'
@@ -124,7 +126,7 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
   },
 
   endBattle: () => {
-    const { pendingResult, playerSnapshot, enemySnapshot } = get()
+    const { pendingResult, playerSnapshot, enemySnapshot, enemy } = get()
 
     if (!pendingResult) {
       return
@@ -143,6 +145,11 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
       result,
     })
 
+    gameEventBus.emit({
+      type: 'BattleEnded',
+      winnerId: result.winnerId,
+      enemyId: asEnemyId(enemy.id),
+    })
     useGameStore.getState().applyBattleResult(result)
   },
 

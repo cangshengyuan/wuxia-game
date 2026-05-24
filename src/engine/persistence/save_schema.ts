@@ -3,22 +3,33 @@
  * @layer engine
  * @description 版本化存档契约与迁移占位
  * @inputs raw JSON
- * @outputs SaveV1 | null
+ * @outputs SaveV2 | null
  * @depends types
  * @forbidden 禁止 import React、禁止访问 store、禁止访问 ui
  */
-import { asSceneId, asSkillId } from '../../types/id'
+import { asQuestId, asSceneId, asSkillId } from '../../types/id'
 import type { QuestId, SceneId } from '../../types/id'
 import type { CharacterAttributes, CharacterState, SkillRuntime } from '../../types/character'
+import type { ActiveQuest } from '../../types/world'
 
-export const SAVE_VERSION = 1 as const
+export const SAVE_VERSION = 2 as const
 
 export interface SaveV1 {
-  version: typeof SAVE_VERSION
+  version: 1
   player: CharacterState
   currentSceneId: SceneId
   completedQuests: QuestId[]
 }
+
+export interface SaveV2 {
+  version: typeof SAVE_VERSION
+  player: CharacterState
+  currentSceneId: SceneId
+  completedQuests: QuestId[]
+  activeQuests: ActiveQuest[]
+}
+
+export type SaveData = SaveV2
 
 const defaultSceneId = asSceneId('scene_001_village')
 
@@ -51,12 +62,13 @@ const defaultPlayer: CharacterState = {
   equippedSkillIds: [asSkillId('skill_sword_010_qingmang')],
 }
 
-export function createDefaultSave(): SaveV1 {
+export function createDefaultSave(): SaveV2 {
   return {
     version: SAVE_VERSION,
     player: structuredClone(defaultPlayer),
     currentSceneId: defaultSceneId,
     completedQuests: [],
+    activeQuests: [],
   }
 }
 
@@ -115,7 +127,39 @@ function isCharacterState(value: unknown): value is CharacterState {
   return player.equippedSkillIds.every((skillId) => typeof skillId === 'string')
 }
 
+function isActiveQuest(value: unknown): value is ActiveQuest {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const quest = value as Record<string, unknown>
+  return (
+    typeof quest.questId === 'string' &&
+    typeof quest.currentStepIndex === 'number' &&
+    (quest.status === 'active' || quest.status === 'ready_to_complete')
+  )
+}
+
 export function isSaveV1(value: unknown): value is SaveV1 {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const save = value as Record<string, unknown>
+  if (save.version !== 1) {
+    return false
+  }
+  if (typeof save.currentSceneId !== 'string') {
+    return false
+  }
+  if (!Array.isArray(save.completedQuests)) {
+    return false
+  }
+  if (!save.completedQuests.every((questId) => typeof questId === 'string')) {
+    return false
+  }
+  return isCharacterState(save.player)
+}
+
+export function isSaveV2(value: unknown): value is SaveV2 {
   if (!value || typeof value !== 'object') {
     return false
   }
@@ -132,13 +176,28 @@ export function isSaveV1(value: unknown): value is SaveV1 {
   if (!save.completedQuests.every((questId) => typeof questId === 'string')) {
     return false
   }
+  if (!Array.isArray(save.activeQuests) || !save.activeQuests.every(isActiveQuest)) {
+    return false
+  }
   return isCharacterState(save.player)
 }
 
-/** 迁移占位：未来 V2 在此扩展 */
-export function migrateSave(raw: unknown): SaveV1 | null {
-  if (isSaveV1(raw)) {
+function migrateV1ToV2(save: SaveV1): SaveV2 {
+  return {
+    version: SAVE_VERSION,
+    player: save.player,
+    currentSceneId: save.currentSceneId,
+    completedQuests: save.completedQuests.map((questId) => asQuestId(questId)),
+    activeQuests: [],
+  }
+}
+
+export function migrateSave(raw: unknown): SaveV2 | null {
+  if (isSaveV2(raw)) {
     return raw
+  }
+  if (isSaveV1(raw)) {
+    return migrateV1ToV2(raw)
   }
   return null
 }

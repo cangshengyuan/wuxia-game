@@ -5,7 +5,7 @@ import { SAVE_VERSION } from '../engine/persistence/save_schema'
 import { defaultPlayer, defaultSceneId, useGameStore } from './gameStore'
 import { useBattleStore } from './battleStore'
 import { useUiStore } from './uiStore'
-import { asMoveId, asSceneId, asSkillId } from '../types/id'
+import { asEnemyId, asMoveId, asNpcId, asQuestId, asSceneId, asSkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'
 
 function resetGameStore(): void {
@@ -15,6 +15,7 @@ function resetGameStore(): void {
     recentUnlocks: [],
     currentSceneId: defaultSceneId,
     completedQuests: [],
+    activeQuests: [],
     rng: createSeededRng(42),
   })
 }
@@ -193,6 +194,13 @@ describe('gameStore', () => {
       version: SAVE_VERSION,
       currentSceneId: asSceneId('scene_002_outskirts'),
       completedQuests: [],
+      activeQuests: [
+        {
+          questId: asQuestId('quest_main_001_first_blood'),
+          currentStepIndex: 1,
+          status: 'active',
+        },
+      ],
       player: {
         ...defaultPlayer,
         learnedSkills: [
@@ -210,11 +218,13 @@ describe('gameStore', () => {
 
     expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
     expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(7)
+    expect(useGameStore.getState().activeQuests).toHaveLength(1)
   })
 
   it('clearSave resets to default player and learned skills', () => {
     useGameStore.getState().enterScene('scene_002_outskirts')
     useGameStore.getState().upgradeSkill('skill_sword_010_qingmang')
+    useGameStore.getState().acceptQuest('quest_main_001_first_blood')
 
     useGameStore.getState().clearSave()
 
@@ -224,5 +234,44 @@ describe('gameStore', () => {
     expect(useGameStore.getState().player.learnedSkills[1]?.skillId).toBe(
       asSkillId('skill_internal_001_huntuan'),
     )
+    expect(useGameStore.getState().activeQuests).toEqual([])
+  })
+
+  it('progresses first blood quest through full chain', () => {
+    useGameStore.getState().acceptQuest('quest_main_001_first_blood')
+
+    useGameStore.getState().handleGameEvent({
+      type: 'DialogClosed',
+      npcId: asNpcId('npc_001_village_swordsman'),
+    })
+    expect(useGameStore.getState().activeQuests[0]?.currentStepIndex).toBe(1)
+
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    expect(useGameStore.getState().activeQuests[0]?.currentStepIndex).toBe(2)
+
+    useGameStore.getState().handleGameEvent({
+      type: 'BattleEnded',
+      winnerId: 'player_001',
+      enemyId: asEnemyId('enemy_001_bandit_grunt'),
+    })
+    expect(useGameStore.getState().activeQuests[0]?.currentStepIndex).toBe(3)
+
+    useGameStore.getState().handleGameEvent({
+      type: 'DialogClosed',
+      npcId: asNpcId('npc_001_village_swordsman'),
+    })
+
+    expect(useGameStore.getState().completedQuests).toContain(asQuestId('quest_main_001_first_blood'))
+    expect(useGameStore.getState().activeQuests).toHaveLength(0)
+    expect(
+      useGameStore.getState().player.learnedSkills.some(
+        (skill) => skill.skillId === asSkillId('skill_sword_011_baihong'),
+      ),
+    ).toBe(true)
+  })
+
+  it('learnSkill does not duplicate existing skill', () => {
+    useGameStore.getState().learnSkill('skill_sword_010_qingmang')
+    expect(useGameStore.getState().player.learnedSkills).toHaveLength(2)
   })
 })

@@ -1,6 +1,7 @@
 import './App.css'
 import { useUiStore } from './store/uiStore'
 import { UnlockToast } from './ui/components/UnlockToast'
+import { QuestLog } from './ui/panels/QuestLog'
 import { SaveControls } from './ui/panels/SaveControls'
 import { BattlePage } from './ui/pages/BattlePage'
 import { HomePage } from './ui/pages/HomePage'
@@ -14,6 +15,7 @@ function App() {
       {currentPage === 'home' ? <HomePage /> : null}
       {currentPage === 'scene' ? <ScenePage /> : null}
       {currentPage === 'battle' ? <BattlePage /> : null}
+      <QuestLog />
       <SaveControls />
       <UnlockToast />
     </main>
