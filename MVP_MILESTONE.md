@@ -18,7 +18,7 @@
 | M3 | 战斗 UI 与战斗 store ✅ | 玩家点击"开战"看到时间轴推进与战报 | ✅ 战斗页可视化，无业务逻辑泄漏到 .tsx |
 | M4 | 功法成长闭环 ✅ | 战斗后获得熟练度，达到阈值解锁新招式 | ✅ 熟练度门槛由 engine 计算，UI 仅读取 |
 | M5 | 场景探索与战斗触发 | 主城/野外两个场景，野外可遇敌 | 场景切换走 store action，战斗在场景内触发 |
-| M6 | 存档持久化 | 关闭网页再打开，进度（角色、功法、场景）保留 | gameStore 持久化到 localStorage，可清档 |
+| M6 | 存档持久化 ✅ | 关闭网页再打开，进度（角色、功法、场景）保留 | gameStore 持久化到 localStorage，可清档 |
 | M7 | 教学任务串联 | 一条"出村 → 击败山贼 → 习得新招"的主线任务 | 从新建角色到完成教学任务全流程可玩 |
 
 完成 M0~M7 即视为达成「最小可玩里程碑」。
@@ -197,19 +197,19 @@
 
 ---
 
-## M6 · 存档持久化
+## M6 · 存档持久化 ✅
 
 **目标**：浏览器刷新或重开页面后，玩家状态、功法成长、当前场景全部保留。`battleStore`、`uiStore` 不持久化（§5.3）。
 
-- [ ] `engine/persistence/save_schema.ts`：定义版本化 `SaveV1` 类型 + 迁移占位
-- [ ] `engine/persistence/save_io.ts`：`saveToStorage(state)` / `loadFromStorage() → SaveV1 | null` / `clearStorage()`
-- [ ] `gameStore.ts`：使用 `zustand/middleware` 的 `persist`，只持久化必要字段（玩家、`learnedSkills`、`currentSceneId`、完成任务列表）
-- [ ] 添加 `ui/panels/SaveControls.tsx`：手动"保存 / 读取 / 清档"按钮（即便有自动持久化，也提供显式入口便于调试）
-- [ ] 单测：写入 → 读取 → 字段一一相等；版本号缺失时回退到默认
+- [x] `engine/persistence/save_schema.ts`：定义版本化 `SaveV1` 类型 + 迁移占位
+- [x] `engine/persistence/save_io.ts`：`saveToStorage(state)` / `loadFromStorage() → SaveV1 | null` / `clearStorage()`
+- [x] `gameStore.ts`：使用 `zustand/middleware` 的 `persist`，只持久化必要字段（玩家、`learnedSkills`、`currentSceneId`、完成任务列表）
+- [x] 添加 `ui/panels/SaveControls.tsx`：手动"保存 / 读取 / 清档"按钮（即便有自动持久化，也提供显式入口便于调试）
+- [x] 单测：写入 → 读取 → 字段一一相等；版本号缺失时回退到默认
 
 **完成标准**：
-- 跑完一场战斗 → 刷新页面 → 熟练度 / 当前场景 / 解锁招式仍在
-- 清档后回到 `defaultPlayer`，且 `learnedSkills` 只含初始两个功法
+- [x] 跑完一场战斗 → 刷新页面 → 熟练度 / 当前场景 / 解锁招式仍在
+- [x] 清档后回到 `defaultPlayer`，且 `learnedSkills` 只含初始两个功法 ✅
 
 ---
 
