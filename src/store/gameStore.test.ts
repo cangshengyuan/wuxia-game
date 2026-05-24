@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSeededRng } from '../engine/util/rng'
+import { saveToStorage } from '../engine/persistence/save_io'
+import { SAVE_VERSION } from '../engine/persistence/save_schema'
 import { defaultPlayer, defaultSceneId, useGameStore } from './gameStore'
 import { useBattleStore } from './battleStore'
 import { useUiStore } from './uiStore'
@@ -7,10 +9,12 @@ import { asMoveId, asSceneId, asSkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'
 
 function resetGameStore(): void {
+  localStorage.clear()
   useGameStore.setState({
     player: structuredClone(defaultPlayer),
     recentUnlocks: [],
     currentSceneId: defaultSceneId,
+    completedQuests: [],
     rng: createSeededRng(42),
   })
 }
@@ -182,5 +186,43 @@ describe('gameStore', () => {
     expect(setPage).toHaveBeenCalledWith('battle')
     prepareBattle.mockRestore()
     setPage.mockRestore()
+  })
+
+  it('rehydrates persisted progress from storage', async () => {
+    saveToStorage({
+      version: SAVE_VERSION,
+      currentSceneId: asSceneId('scene_002_outskirts'),
+      completedQuests: [],
+      player: {
+        ...defaultPlayer,
+        learnedSkills: [
+          {
+            skillId: asSkillId('skill_sword_010_qingmang'),
+            proficiency: 7,
+            unlockedMoveIds: ['move_qingmang_01'],
+          },
+          ...defaultPlayer.learnedSkills.slice(1),
+        ],
+      },
+    })
+
+    await useGameStore.persist.rehydrate()
+
+    expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
+    expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(7)
+  })
+
+  it('clearSave resets to default player and learned skills', () => {
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    useGameStore.getState().upgradeSkill('skill_sword_010_qingmang')
+
+    useGameStore.getState().clearSave()
+
+    expect(useGameStore.getState().currentSceneId).toBe(defaultSceneId)
+    expect(useGameStore.getState().player.learnedSkills).toHaveLength(2)
+    expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(0)
+    expect(useGameStore.getState().player.learnedSkills[1]?.skillId).toBe(
+      asSkillId('skill_internal_001_huntuan'),
+    )
   })
 })
