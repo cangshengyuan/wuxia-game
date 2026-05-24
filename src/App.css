@@ -127,6 +127,62 @@
   gap: 8px;
 }
 
+.scene-layout__description {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.scene-layout__section {
+  margin-top: 16px;
+}
+
+.scene-layout__section h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.scene-layout__destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scene-layout__destinations .counter--secondary {
+  margin-left: 0;
+}
+
+.scene-layout__npc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.scene-layout__npc-button {
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--accent);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.scene-layout__npc-button:hover {
+  filter: brightness(1.06);
+}
+
+.scene-layout__empty,
+.scene-layout__placeholder {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.85;
+}
+
 .skill-panel__list {
   list-style: none;
   margin: 0;

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { startBattle as runCombat } from '../engine/combat/combat_runner'
+import { formatBattleEvent } from '../engine/combat/event_format'
 import {
   applyEventToSnapshots,
   createSnapshotsFromCombatants,
@@ -7,7 +8,7 @@ import {
 import { buildEnemyState } from '../engine/world/enemyEngine'
 import type { BattleEvent, BattleResult, CombatantSnapshot } from '../types/battle'
 import type { CharacterState } from '../types/character'
-import { useGameStore } from './gameStore'
+import { defaultPlayer, useGameStore } from './gameStore'
 
 export type BattleStatus = 'idle' | 'running' | 'finished'
 
@@ -25,6 +26,7 @@ interface BattleStoreState {
   tickPlayback: () => void
   endBattle: () => void
   reset: () => void
+  formatEvent: (event: BattleEvent) => string
 }
 
 const fallbackEnemy: CharacterState = {
@@ -46,10 +48,7 @@ const fallbackEnemy: CharacterState = {
 }
 
 const defaultEnemy = buildEnemyState('enemy_001_bandit_grunt') ?? fallbackEnemy
-const initialSnapshots = createSnapshotsFromCombatants(
-  useGameStore.getState().player,
-  defaultEnemy,
-)
+const initialSnapshots = createSnapshotsFromCombatants(defaultPlayer, defaultEnemy)
 
 export const useBattleStore = create<BattleStoreState>((set, get) => ({
   status: 'idle',
@@ -150,4 +149,6 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
   reset: () => {
     get().prepareBattle(get().enemy.id)
   },
+
+  formatEvent: (event) => formatBattleEvent(event),
 }))

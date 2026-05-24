@@ -8,6 +8,6 @@ interface UiStoreState {
 }
 
 export const useUiStore = create<UiStoreState>((set) => ({
-  currentPage: 'home',
+  currentPage: 'scene',
   setPage: (page) => set({ currentPage: page }),
 }))

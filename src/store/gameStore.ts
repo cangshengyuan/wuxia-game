@@ -5,11 +5,17 @@ import {
 } from '../engine/character/skill_runtime'
 import { applyProficiencyGain, checkUnlocks } from '../engine/skill/proficiency'
 import { getMoveById, getSkillById } from '../engine/skillEngine'
-import { asMoveId, asSkillId } from '../types/id'
+import { createSeededRng, type Rng } from '../engine/util/rng'
+import { rollEncounter } from '../engine/world/encounter'
+import { listNpcsByScene } from '../engine/world/npcEngine'
+import { getSceneById } from '../engine/world/sceneEngine'
+import { canEnter, getSceneExits } from '../engine/world/scene_transition'
+import { asMoveId, asSceneId, asSkillId } from '../types/id'
+import type { SceneId, SkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'
 import type { CharacterState } from '../types/character'
 import type { UnlockNotice } from '../types/notice'
-import type { SkillId } from '../types/id'
+import { useUiStore } from './uiStore'
 
 export interface SkillDisplay {
   skillId: SkillId
@@ -19,14 +25,41 @@ export interface SkillDisplay {
   unlockedMoveNames: string[]
 }
 
+export interface SceneDisplay {
+  sceneId: SceneId
+  name: string
+  description: string
+  canExplore: boolean
+}
+
+export interface NpcDisplay {
+  id: string
+  name: string
+  description?: string
+}
+
+export interface SceneDestination {
+  sceneId: SceneId
+  name: string
+}
+
+export const defaultSceneId = asSceneId('scene_001_village')
+
 interface GameStoreState {
   player: CharacterState
   recentUnlocks: UnlockNotice[]
+  currentSceneId: SceneId
+  rng: Rng
   applyBattleResult: (result: BattleResult) => void
   canUpgradeSkill: (skillId: SkillId | string) => boolean
   upgradeSkill: (skillId: SkillId | string) => void
   dismissUnlockNotice: (id: string) => void
   getSkillDisplay: (skillId: SkillId | string) => SkillDisplay | undefined
+  getCurrentScene: () => SceneDisplay | undefined
+  getSceneNpcs: () => NpcDisplay[]
+  getSceneDestinations: () => SceneDestination[]
+  enterScene: (sceneId: SceneId | string) => void
+  explore: () => void
 }
 
 export const defaultPlayer: CharacterState = {
@@ -68,6 +101,8 @@ function nextUnlockNoticeId(): string {
 export const useGameStore = create<GameStoreState>((set, get) => ({
   player: defaultPlayer,
   recentUnlocks: [],
+  currentSceneId: defaultSceneId,
+  rng: createSeededRng(42),
 
   applyBattleResult: (result) => {
     const { player } = get()
@@ -168,5 +203,64 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
       maxProficiency: skillDef.maxProficiency,
       unlockedMoveNames,
     }
+  },
+
+  getCurrentScene: () => {
+    const scene = getSceneById(get().currentSceneId)
+    if (!scene) {
+      return undefined
+    }
+    return {
+      sceneId: scene.id,
+      name: scene.name,
+      description: scene.description ?? '',
+      canExplore: scene.encounters.length > 0,
+    }
+  },
+
+  getSceneNpcs: () => {
+    return listNpcsByScene(get().currentSceneId).map((npc) => ({
+      id: npc.id,
+      name: npc.name,
+      ...(npc.description !== undefined ? { description: npc.description } : {}),
+    }))
+  },
+
+  getSceneDestinations: () => {
+    return getSceneExits(get().currentSceneId)
+      .map((sceneId) => {
+        const scene = getSceneById(sceneId)
+        if (!scene) {
+          return undefined
+        }
+        return { sceneId: scene.id, name: scene.name }
+      })
+      .filter((entry): entry is SceneDestination => entry !== undefined)
+  },
+
+  enterScene: (sceneId) => {
+    const targetId = typeof sceneId === 'string' ? asSceneId(sceneId) : sceneId
+    if (!canEnter(get().currentSceneId, targetId)) {
+      return
+    }
+    if (!getSceneById(targetId)) {
+      return
+    }
+    set({ currentSceneId: targetId })
+  },
+
+  explore: () => {
+    const scene = getSceneById(get().currentSceneId)
+    if (!scene) {
+      return
+    }
+    const enemyId = rollEncounter(scene, get().rng)
+    if (!enemyId) {
+      return
+    }
+    void import('./battleStore').then(({ useBattleStore }) => {
+      useBattleStore.getState().prepareBattle(enemyId)
+      useUiStore.getState().setPage('battle')
+    })
   },
 }))

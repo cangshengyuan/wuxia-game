@@ -33,8 +33,8 @@ export function BattleControls() {
       >
         {getPrimaryActionLabel(status)}
       </button>
-      <button type="button" className="counter counter--secondary" onClick={() => setPage('home')}>
-        返回主城
+      <button type="button" className="counter counter--secondary" onClick={() => setPage('scene')}>
+        返回场景
       </button>
     </div>
   )

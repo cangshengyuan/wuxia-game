@@ -20,8 +20,8 @@ export function HomePage() {
         <p>
           内力：{player.qi}/{player.maxQi}
         </p>
-        <button type="button" className="counter" onClick={() => setPage('battle')}>
-          进入战斗
+        <button type="button" className="counter" onClick={() => setPage('scene')}>
+          进入世界
         </button>
       </section>
 

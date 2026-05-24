@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { formatBattleEvent } from '../../engine/combat/event_format'
 import { useBattleStore } from '../../store/battleStore'
 import { useGameStore } from '../../store/gameStore'
 import { EventLogItem } from '../components/EventLogItem'
@@ -7,7 +6,6 @@ import { HpBar } from '../components/HpBar'
 import { BattleControls } from '../panels/BattleControls'
 
 const PLAYBACK_INTERVAL_MS = 400
-const DEFAULT_ENEMY_ID = 'enemy_001_bandit_grunt'
 
 export function BattlePage() {
   const player = useGameStore((state) => state.player)
@@ -18,14 +16,8 @@ export function BattlePage() {
   const playerSnapshot = useBattleStore((state) => state.playerSnapshot)
   const enemySnapshot = useBattleStore((state) => state.enemySnapshot)
   const result = useBattleStore((state) => state.result)
-  const prepareBattle = useBattleStore((state) => state.prepareBattle)
   const tickPlayback = useBattleStore((state) => state.tickPlayback)
-
-  useEffect(() => {
-    if (status === 'idle') {
-      prepareBattle(DEFAULT_ENEMY_ID)
-    }
-  }, [status, prepareBattle])
+  const formatEvent = useBattleStore((state) => state.formatEvent)
 
   useEffect(() => {
     if (status !== 'running') {
@@ -74,7 +66,7 @@ export function BattlePage() {
 
       <ul className="event-log" aria-label="战报">
         {visibleEvents.map((event, index) => (
-          <EventLogItem key={index} index={index} message={formatBattleEvent(event)} />
+          <EventLogItem key={index} index={index} message={formatEvent(event)} />
         ))}
       </ul>
 

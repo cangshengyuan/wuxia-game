@@ -1,18 +1,28 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { defaultPlayer, useGameStore } from './gameStore'
-import { asMoveId, asSkillId } from '../types/id'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createSeededRng } from '../engine/util/rng'
+import { defaultPlayer, defaultSceneId, useGameStore } from './gameStore'
+import { useBattleStore } from './battleStore'
+import { useUiStore } from './uiStore'
+import { asMoveId, asSceneId, asSkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'
 
 function resetGameStore(): void {
   useGameStore.setState({
     player: structuredClone(defaultPlayer),
     recentUnlocks: [],
+    currentSceneId: defaultSceneId,
+    rng: createSeededRng(42),
   })
+}
+
+function resetUiStore(): void {
+  useUiStore.setState({ currentPage: 'scene' })
 }
 
 describe('gameStore', () => {
   beforeEach(() => {
     resetGameStore()
+    resetUiStore()
   })
 
   it('applyBattleResult updates hp, qi, and proficiency on victory', () => {
@@ -117,5 +127,60 @@ describe('gameStore', () => {
 
     useGameStore.getState().dismissUnlockNotice('unlock_test')
     expect(useGameStore.getState().recentUnlocks).toHaveLength(0)
+  })
+
+  it('getCurrentScene returns village with explore disabled', () => {
+    const scene = useGameStore.getState().getCurrentScene()
+    expect(scene).toEqual({
+      sceneId: asSceneId('scene_001_village'),
+      name: '主城新手村',
+      description: '宁静的村落，江湖传闻的起点。',
+      canExplore: false,
+    })
+  })
+
+  it('getSceneNpcs lists village npcs', () => {
+    const npcs = useGameStore.getState().getSceneNpcs()
+    expect(npcs).toHaveLength(1)
+    expect(npcs[0]?.name).toBe('村口剑客')
+  })
+
+  it('getSceneDestinations lists outskirts from village', () => {
+    const destinations = useGameStore.getState().getSceneDestinations()
+    expect(destinations).toEqual([
+      { sceneId: asSceneId('scene_002_outskirts'), name: '村外野径' },
+    ])
+  })
+
+  it('enterScene switches currentSceneId', () => {
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
+  })
+
+  it('explore in village does not trigger battle', () => {
+    const prepareBattle = vi.spyOn(useBattleStore.getState(), 'prepareBattle')
+    const setPage = vi.spyOn(useUiStore.getState(), 'setPage')
+
+    useGameStore.getState().explore()
+
+    expect(prepareBattle).not.toHaveBeenCalled()
+    expect(setPage).not.toHaveBeenCalled()
+    prepareBattle.mockRestore()
+    setPage.mockRestore()
+  })
+
+  it('explore in outskirts triggers battle and switches to battle page', async () => {
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    const prepareBattle = vi.spyOn(useBattleStore.getState(), 'prepareBattle')
+    const setPage = vi.spyOn(useUiStore.getState(), 'setPage')
+
+    useGameStore.getState().explore()
+
+    await vi.waitFor(() => {
+      expect(prepareBattle).toHaveBeenCalledWith('enemy_001_bandit_grunt')
+    })
+    expect(setPage).toHaveBeenCalledWith('battle')
+    prepareBattle.mockRestore()
+    setPage.mockRestore()
   })
 })
