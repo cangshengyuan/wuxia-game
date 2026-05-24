@@ -172,28 +172,28 @@
 
 ---
 
-## M5 · 场景探索与战斗触发
+## M5 · 场景探索与战斗触发 ✅
 
 **目标**：玩家在场景间移动，野外场景可触发遭遇战。这是把战斗"嵌入世界"的最薄一层。
 
 ### 5.1 引擎
-- [ ] `engine/world/encounter.ts`：`rollEncounter(scene, rng) → EnemyId | null`（基于场景 `encounters` 权重表）
-- [ ] `engine/world/scene_transition.ts`：`canEnter(fromSceneId, toSceneId) → boolean`（M5 内全部返回 true，留扩展位）
+- [x] `engine/world/encounter.ts`：`rollEncounter(scene, rng) → EnemyId | null`（基于场景 `encounters` 权重表）
+- [x] `engine/world/scene_transition.ts`：`canEnter(fromSceneId, toSceneId) → boolean`（M5 内全部返回 true，留扩展位；额外提供 `getSceneExits` 供 store 查询邻接场景）
 
 ### 5.2 store
-- [ ] `gameStore.ts`：新增 `currentSceneId: SceneId`、action `enterScene(sceneId)`、`explore()`
+- [x] `gameStore.ts`：新增 `currentSceneId: SceneId`、action `enterScene(sceneId)`、`explore()`
   - `explore()` 内部：调用 `rollEncounter` → 若返回敌人 ID，则调用 `battleStore.prepareBattle(enemyId)` 并切换 `uiStore` 到 `'battle'`
-- [ ] `gameStore` 注入种子 RNG（`engine/util/rng.ts`，可被测试替换为确定性 RNG）
+- [x] `gameStore` 注入种子 RNG（`engine/util/rng.ts`，可被测试替换为确定性 RNG）
 
 ### 5.3 UI
-- [ ] `ui/pages/ScenePage.tsx`：显示当前场景名称 / 描述 / NPC 列表 / "探索"按钮 / "前往……"按钮组
-- [ ] `ui/panels/NpcList.tsx`：占位展示，点击仅切换"对话面板"（M5 可不实现对话内容）
-- [ ] 接入 `uiStore.currentPage`：`'scene' | 'battle' | 'home'`
+- [x] `ui/pages/ScenePage.tsx`：显示当前场景名称 / 描述 / NPC 列表 / "探索"按钮 / "前往……"按钮组
+- [x] `ui/panels/NpcList.tsx`：占位展示，点击仅切换"对话面板"（M5 可不实现对话内容）
+- [x] 接入 `uiStore.currentPage`：`'scene' | 'battle' | 'home'`
 
 **完成标准**：
-- 在「村外野径」点"探索"有概率进入战斗，胜利后回到场景页
-- 在「新手村」无遭遇，可以前往「村外野径」
-- `ui/pages/*.tsx` 不直接 import `engine/*`
+- [x] 在「村外野径」点"探索"有概率进入战斗，胜利后通过「返回场景」按钮回到场景页（`BattleControls` 手动切页，非自动跳转）
+- [x] 在「新手村」无遭遇，可以前往「村外野径」
+- [x] `ui/pages/*.tsx` 不直接 import `engine/*` ✅
 
 ---
 
