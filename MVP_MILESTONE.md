@@ -218,27 +218,27 @@
 **目标**：用一条主线把 M1~M6 全部串起来，让"最小可玩"具有起点与终点。
 
 ### 数据
-- [ ] `data/quests/index.json` 完善 `quest_main_001_first_blood`：
-  - 步骤 1：与村口剑客对话（NPC `npc_001_swordsman`）
-  - 步骤 2：前往「村外野径」
-  - 步骤 3：击败任一山贼
-  - 步骤 4：返回村口剑客，习得新剑法
+- [x] `data/quests/index.json` 完善 `quest_main_001_first_blood`：
+  - [x] 步骤 1：与村口剑客对话（NPC `npc_001_village_swordsman`）
+  - [x] 步骤 2：前往「村外野径」
+  - [x] 步骤 3：击败山贼喽啰（`enemy_001_bandit_grunt`）
+  - [x] 步骤 4：返回村口剑客，习得新剑法（奖励 `skill_sword_011_baihong`）
 
 ### 引擎
-- [ ] `engine/quest/quest_engine.ts`：纯函数 `advanceQuest(quest, event) → QuestState`
-- [ ] `engine/event_bus`：在 `BattleEnded`、`SceneEntered`、`DialogClosed` 等事件触发时由 `gameStore` 统一转发给 `quest_engine`
+- [x] `engine/quest/quest_engine.ts`：纯函数 `advanceQuest(quest, event) → QuestState`
+- [x] `engine/game_event_bus.ts`：在 `BattleEnded`、`SceneEntered`、`DialogClosed` 等事件触发时由 `gameStore` 统一转发给 `quest_engine`（`registerQuestEventHandlers` → `handleGameEvent`）
 
 ### store / UI
-- [ ] `gameStore`：`activeQuests`、`completedQuests`，action `acceptQuest / progressQuest / completeQuest`
-- [ ] `ui/panels/QuestLog.tsx`：列出活动任务及当前步骤描述
+- [x] `gameStore`：`activeQuests`、`completedQuests`，action `acceptQuest / handleGameEvent / completeQuest`（事件驱动推进，等价于原 `progressQuest`）
+- [x] `ui/panels/QuestLog.tsx`：列出活动任务及当前步骤描述
 
 **完成标准（即「最小可玩里程碑」总验收）**：
-- 从清档状态开始：
-  1. 进入新手村，与 NPC 对话接到任务
-  2. 进入村外野径，遭遇并击败山贼
-  3. 回到 NPC 处完成任务，获得一本新剑法（写入 `learnedSkills`）
-  4. 刷新页面进度保留
-- 全程未出现报错；`npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿
+- [x] 从清档状态开始：
+  1. [x] 进入新手村，与 NPC 对话接到任务（`ScenePage` + `acceptQuest`）
+  2. [x] 进入村外野径，遭遇并击败山贼（`explore` → `battleStore` → `BattleEnded` 事件）
+  3. [x] 回到 NPC 处完成任务，获得一本新剑法（`completeQuest` → `learnSkill`）
+  4. [x] 刷新页面进度保留（`persist` 含 `activeQuests` / `completedQuests` / `learnedSkills`）
+- [x] 全程未出现报错；`npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿（81 测例通过；带 coverage 时 vitest worker OOM，与业务无关）
 
 ---
 
