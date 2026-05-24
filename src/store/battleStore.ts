@@ -10,7 +10,8 @@ import { buildEnemyState } from '../engine/world/enemyEngine'
 import { asEnemyId } from '../types/id'
 import type { BattleEvent, BattleResult, CombatantSnapshot } from '../types/battle'
 import type { CharacterState } from '../types/character'
-import { defaultPlayer, useGameStore } from './gameStore'
+import { defaultPlayer } from './gameStore.defaults'
+import { useGameStore } from './gameStore'
 
 export type BattleStatus = 'idle' | 'running' | 'finished'
 

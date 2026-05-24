@@ -174,16 +174,14 @@ describe('gameStore', () => {
     setPage.mockRestore()
   })
 
-  it('explore in outskirts triggers battle and switches to battle page', async () => {
+  it('explore in outskirts triggers battle and switches to battle page', () => {
     useGameStore.getState().enterScene('scene_002_outskirts')
     const prepareBattle = vi.spyOn(useBattleStore.getState(), 'prepareBattle')
     const setPage = vi.spyOn(useUiStore.getState(), 'setPage')
 
     useGameStore.getState().explore()
 
-    await vi.waitFor(() => {
-      expect(prepareBattle).toHaveBeenCalledWith('enemy_001_bandit_grunt')
-    })
+    expect(prepareBattle).toHaveBeenCalledWith('enemy_001_bandit_grunt')
     expect(setPage).toHaveBeenCalledWith('battle')
     prepareBattle.mockRestore()
     setPage.mockRestore()
