@@ -1,3 +1,12 @@
+/**
+ * @module engine/character/skill_runtime.test
+ * @layer engine
+ * @description skill_runtime 测试：验证授予、可用性与升级逻辑
+ * @inputs skill_runtime
+ * @outputs 测试断言
+ * @depends test, engine/character, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { canUpgradeSkill, canUseMove, grantSkill, upgradeSkill } from './skill_runtime'
 import { asMoveId, asSkillId } from '../../types/id'

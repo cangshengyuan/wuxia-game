@@ -1,3 +1,12 @@
+/**
+ * @module ui/pages/BattlePage.test
+ * @layer ui
+ * @description 战斗页测试：验证时间轴回放与战报渲染顺序
+ * @inputs BattlePage, battleStore
+ * @outputs 测试断言
+ * @depends test, store, ui/pages
+ * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
+ */
 import { fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { asMoveId, asSkillId } from '../../types/id'

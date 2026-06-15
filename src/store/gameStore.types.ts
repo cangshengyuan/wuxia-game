@@ -12,7 +12,7 @@ import type { BattleResult } from '../types/battle'
 import type { CharacterState } from '../types/character'
 import type { GameEvent } from '../types/event'
 import type { UnlockNotice } from '../types/notice'
-import type { QuestId, SceneId, SkillId } from '../types/id'
+import type { NpcId, QuestId, SceneId, SkillId } from '../types/id'
 import type { ActiveQuest } from '../types/world'
 import type { Rng } from '../engine/util/rng'
 
@@ -48,6 +48,14 @@ export interface QuestDisplay {
   stepDescription: string
 }
 
+export interface NpcDialogDisplay {
+  npcId: NpcId
+  npcName: string
+  npcDescription: string
+  message: string
+  primaryActionLabel?: string
+}
+
 export interface PersistedGameState {
   player: CharacterState
   currentSceneId: SceneId
@@ -63,16 +71,21 @@ export interface GameStoreState extends PersistedGameState {
   upgradeSkill: (skillId: SkillId | string) => void
   dismissUnlockNotice: (id: string) => void
   getSkillDisplay: (skillId: SkillId | string) => SkillDisplay | undefined
+  getLearnedSkillDisplays: () => SkillDisplay[]
   getCurrentScene: () => SceneDisplay | undefined
   getSceneNpcs: () => NpcDisplay[]
   getSceneDestinations: () => SceneDestination[]
   getActiveQuestDisplays: () => QuestDisplay[]
+  getNpcDialogDisplay: (npcId: NpcId | string) => NpcDialogDisplay | undefined
   acceptQuest: (questId: QuestId | string) => void
+  performNpcDialogAction: (npcId: NpcId | string) => void
   handleGameEvent: (event: GameEvent) => void
   completeQuest: (questId: QuestId | string) => void
   learnSkill: (skillId: SkillId | string) => void
   enterScene: (sceneId: SceneId | string) => void
   explore: () => void
+  saveGame: () => void
+  loadGame: () => void
   clearSave: () => void
 }
 

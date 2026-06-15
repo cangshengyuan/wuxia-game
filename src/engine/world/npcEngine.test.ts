@@ -1,3 +1,12 @@
+/**
+ * @module engine/world/npcEngine.test
+ * @layer engine
+ * @description npcEngine 测试：验证 NPC 按场景查询
+ * @inputs npcEngine
+ * @outputs 测试断言
+ * @depends test, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { listNpcsByScene } from './npcEngine'
 import { asSceneId } from '../../types/id'

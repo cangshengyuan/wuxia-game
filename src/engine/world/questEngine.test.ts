@@ -1,3 +1,12 @@
+/**
+ * @module engine/world/questEngine.test
+ * @layer engine
+ * @description questEngine 测试：验证任务数据读取与奖励内容
+ * @inputs questEngine
+ * @outputs 测试断言
+ * @depends test, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { getQuestById, listQuests } from './questEngine'
 import { asQuestId } from '../../types/id'

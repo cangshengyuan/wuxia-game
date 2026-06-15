@@ -1,3 +1,9 @@
+/**
+ * @module types/battle
+ * @layer types
+ * @description 战斗快照、事件流与结算结果类型契约
+ * @forbidden 禁止在 types 层 import engine/store/ui
+ */
 import type { MoveId, SkillId } from './id'
 
 export interface BattleAction {

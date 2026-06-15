@@ -1,3 +1,12 @@
+/**
+ * @module engine/combat/loot.test
+ * @layer engine
+ * @description loot 测试：验证熟练度奖励按技能使用次数与胜负计算
+ * @inputs loot
+ * @outputs 测试断言
+ * @depends test, engine/combat, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { calcProficiencyGains } from './loot'
 import { asMoveId, asSkillId } from '../../types/id'

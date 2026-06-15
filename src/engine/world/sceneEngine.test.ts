@@ -1,3 +1,12 @@
+/**
+ * @module engine/world/sceneEngine.test
+ * @layer engine
+ * @description sceneEngine 测试：验证场景目录读取与遭遇表内容
+ * @inputs sceneEngine
+ * @outputs 测试断言
+ * @depends test, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { getSceneById, listScenes } from './sceneEngine'
 import { asSceneId } from '../../types/id'

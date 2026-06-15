@@ -1,3 +1,12 @@
+/**
+ * @module engine/persistence/save_io.test
+ * @layer engine
+ * @description save_io 测试：验证存档写入、读取与清除行为
+ * @inputs save_io
+ * @outputs 测试断言
+ * @depends test, engine/persistence, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { beforeEach, describe, expect, it } from 'vitest'
 import { asQuestId, asSceneId, asSkillId } from '../../types/id'
 import { clearStorage, loadFromStorage, saveToStorage, STORAGE_KEY } from './save_io'

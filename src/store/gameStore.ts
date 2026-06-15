@@ -20,6 +20,7 @@ import { createSceneSlice } from './gameStore.scene'
 import type { GameStoreState, PersistedGameState } from './gameStore.types'
 
 export type {
+  NpcDialogDisplay,
   NpcDisplay,
   QuestDisplay,
   SceneDestination,
@@ -74,6 +75,31 @@ export const useGameStore = create<GameStoreState>()(
       ...createCharacterSlice(set, get, api),
       ...createSceneSlice(set, get, api),
       ...createQuestSlice(set, get, api),
+
+      saveGame: () => {
+        const { player, currentSceneId, completedQuests, activeQuests } = get()
+        saveToStorage({
+          version: SAVE_VERSION,
+          player,
+          currentSceneId,
+          completedQuests,
+          activeQuests,
+        })
+      },
+
+      loadGame: () => {
+        const save = loadFromStorage()
+        if (!save) {
+          return
+        }
+        set({
+          player: save.player,
+          currentSceneId: save.currentSceneId,
+          completedQuests: save.completedQuests,
+          activeQuests: save.activeQuests,
+          recentUnlocks: [],
+        })
+      },
 
       clearSave: () => {
         clearStorage()

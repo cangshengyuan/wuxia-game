@@ -1,3 +1,12 @@
+/**
+ * @module engine/combat/priority_queue.test
+ * @layer engine
+ * @description priority_queue 测试：验证堆序、时间更新与失效逻辑
+ * @inputs priority_queue
+ * @outputs 测试断言
+ * @depends test, engine/combat, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { PriorityQueue } from './priority_queue'
 import { asMoveId, asSkillId } from '../../types/id'

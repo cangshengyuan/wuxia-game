@@ -1,3 +1,12 @@
+/**
+ * @module ui/pages/BattlePage
+ * @layer ui
+ * @description 战斗页：展示回放中的战斗快照、战报与控制按钮
+ * @inputs battleStore, gameStore
+ * @outputs 战斗 UI
+ * @depends store, ui/components, ui/panels
+ * @forbidden 禁止 import engine、禁止在组件内计算伤害/CD/概率、禁止直接修改全局状态
+ */
 import { useEffect } from 'react'
 import { useBattleStore } from '../../store/battleStore'
 import { useGameStore } from '../../store/gameStore'

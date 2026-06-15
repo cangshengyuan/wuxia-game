@@ -1,3 +1,12 @@
+/**
+ * @module engine/world/scene_transition.test
+ * @layer engine
+ * @description scene_transition 测试：验证场景邻接与可进入判定
+ * @inputs scene_transition
+ * @outputs 测试断言
+ * @depends test, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { canEnter, getSceneExits } from './scene_transition'
 import { asSceneId } from '../../types/id'

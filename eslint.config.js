@@ -7,7 +7,14 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage']),
+  // 主项目工程闸：排除 references/ 等外部参考目录；参考项目 lint 须另加脚本，不得并入此处
+  globalIgnores([
+    'references/**',
+    'dist/**',
+    'dist-ssr/**',
+    'coverage/**',
+    'node_modules/**',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

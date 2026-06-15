@@ -1,34 +1,41 @@
+/**
+ * @module ui/pages/ScenePage
+ * @layer ui
+ * @description 场景页：展示当前场景、NPC、探索与场景切换入口
+ * @inputs gameStore, NpcList
+ * @outputs 场景与对话 UI
+ * @depends store, ui/panels
+ * @forbidden 禁止 import engine、禁止在组件内计算任务推进规则、禁止直接修改全局状态
+ */
 import { useState } from 'react'
-import { gameEventBus } from '../../engine/game_event_bus'
-import { getQuestById } from '../../engine/world/questEngine'
 import { useGameStore } from '../../store/gameStore'
-import { asNpcId, asQuestId } from '../../types/id'
+import { asQuestId } from '../../types/id'
 import { NpcList } from '../panels/NpcList'
 
 const FIRST_BLOOD_QUEST_ID = asQuestId('quest_main_001_first_blood')
-const SWORDSMAN_NPC_ID = asNpcId('npc_001_village_swordsman')
 
 type ScenePanel = 'main' | 'dialog'
 
 export function ScenePage() {
+  const currentSceneId = useGameStore((state) => state.currentSceneId)
+  const activeQuests = useGameStore((state) => state.activeQuests)
+  const completedQuests = useGameStore((state) => state.completedQuests)
   const getCurrentScene = useGameStore((state) => state.getCurrentScene)
   const getSceneNpcs = useGameStore((state) => state.getSceneNpcs)
   const getSceneDestinations = useGameStore((state) => state.getSceneDestinations)
+  const getNpcDialogDisplay = useGameStore((state) => state.getNpcDialogDisplay)
   const enterScene = useGameStore((state) => state.enterScene)
   const explore = useGameStore((state) => state.explore)
-  const acceptQuest = useGameStore((state) => state.acceptQuest)
-  const activeQuests = useGameStore((state) => state.activeQuests)
-  const completedQuests = useGameStore((state) => state.completedQuests)
+  const performNpcDialogAction = useGameStore((state) => state.performNpcDialogAction)
 
-  const scene = getCurrentScene()
-  const npcs = getSceneNpcs()
-  const destinations = getSceneDestinations()
+  const scene = currentSceneId ? getCurrentScene() : undefined
+  const npcs = currentSceneId ? getSceneNpcs() : []
+  const destinations = currentSceneId ? getSceneDestinations() : []
 
   const [panel, setPanel] = useState<ScenePanel>('main')
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null)
 
-  const selectedNpc = npcs.find((npc) => npc.id === selectedNpcId)
-  const firstBloodQuest = getQuestById(FIRST_BLOOD_QUEST_ID)
+  const dialog = selectedNpcId ? getNpcDialogDisplay(selectedNpcId) : undefined
   const activeFirstBlood = activeQuests.find((quest) => quest.questId === FIRST_BLOOD_QUEST_ID)
   const isFirstBloodCompleted = completedQuests.includes(FIRST_BLOOD_QUEST_ID)
 
@@ -42,63 +49,17 @@ export function ScenePage() {
     setSelectedNpcId(null)
   }
 
-  const handleDialogProgress = () => {
-    if (!selectedNpc) {
+  const handleDialogAction = () => {
+    if (!selectedNpcId) {
       return
     }
-    gameEventBus.emit({ type: 'DialogClosed', npcId: asNpcId(selectedNpc.id) })
-    handleBackToMain()
-  }
+    const hadQuestAction = !activeFirstBlood && !isFirstBloodCompleted
 
-  const renderDialogContent = () => {
-    if (!selectedNpc || !firstBloodQuest) {
-      return <p className="scene-layout__placeholder">（对话内容待实现）</p>
+    performNpcDialogAction(selectedNpcId)
+
+    if (!hadQuestAction) {
+      handleBackToMain()
     }
-
-    const isSwordsman = selectedNpc.id === SWORDSMAN_NPC_ID
-
-    if (isSwordsman && !isFirstBloodCompleted && !activeFirstBlood) {
-      return (
-        <>
-          <p>{firstBloodQuest.description}</p>
-          <button type="button" className="counter" onClick={() => acceptQuest(FIRST_BLOOD_QUEST_ID)}>
-            接受任务
-          </button>
-        </>
-      )
-    }
-
-    if (isSwordsman && activeFirstBlood) {
-      const currentObjective = firstBloodQuest.objectives[activeFirstBlood.currentStepIndex]
-
-      if (currentObjective?.type === 'talk_to_npc') {
-        return (
-          <>
-            <p>「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」</p>
-            <button type="button" className="counter" onClick={handleDialogProgress}>
-              继续
-            </button>
-          </>
-        )
-      }
-
-      if (currentObjective?.type === 'return_to_npc') {
-        return (
-          <>
-            <p>「不错，你已经有了行走江湖的底气。这套白虹剑法，你且收下。」</p>
-            <button type="button" className="counter" onClick={handleDialogProgress}>
-              交付任务
-            </button>
-          </>
-        )
-      }
-    }
-
-    if (isSwordsman && isFirstBloodCompleted) {
-      return <p>「江湖路远，多加小心。」</p>
-    }
-
-    return <p className="scene-layout__placeholder">「……」</p>
   }
 
   if (!scene) {
@@ -110,12 +71,17 @@ export function ScenePage() {
     )
   }
 
-  if (panel === 'dialog' && selectedNpc) {
+  if (panel === 'dialog' && dialog) {
     return (
       <section className="scene-layout panel">
-        <h2>{selectedNpc.name}</h2>
-        <p className="scene-layout__description">{selectedNpc.description ?? '（暂无描述）'}</p>
-        {renderDialogContent()}
+        <h2>{dialog.npcName}</h2>
+        <p className="scene-layout__description">{dialog.npcDescription}</p>
+        <p>{dialog.message}</p>
+        {dialog.primaryActionLabel ? (
+          <button type="button" className="counter" onClick={handleDialogAction}>
+            {dialog.primaryActionLabel}
+          </button>
+        ) : null}
         <button type="button" className="counter counter--secondary" onClick={handleBackToMain}>
           返回
         </button>

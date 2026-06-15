@@ -1,6 +1,15 @@
+/**
+ * @module store/gameStore.test
+ * @layer store
+ * @description gameStore 测试：验证成长、场景、任务、存档与展示 selector
+ * @inputs gameStore, battleStore, uiStore
+ * @outputs 测试断言
+ * @depends test, store, engine/persistence
+ * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
+ */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSeededRng } from '../engine/util/rng'
-import { saveToStorage } from '../engine/persistence/save_io'
+import { loadFromStorage, saveToStorage } from '../engine/persistence/save_io'
 import { SAVE_VERSION } from '../engine/persistence/save_schema'
 import { defaultPlayer, defaultSceneId, useGameStore } from './gameStore'
 import { useBattleStore } from './battleStore'
@@ -157,9 +166,39 @@ describe('gameStore', () => {
     ])
   })
 
+  it('getActiveQuestDisplays returns current objective text', () => {
+    useGameStore.getState().acceptQuest('quest_main_001_first_blood')
+
+    expect(useGameStore.getState().getActiveQuestDisplays()).toEqual([
+      {
+        questId: asQuestId('quest_main_001_first_blood'),
+        questName: '初战告捷',
+        stepDescription: '与村口剑客交谈',
+      },
+    ])
+  })
+
   it('enterScene switches currentSceneId', () => {
     useGameStore.getState().enterScene('scene_002_outskirts')
     expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
+  })
+
+  it('getNpcDialogDisplay reflects quest dialog state for the village swordsman', () => {
+    expect(
+      useGameStore.getState().getNpcDialogDisplay('npc_001_village_swordsman'),
+    ).toMatchObject({
+      npcName: '村口剑客',
+      primaryActionLabel: '接受任务',
+    })
+
+    useGameStore.getState().performNpcDialogAction('npc_001_village_swordsman')
+
+    expect(
+      useGameStore.getState().getNpcDialogDisplay('npc_001_village_swordsman'),
+    ).toMatchObject({
+      primaryActionLabel: '继续',
+      message: '「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」',
+    })
   })
 
   it('explore in village does not trigger battle', () => {
@@ -217,6 +256,65 @@ describe('gameStore', () => {
     expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
     expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(7)
     expect(useGameStore.getState().activeQuests).toHaveLength(1)
+  })
+
+  it('saveGame writes the current progress to storage', () => {
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    useGameStore.getState().upgradeSkill('skill_sword_010_qingmang')
+    useGameStore.getState().acceptQuest('quest_main_001_first_blood')
+    useGameStore.getState().saveGame()
+
+    expect(loadFromStorage()).toEqual({
+      version: SAVE_VERSION,
+      player: useGameStore.getState().player,
+      currentSceneId: asSceneId('scene_002_outskirts'),
+      completedQuests: [],
+      activeQuests: [
+        {
+          questId: asQuestId('quest_main_001_first_blood'),
+          currentStepIndex: 0,
+          status: 'active',
+        },
+      ],
+    })
+  })
+
+  it('loadGame restores progress from storage into the current store state', () => {
+    saveToStorage({
+      version: SAVE_VERSION,
+      currentSceneId: asSceneId('scene_002_outskirts'),
+      completedQuests: [],
+      activeQuests: [
+        {
+          questId: asQuestId('quest_main_001_first_blood'),
+          currentStepIndex: 0,
+          status: 'active',
+        },
+      ],
+      player: {
+        ...defaultPlayer,
+        learnedSkills: [
+          {
+            skillId: asSkillId('skill_sword_010_qingmang'),
+            proficiency: 1,
+            unlockedMoveIds: ['move_qingmang_01'],
+          },
+          ...defaultPlayer.learnedSkills.slice(1),
+        ],
+      },
+    })
+
+    useGameStore.getState().loadGame()
+
+    expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
+    expect(useGameStore.getState().player.learnedSkills[0]?.proficiency).toBe(1)
+    expect(useGameStore.getState().activeQuests).toEqual([
+      {
+        questId: asQuestId('quest_main_001_first_blood'),
+        currentStepIndex: 0,
+        status: 'active',
+      },
+    ])
   })
 
   it('clearSave resets to default player and learned skills', () => {

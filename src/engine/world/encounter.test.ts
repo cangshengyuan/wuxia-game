@@ -1,3 +1,12 @@
+/**
+ * @module engine/world/encounter.test
+ * @layer engine
+ * @description encounter 测试：验证空场景与带权遭遇判定
+ * @inputs encounter
+ * @outputs 测试断言
+ * @depends test, engine/world, engine/util, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { rollEncounter } from './encounter'
 import { getSceneById } from './sceneEngine'

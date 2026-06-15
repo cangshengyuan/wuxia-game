@@ -3,7 +3,7 @@
  * @layer store
  * @description 角色功法与技能展示切片
  * @inputs SkillId
- * @outputs canUpgradeSkill, upgradeSkill, getSkillDisplay, learnSkill
+ * @outputs canUpgradeSkill, upgradeSkill, getSkillDisplay, getLearnedSkillDisplays, learnSkill
  * @depends engine/character, engine/skillEngine
  * @forbidden 禁止 import React、禁止直接操作 localStorage
  */
@@ -15,13 +15,37 @@ import {
 import { getMoveById, getSkillById } from '../engine/skillEngine'
 import { asMoveId, asSkillId } from '../types/id'
 import type { UnlockNotice } from '../types/notice'
-import type { GameStoreSlice, GameStoreState } from './gameStore.types'
+import type { GameStoreSlice, GameStoreState, SkillDisplay } from './gameStore.types'
 
 type CharacterSliceState = Pick<
   GameStoreState,
-  'canUpgradeSkill' | 'upgradeSkill' | 'getSkillDisplay' | 'learnSkill'
+  'canUpgradeSkill' | 'upgradeSkill' | 'getSkillDisplay' | 'getLearnedSkillDisplays' | 'learnSkill'
 >
 import { nextUnlockNoticeId } from './gameStore.battle'
+
+function buildSkillDisplay(
+  state: GameStoreState,
+  skillId: string,
+): SkillDisplay | undefined {
+  const runtime = state.player.learnedSkills.find((entry) => entry.skillId === skillId)
+  const skillDef = getSkillById(skillId)
+  if (!runtime || !skillDef) {
+    return undefined
+  }
+
+  const unlockedMoveNames = runtime.unlockedMoveIds.map((moveId) => {
+    const moveInfo = getMoveById(moveId)
+    return moveInfo?.move.name ?? moveId
+  })
+
+  return {
+    skillId: runtime.skillId,
+    skillName: skillDef.name,
+    proficiency: runtime.proficiency,
+    maxProficiency: skillDef.maxProficiency,
+    unlockedMoveNames,
+  }
+}
 
 export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, get) => ({
   canUpgradeSkill: (skillId) => {
@@ -51,24 +75,14 @@ export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, g
   },
 
   getSkillDisplay: (skillId) => {
-    const runtime = get().player.learnedSkills.find((entry) => entry.skillId === skillId)
-    const skillDef = getSkillById(skillId)
-    if (!runtime || !skillDef) {
-      return undefined
-    }
+    return buildSkillDisplay(get(), skillId)
+  },
 
-    const unlockedMoveNames = runtime.unlockedMoveIds.map((moveId) => {
-      const moveInfo = getMoveById(moveId)
-      return moveInfo?.move.name ?? moveId
+  getLearnedSkillDisplays: () => {
+    return get().player.learnedSkills.flatMap((runtime) => {
+      const display = buildSkillDisplay(get(), runtime.skillId)
+      return display ? [display] : []
     })
-
-    return {
-      skillId: runtime.skillId,
-      skillName: skillDef.name,
-      proficiency: runtime.proficiency,
-      maxProficiency: skillDef.maxProficiency,
-      unlockedMoveNames,
-    }
   },
 
   learnSkill: (skillId) => {

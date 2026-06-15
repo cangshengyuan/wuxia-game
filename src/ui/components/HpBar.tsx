@@ -1,3 +1,12 @@
+/**
+ * @module ui/components/HpBar
+ * @layer ui
+ * @description 血量与内力条：展示角色当前战斗快照
+ * @inputs label, hp, maxHp, qi, maxQi
+ * @outputs 状态条 UI
+ * @depends ui
+ * @forbidden 禁止 import engine、禁止在组件内计算战斗业务规则、禁止直接修改全局状态
+ */
 interface HpBarProps {
   label: string
   hp: number

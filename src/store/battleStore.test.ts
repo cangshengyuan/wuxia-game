@@ -1,3 +1,12 @@
+/**
+ * @module store/battleStore.test
+ * @layer store
+ * @description battleStore 测试：验证战斗准备、回放推进与结算写回
+ * @inputs battleStore, gameStore
+ * @outputs 测试断言
+ * @depends test, store
+ * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
+ */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { asMoveId, asSkillId } from '../types/id'
 import type { BattleResult } from '../types/battle'

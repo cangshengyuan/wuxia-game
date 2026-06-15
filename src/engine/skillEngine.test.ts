@@ -1,3 +1,12 @@
+/**
+ * @module engine/skillEngine.test
+ * @layer engine
+ * @description skillEngine 测试：验证功法目录读取、查询与分类过滤
+ * @inputs skillEngine
+ * @outputs 测试断言
+ * @depends test, engine, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import {
   getMoveById,

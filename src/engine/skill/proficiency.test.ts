@@ -1,3 +1,12 @@
+/**
+ * @module engine/skill/proficiency.test
+ * @layer engine
+ * @description proficiency 测试：验证熟练度增长与招式解锁判定
+ * @inputs proficiency
+ * @outputs 测试断言
+ * @depends test, engine/skill, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { applyProficiencyGain, checkUnlocks } from './proficiency'
 import { asMoveId, asSkillId } from '../../types/id'

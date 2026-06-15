@@ -1,3 +1,12 @@
+/**
+ * @module engine/combat/combat_runner.test
+ * @layer engine
+ * @description combat_runner 测试：验证固定输入下事件流与结算稳定性
+ * @inputs combat_runner
+ * @outputs 测试断言
+ * @depends test, engine/combat, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { startBattle } from './combat_runner'
 import { buildEnemyState } from '../world/enemyEngine'

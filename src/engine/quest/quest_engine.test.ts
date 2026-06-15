@@ -1,3 +1,12 @@
+/**
+ * @module engine/quest/quest_engine.test
+ * @layer engine
+ * @description quest_engine 测试：验证任务步骤推进与完成判定
+ * @inputs quest_engine
+ * @outputs 测试断言
+ * @depends test, engine/quest, engine/world, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { advanceQuest } from './quest_engine'
 import { getQuestById } from '../world/questEngine'

@@ -1,3 +1,12 @@
+/**
+ * @module ui/pages/HomePage
+ * @layer ui
+ * @description 首页：展示基础角色信息并提供进入世界入口
+ * @inputs gameStore, uiStore
+ * @outputs 首页 UI
+ * @depends store, ui/panels
+ * @forbidden 禁止 import engine、禁止在组件内计算角色成长规则、禁止直接修改全局状态
+ */
 import { useGameStore } from '../../store/gameStore'
 import { useUiStore } from '../../store/uiStore'
 import { SkillPanel } from '../panels/SkillPanel'

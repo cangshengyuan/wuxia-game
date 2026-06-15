@@ -1,3 +1,12 @@
+/**
+ * @module engine/combat/event_format.test
+ * @layer engine
+ * @description event_format 测试：验证战斗事件文案格式化输出
+ * @inputs event_format
+ * @outputs 测试断言
+ * @depends test, engine/combat, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it } from 'vitest'
 import { asMoveId, asSkillId } from '../../types/id'
 import { formatBattleEvent } from './event_format'

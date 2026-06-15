@@ -265,25 +265,25 @@
 **目标**：把 M0~M7 后遗留的工程债清掉，确保后续复杂功法系统不会在不稳定的工程闸上继续膨胀。
 
 ### 8.1 lint 范围收口
-- [ ] `eslint.config.js` 排除 `references/`、`dist/`、`coverage/` 等非主项目目录
-- [ ] `npm run lint` 不再扫描外部参考项目
-- [ ] 若未来需要 lint 参考项目，必须单独增加脚本，不能污染主项目工程闸
+- [x] `eslint.config.js` 排除 `references/`、`dist/`、`coverage/` 等非主项目目录
+- [x] `npm run lint` 不再扫描外部参考项目
+- [x] 若未来需要 lint 参考项目，必须单独增加脚本，不能污染主项目工程闸
 
 ### 8.2 UI 与 engine 解耦
-- [ ] `ui/` 下所有 `.tsx` 不再直接 import `engine/*`
-- [ ] `QuestLog.tsx` 通过 `gameStore.getActiveQuestDisplays()` 获取展示数据
-- [ ] `SaveControls.tsx` 只调用 `gameStore` action，不直接调用 `save_io`
-- [ ] `ScenePage.tsx` 的任务查询、对话推进、任务交付均走 `gameStore` action/selector
+- [x] `ui/` 下所有 `.tsx` 不再直接 import `engine/*`
+- [x] `QuestLog.tsx` 通过 `gameStore.getActiveQuestDisplays()` 获取展示数据
+- [x] `SaveControls.tsx` 只调用 `gameStore` action，不直接调用 `save_io`
+- [x] `ScenePage.tsx` 的任务查询、对话推进、任务交付均走 `gameStore` action/selector
 
 ### 8.3 文件头注释补齐
-- [ ] 所有 `src/**/*.ts` 与 `src/**/*.tsx` 都包含 `@module / @layer / @description / @forbidden` 头部注释
-- [ ] 头部注释中的 `@layer` 与实际目录一致
-- [ ] 头部注释中的 `@forbidden` 不与当前 import 冲突
+- [x] 所有 `src/**/*.ts` 与 `src/**/*.tsx` 都包含 `@module / @layer / @description / @forbidden` 头部注释
+- [x] 头部注释中的 `@layer` 与实际目录一致
+- [x] 头部注释中的 `@forbidden` 不与当前 import 冲突
 
 **完成标准**：
-- [ ] `rg -n "from ['\\\"]\\.\\./\\.\\./engine|from ['\\\"]\\.\\./engine" src/ui src/App.tsx` 无结果
-- [ ] `npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿
-- [ ] 不修改 `ARCHITECTURE.md` 的前提下，当前代码重新满足五层依赖方向
+- [x] `rg -n "from ['\\\"]\\.\\./\\.\\./engine|from ['\\\"]\\.\\./engine" src/ui src/App.tsx` 无结果
+- [x] `npm run lint && npm run typecheck && npm run test:run && npm run build` 全绿
+- [x] 不修改 `ARCHITECTURE.md` 的前提下，当前代码重新满足五层依赖方向
 
 ---
 

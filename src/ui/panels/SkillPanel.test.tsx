@@ -1,19 +1,28 @@
+/**
+ * @module ui/panels/SkillPanel.test
+ * @layer ui
+ * @description 功法面板测试：验证空状态、列表展示与更新后的 UI 输出
+ * @inputs SkillPanel, gameStore
+ * @outputs 测试断言
+ * @depends test, store, ui/panels
+ * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
+ */
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { createSeededRng } from '../../engine/util/rng'
 import { defaultPlayer, defaultSceneId, useGameStore } from '../../store/gameStore'
 import { asSkillId } from '../../types/id'
 import { SkillPanel } from './SkillPanel'
 
 function resetGameStore(): void {
   localStorage.clear()
+  const rng = useGameStore.getState().rng
   useGameStore.setState({
     player: structuredClone(defaultPlayer),
     recentUnlocks: [],
     currentSceneId: defaultSceneId,
     completedQuests: [],
     activeQuests: [],
-    rng: createSeededRng(42),
+    rng,
   })
 }
 

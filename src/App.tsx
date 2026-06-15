@@ -1,3 +1,12 @@
+/**
+ * @module App
+ * @layer ui
+ * @description 应用根组件：根据 UI 页面状态挂载主页面与常驻面板
+ * @inputs uiStore, 各页面与面板组件
+ * @outputs 根布局 UI
+ * @depends store, ui
+ * @forbidden 禁止 import engine、禁止在组件内编排游戏业务规则、禁止直接修改全局状态
+ */
 import './App.css'
 import { useUiStore } from './store/uiStore'
 import { UnlockToast } from './ui/components/UnlockToast'

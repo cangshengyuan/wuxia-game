@@ -1,27 +1,19 @@
-import { useMemo } from 'react'
-import { getCurrentObjectiveDescription } from '../../engine/quest/quest_engine'
-import { getQuestById } from '../../engine/world/questEngine'
+/**
+ * @module ui/panels/QuestLog
+ * @layer ui
+ * @description 任务日志：展示活动任务与当前目标描述
+ * @inputs gameStore
+ * @outputs 任务列表 UI
+ * @depends store
+ * @forbidden 禁止 import engine、禁止在组件内计算任务推进规则、禁止直接修改全局状态
+ */
 import { useGameStore } from '../../store/gameStore'
 
 export function QuestLog() {
   const activeQuests = useGameStore((state) => state.activeQuests)
+  const getActiveQuestDisplays = useGameStore((state) => state.getActiveQuestDisplays)
 
-  const quests = useMemo(() => {
-    return activeQuests.flatMap((active) => {
-      const definition = getQuestById(active.questId)
-      if (!definition) {
-        return []
-      }
-      const stepDescription = getCurrentObjectiveDescription(active, definition)
-      return [
-        {
-          questId: active.questId,
-          questName: definition.name,
-          stepDescription: stepDescription ?? definition.description,
-        },
-      ]
-    })
-  }, [activeQuests])
+  const quests = activeQuests.length === 0 ? [] : getActiveQuestDisplays()
 
   return (
     <section className="panel quest-log">

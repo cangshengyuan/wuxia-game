@@ -3,21 +3,30 @@
  * @layer store
  * @description 任务接取、推进与展示切片
  * @inputs GameEvent, QuestId
- * @outputs getActiveQuestDisplays, acceptQuest, handleGameEvent, completeQuest
+ * @outputs getActiveQuestDisplays, getNpcDialogDisplay, acceptQuest, performNpcDialogAction, handleGameEvent, completeQuest
  * @depends engine/quest, engine/world/questEngine, game_event_bus
  * @forbidden 禁止 import React、禁止直接操作 localStorage
  */
 import { gameEventBus } from '../engine/game_event_bus'
 import { advanceQuest, getCurrentObjectiveDescription } from '../engine/quest/quest_engine'
+import { getNpcById } from '../engine/world/npcEngine'
 import { getQuestById } from '../engine/world/questEngine'
-import { asQuestId } from '../types/id'
+import { asNpcId, asQuestId } from '../types/id'
 import type { QuestId } from '../types/id'
 import type { GameEvent } from '../types/event'
 import type { GameStoreSlice, GameStoreState } from './gameStore.types'
 
+const FIRST_BLOOD_QUEST_ID = asQuestId('quest_main_001_first_blood')
+const SWORDSMAN_NPC_ID = asNpcId('npc_001_village_swordsman')
+
 type QuestSliceState = Pick<
   GameStoreState,
-  'getActiveQuestDisplays' | 'acceptQuest' | 'handleGameEvent' | 'completeQuest'
+  | 'getActiveQuestDisplays'
+  | 'getNpcDialogDisplay'
+  | 'acceptQuest'
+  | 'performNpcDialogAction'
+  | 'handleGameEvent'
+  | 'completeQuest'
 >
 
 export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => ({
@@ -36,6 +45,78 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
         },
       ]
     })
+  },
+
+  getNpcDialogDisplay: (npcId) => {
+    const id = typeof npcId === 'string' ? asNpcId(npcId) : npcId
+    const npc = getNpcById(id)
+    if (!npc) {
+      return undefined
+    }
+
+    const quest = getQuestById(FIRST_BLOOD_QUEST_ID)
+    const activeFirstBlood = get().activeQuests.find(
+      (activeQuest) => activeQuest.questId === FIRST_BLOOD_QUEST_ID,
+    )
+    const isFirstBloodCompleted = get().completedQuests.includes(FIRST_BLOOD_QUEST_ID)
+
+    if (!quest || id !== SWORDSMAN_NPC_ID) {
+      return {
+        npcId: npc.id,
+        npcName: npc.name,
+        npcDescription: npc.description ?? '（暂无描述）',
+        message: '「……」',
+      }
+    }
+
+    if (!isFirstBloodCompleted && !activeFirstBlood) {
+      return {
+        npcId: npc.id,
+        npcName: npc.name,
+        npcDescription: npc.description ?? '（暂无描述）',
+        message: quest.description,
+        primaryActionLabel: '接受任务',
+      }
+    }
+
+    if (activeFirstBlood) {
+      const currentObjective = quest.objectives[activeFirstBlood.currentStepIndex]
+      if (currentObjective?.type === 'talk_to_npc') {
+        return {
+          npcId: npc.id,
+          npcName: npc.name,
+          npcDescription: npc.description ?? '（暂无描述）',
+          message: '「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」',
+          primaryActionLabel: '继续',
+        }
+      }
+
+      if (currentObjective?.type === 'return_to_npc') {
+        return {
+          npcId: npc.id,
+          npcName: npc.name,
+          npcDescription: npc.description ?? '（暂无描述）',
+          message: '「不错，你已经有了行走江湖的底气。这套白虹剑法，你且收下。」',
+          primaryActionLabel: '交付任务',
+        }
+      }
+    }
+
+    if (isFirstBloodCompleted) {
+      return {
+        npcId: npc.id,
+        npcName: npc.name,
+        npcDescription: npc.description ?? '（暂无描述）',
+        message: '「江湖路远，多加小心。」',
+      }
+    }
+
+    return {
+      npcId: npc.id,
+      npcName: npc.name,
+      npcDescription: npc.description ?? '（暂无描述）',
+      message: '「……」',
+    }
   },
 
   acceptQuest: (questId) => {
@@ -63,6 +144,23 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
         },
       ],
     })
+  },
+
+  performNpcDialogAction: (npcId) => {
+    const id = typeof npcId === 'string' ? asNpcId(npcId) : npcId
+    if (id === SWORDSMAN_NPC_ID) {
+      const activeFirstBlood = get().activeQuests.find(
+        (activeQuest) => activeQuest.questId === FIRST_BLOOD_QUEST_ID,
+      )
+      const isFirstBloodCompleted = get().completedQuests.includes(FIRST_BLOOD_QUEST_ID)
+
+      if (!isFirstBloodCompleted && !activeFirstBlood) {
+        get().acceptQuest(FIRST_BLOOD_QUEST_ID)
+        return
+      }
+    }
+
+    gameEventBus.emit({ type: 'DialogClosed', npcId: id })
   },
 
   handleGameEvent: (event) => {

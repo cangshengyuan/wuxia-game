@@ -1,3 +1,12 @@
+/**
+ * @module ui/components/UnlockToast
+ * @layer ui
+ * @description 解锁提示：短暂展示新招式解锁通知
+ * @inputs gameStore
+ * @outputs toast UI
+ * @depends store
+ * @forbidden 禁止 import engine、禁止在组件内计算解锁规则、禁止直接修改全局状态
+ */
 import { useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 

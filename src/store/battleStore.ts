@@ -1,3 +1,12 @@
+/**
+ * @module store/battleStore
+ * @layer store
+ * @description 战斗状态容器：负责战斗准备、事件回放、结算写回与页面可读快照
+ * @inputs combat_runner, playback, gameStore, game_event_bus
+ * @outputs useBattleStore, BattleStatus
+ * @depends engine/combat, engine/world, store/gameStore, types
+ * @forbidden 禁止 import React、禁止在 store 外部直接 mutate 战斗状态
+ */
 import { create } from 'zustand'
 import { startBattle as runCombat } from '../engine/combat/combat_runner'
 import { formatBattleEvent } from '../engine/combat/event_format'

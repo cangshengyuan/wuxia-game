@@ -1,3 +1,12 @@
+/**
+ * @module engine/event_bus.test
+ * @layer engine
+ * @description event_bus 测试：验证订阅、注销与递归深度限制
+ * @inputs event_bus
+ * @outputs 测试断言
+ * @depends test, engine, types
+ * @forbidden 禁止在测试中访问 store 或 UI
+ */
 import { describe, expect, it, vi } from 'vitest'
 import { createScopedBus } from './event_bus'
 import type { BattleEvent } from '../types/battle'
