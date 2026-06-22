@@ -69,14 +69,22 @@ const baseRuntime: SkillRuntime = {
 
 describe('applyProficiencyGain', () => {
   it('increases proficiency by gain amount', () => {
-    const result = applyProficiencyGain(baseRuntime, { skillId: baseRuntime.skillId, amount: 3 }, 30)
+    const result = applyProficiencyGain(
+      baseRuntime,
+      { skillId: baseRuntime.skillId, amount: 3 },
+      qingmangDef,
+    )
     expect(result.proficiency).toBe(3)
     expect(baseRuntime.proficiency).toBe(0)
   })
 
   it('caps proficiency at maxProficiency', () => {
     const runtime: SkillRuntime = { ...baseRuntime, proficiency: 28 }
-    const result = applyProficiencyGain(runtime, { skillId: runtime.skillId, amount: 5 }, 30)
+    const result = applyProficiencyGain(
+      runtime,
+      { skillId: runtime.skillId, amount: 5 },
+      qingmangDef,
+    )
     expect(result.proficiency).toBe(30)
   })
 })

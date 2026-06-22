@@ -21,7 +21,13 @@ export interface SkillDisplay {
   skillName: string
   proficiency: number
   maxProficiency: number
+  realmLevel: number
+  realmMaxLevel: number
+  insight: number
   unlockedMoveNames: string[]
+  attributeBonusSummaries: string[]
+  nextBreakthroughSummary: string
+  activeSynergySummaries: string[]
 }
 
 export interface SceneDisplay {

@@ -12,6 +12,10 @@ import {
   grantSkill,
   upgradeSkill as upgradeSkillEngine,
 } from '../engine/character/skill_runtime'
+import { calculateSkillAttributeBonuses } from '../engine/character/attributes'
+import { getSynergySources } from '../engine/skill_relation_engine'
+import { calculateInheritedProficiency } from '../engine/skill/inheritance'
+import { countSimilarSkills } from '../engine/skill/realm'
 import { getMoveById, getSkillById } from '../engine/skillEngine'
 import { asMoveId, asSkillId } from '../types/id'
 import type { UnlockNotice } from '../types/notice'
@@ -22,6 +26,54 @@ type CharacterSliceState = Pick<
   'canUpgradeSkill' | 'upgradeSkill' | 'getSkillDisplay' | 'getLearnedSkillDisplays' | 'learnSkill'
 >
 import { nextUnlockNoticeId } from './gameStore.battle'
+
+const ATTRIBUTE_LABELS = {
+  armStrength: '臂力',
+  agility: '身法',
+  constitution: '体魄',
+  maxHp: '气血',
+  maxQi: '内力',
+  speed: '速度',
+} as const
+
+function buildAttributeBonusSummaries(display: ReturnType<typeof calculateSkillAttributeBonuses>): string[] {
+  return Object.entries(display)
+    .filter(([, value]) => value > 0)
+    .map(([key, value]) => `${ATTRIBUTE_LABELS[key as keyof typeof ATTRIBUTE_LABELS]} +${value}`)
+}
+
+function buildNextBreakthroughSummary(state: GameStoreState, skillId: string): string {
+  const runtime = state.player.learnedSkills.find((entry) => entry.skillId === skillId)
+  const skillDef = getSkillById(skillId)
+  if (!runtime || !skillDef) {
+    return '未知'
+  }
+  if (runtime.realmLevel >= skillDef.realm.maxLevel) {
+    return '已至最高境界'
+  }
+
+  const realmIndex = runtime.realmLevel - skillDef.realm.minLevel
+  const requiredProficiency = skillDef.realm.breakthroughProficiency[realmIndex] ?? 0
+  const requiredInsight = skillDef.realm.insightThresholds[realmIndex] ?? 0
+  const requiredSimilar = skillDef.realm.similarSkillRequired[realmIndex] ?? 0
+  const similarCount = countSimilarSkills(skillId, state.player.learnedSkills)
+
+  return `突破条件：熟练度 ${runtime.proficiency}/${requiredProficiency}，感悟 ${runtime.insight}/${requiredInsight}，相似功法 ${similarCount}/${requiredSimilar}`
+}
+
+function buildActiveSynergySummaries(state: GameStoreState, skillId: string): string[] {
+  return getSynergySources(skillId)
+    .flatMap((relation) => {
+      const runtime = state.player.learnedSkills.find((entry) => entry.skillId === relation.sourceSkillId)
+      const sourceSkill = getSkillById(relation.sourceSkillId)
+      if (!runtime || !sourceSkill || runtime.proficiency < relation.requiredProficiency) {
+        return []
+      }
+      return [
+        `${sourceSkill.name}：伤害 x${relation.damageMultiplier.toFixed(2)}，收益 x${relation.battleGainMultiplier.toFixed(2)}`,
+      ]
+    })
+}
 
 function buildSkillDisplay(
   state: GameStoreState,
@@ -37,13 +89,22 @@ function buildSkillDisplay(
     const moveInfo = getMoveById(moveId)
     return moveInfo?.move.name ?? moveId
   })
+  const attributeBonusSummaries = buildAttributeBonusSummaries(
+    calculateSkillAttributeBonuses(runtime, skillDef),
+  )
 
   return {
     skillId: runtime.skillId,
     skillName: skillDef.name,
     proficiency: runtime.proficiency,
     maxProficiency: skillDef.maxProficiency,
+    realmLevel: runtime.realmLevel,
+    realmMaxLevel: skillDef.realm.maxLevel,
+    insight: runtime.insight,
     unlockedMoveNames,
+    attributeBonusSummaries,
+    nextBreakthroughSummary: buildNextBreakthroughSummary(state, skillId),
+    activeSynergySummaries: buildActiveSynergySummaries(state, skillId),
   }
 }
 
@@ -97,7 +158,8 @@ export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, g
       return
     }
 
-    const runtime = grantSkill(id, skillDef)
+    const inheritance = calculateInheritedProficiency(player.learnedSkills, skillDef)
+    const runtime = grantSkill(id, skillDef, inheritance.initialProficiency)
     const firstMoveId = runtime.unlockedMoveIds[0]
     const moveInfo = firstMoveId ? getMoveById(firstMoveId) : undefined
     const newUnlocks: UnlockNotice[] = firstMoveId

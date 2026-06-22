@@ -8,6 +8,7 @@
  * @forbidden 禁止 import React、禁止直接操作 localStorage
  */
 import { applyProficiencyGain, checkUnlocks } from '../engine/skill/proficiency'
+import { applyRealmProgress } from '../engine/skill/realm'
 import { getMoveById, getSkillById } from '../engine/skillEngine'
 import { asMoveId } from '../types/id'
 import type { GameStoreSlice, GameStoreState } from './gameStore.types'
@@ -28,10 +29,10 @@ export const createBattleSlice: GameStoreSlice<BattleSliceState> = (set, get) =>
   recentUnlocks: [],
 
   applyBattleResult: (result) => {
-    const { player } = get()
+    const { player, rng } = get()
     const newUnlocks: ReturnType<typeof get>['recentUnlocks'] = []
 
-    const updatedLearnedSkills = player.learnedSkills.map((runtime) => {
+    const profUpdatedSkills = player.learnedSkills.map((runtime) => {
       const gain = result.proficiencyGains.find((entry) => entry.skillId === runtime.skillId)
       if (!gain) {
         return runtime
@@ -42,7 +43,7 @@ export const createBattleSlice: GameStoreSlice<BattleSliceState> = (set, get) =>
         return runtime
       }
 
-      const withGain = applyProficiencyGain(runtime, gain, skillDef.maxProficiency)
+      const withGain = applyProficiencyGain(runtime, gain, skillDef)
       const { newlyUnlockedMoveIds } = checkUnlocks(withGain, skillDef)
 
       for (const moveId of newlyUnlockedMoveIds) {
@@ -64,6 +65,14 @@ export const createBattleSlice: GameStoreSlice<BattleSliceState> = (set, get) =>
         ...withGain,
         unlockedMoveIds: [...withGain.unlockedMoveIds, ...newlyUnlockedMoveIds],
       }
+    })
+
+    const updatedLearnedSkills = profUpdatedSkills.map((runtime) => {
+      const skillDef = getSkillById(runtime.skillId)
+      if (!skillDef) {
+        return runtime
+      }
+      return applyRealmProgress(runtime, skillDef, profUpdatedSkills, rng).runtime
     })
 
     set({

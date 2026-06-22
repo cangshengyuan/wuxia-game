@@ -15,11 +15,15 @@ import type { MoveId } from '../../types/id'
 export function applyProficiencyGain(
   runtime: SkillRuntime,
   gain: ProficiencyGain,
-  maxProficiency: number,
+  skillDef: SkillDefinition,
 ): SkillRuntime {
+  const adjustedGain = Math.max(
+    1,
+    Math.round(gain.amount * skillDef.growthCurve.proficiencyMultiplier),
+  )
   return {
     ...runtime,
-    proficiency: Math.min(runtime.proficiency + gain.amount, maxProficiency),
+    proficiency: Math.min(runtime.proficiency + adjustedGain, skillDef.maxProficiency),
   }
 }
 

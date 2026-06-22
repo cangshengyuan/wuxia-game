@@ -119,13 +119,18 @@ describe('gameStore', () => {
 
   it('getSkillDisplay returns merged view for SkillPanel', () => {
     const display = useGameStore.getState().getSkillDisplay('skill_sword_010_qingmang')
-    expect(display).toEqual({
+    expect(display).toMatchObject({
       skillId: asSkillId('skill_sword_010_qingmang'),
       skillName: '青蟒剑法',
       proficiency: 0,
       maxProficiency: 30,
+      realmLevel: 1,
+      realmMaxLevel: 3,
+      insight: 0,
       unlockedMoveNames: ['青蟒出洞'],
     })
+    expect(display?.attributeBonusSummaries).toEqual([])
+    expect(display?.nextBreakthroughSummary).toContain('突破条件')
   })
 
   it('dismissUnlockNotice removes notice by id', () => {

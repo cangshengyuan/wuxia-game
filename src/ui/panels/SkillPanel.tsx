@@ -28,8 +28,18 @@ export function SkillPanel() {
               <p className="skill-panel__proficiency">
                 熟练度：{display.proficiency} / {display.maxProficiency}
               </p>
+              <p className="skill-panel__realm">
+                境界：{display.realmLevel} / {display.realmMaxLevel}，感悟：{display.insight}
+              </p>
               <p className="skill-panel__moves">
                 已解锁招式：{display.unlockedMoveNames.join('、') || '无'}
+              </p>
+              <p className="skill-panel__bonus">
+                属性加成：{display.attributeBonusSummaries.join('；') || '无'}
+              </p>
+              <p className="skill-panel__breakthrough">{display.nextBreakthroughSummary}</p>
+              <p className="skill-panel__synergy">
+                连携：{display.activeSynergySummaries.join('；') || '暂无'}
               </p>
             </li>
           ))}
