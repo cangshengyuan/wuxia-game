@@ -7,7 +7,7 @@
  * @depends test, store, ui/pages
  * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
  */
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { asMoveId, asSkillId } from '../../types/id'
 import type { BattleResult } from '../../types/battle'
@@ -50,24 +50,25 @@ const mockBattleResult: BattleResult = {
   proficiencyGains: [],
 }
 
-vi.mock('../../engine/combat/combat_runner', () => ({
-  startBattle: vi.fn(() => mockBattleResult),
-}))
-
 describe('BattlePage', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     useBattleStore.getState().prepareBattle('enemy_001_bandit_grunt')
+    useBattleStore.setState({
+      status: 'running',
+      events: mockEvents,
+      playbackIndex: -1,
+      pendingResult: mockBattleResult,
+      result: undefined,
+    })
   })
 
   afterEach(() => {
     vi.useRealTimers()
   })
 
-  it('renders battle log events in order after starting playback', async () => {
+  it('renders battle log events in order during playback', async () => {
     render(<BattlePage />)
-
-    fireEvent.click(screen.getByRole('button', { name: '开战' }))
 
     await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/准备/)).toBeInTheDocument()

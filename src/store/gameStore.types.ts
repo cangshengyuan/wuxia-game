@@ -98,13 +98,14 @@ export interface GameStoreState extends PersistedGameState {
   getSceneNpcs: () => NpcDisplay[]
   getSceneDestinations: () => SceneDestination[]
   getActiveQuestDisplays: () => QuestDisplay[]
+  getCurrentQuestName: () => string
   getNpcDialogDisplay: (npcId: NpcId | string) => NpcDialogDisplay | undefined
   getFormationSlots: () => FormationSlotDisplay[]
   getFormationSkillOptions: () => FormationSkillOptionDisplay[]
   equipSkill: (skillId: SkillId | string) => void
   unequipSkill: (skillId: SkillId | string) => void
   acceptQuest: (questId: QuestId | string) => void
-  performNpcDialogAction: (npcId: NpcId | string) => void
+  performNpcDialogAction: (npcId: NpcId | string) => boolean
   handleGameEvent: (event: GameEvent) => void
   completeQuest: (questId: QuestId | string) => void
   learnSkill: (skillId: SkillId | string) => void

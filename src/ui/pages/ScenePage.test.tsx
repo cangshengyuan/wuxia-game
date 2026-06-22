@@ -46,6 +46,26 @@ describe('ScenePage', () => {
     expect(screen.getByRole('button', { name: '探索' })).not.toBeDisabled()
   })
 
+  it('opens the status panel without triggering a render loop', () => {
+    render(<ScenePage />)
+
+    fireEvent.click(screen.getByRole('button', { name: '状态' }))
+
+    expect(screen.getByRole('heading', { name: '状态' })).toBeInTheDocument()
+    expect(screen.getByText('姓名：无名侠客')).toBeInTheDocument()
+    expect(screen.getByText('当前编成')).toBeInTheDocument()
+  })
+
+  it('keeps the npc dialog open after accepting the first quest', () => {
+    render(<ScenePage />)
+
+    fireEvent.click(screen.getByRole('button', { name: '村口剑客' }))
+    fireEvent.click(screen.getByRole('button', { name: '接受任务' }))
+
+    expect(screen.getByRole('heading', { name: '村口剑客' })).toBeInTheDocument()
+    expect(screen.getByText('「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」')).toBeInTheDocument()
+  })
+
   it('refreshes the skill management view immediately after unequipping and re-equipping', () => {
     render(<ScenePage />)
 

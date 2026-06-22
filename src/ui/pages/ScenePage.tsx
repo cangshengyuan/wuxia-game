@@ -9,7 +9,6 @@
  */
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { asQuestId } from '../../types/id'
 import { FeaturePlaceholderPanel } from '../panels/FeaturePlaceholderPanel'
 import { FormationPanel } from '../panels/FormationPanel'
 import { NpcList } from '../panels/NpcList'
@@ -17,8 +16,6 @@ import { QuestLog } from '../panels/QuestLog'
 import { SaveControls } from '../panels/SaveControls'
 import { SkillPanel } from '../panels/SkillPanel'
 import { StatusPanel } from '../panels/StatusPanel'
-
-const FIRST_BLOOD_QUEST_ID = asQuestId('quest_main_001_first_blood')
 
 type SceneDialogState = 'main' | 'dialog'
 type SceneUtilityPanel = 'status' | 'skills' | 'inventory' | 'quests' | 'shop' | 'save'
@@ -36,8 +33,7 @@ export function ScenePage() {
   const player = useGameStore((state) => state.player)
   const currentSceneId = useGameStore((state) => state.currentSceneId)
   const activeQuests = useGameStore((state) => state.activeQuests)
-  const completedQuests = useGameStore((state) => state.completedQuests)
-  const questName = useGameStore((state) => state.getActiveQuestDisplays()[0]?.questName ?? '暂无')
+  const getCurrentQuestName = useGameStore((state) => state.getCurrentQuestName)
   const getCurrentScene = useGameStore((state) => state.getCurrentScene)
   const getSceneNpcs = useGameStore((state) => state.getSceneNpcs)
   const getSceneDestinations = useGameStore((state) => state.getSceneDestinations)
@@ -45,6 +41,7 @@ export function ScenePage() {
   const enterScene = useGameStore((state) => state.enterScene)
   const explore = useGameStore((state) => state.explore)
   const performNpcDialogAction = useGameStore((state) => state.performNpcDialogAction)
+  const questName = activeQuests.length > 0 ? getCurrentQuestName() : '暂无'
 
   const scene = currentSceneId ? getCurrentScene() : undefined
   const npcs = currentSceneId ? getSceneNpcs() : []
@@ -55,8 +52,6 @@ export function ScenePage() {
   const [activePanel, setActivePanel] = useState<SceneUtilityPanel | null>(null)
 
   const dialog = selectedNpcId ? getNpcDialogDisplay(selectedNpcId) : undefined
-  const activeFirstBlood = activeQuests.find((quest) => quest.questId === FIRST_BLOOD_QUEST_ID)
-  const isFirstBloodCompleted = completedQuests.includes(FIRST_BLOOD_QUEST_ID)
 
   const handleSelectNpc = (npcId: string) => {
     setSelectedNpcId(npcId)
@@ -72,11 +67,8 @@ export function ScenePage() {
     if (!selectedNpcId) {
       return
     }
-    const hadQuestAction = !activeFirstBlood && !isFirstBloodCompleted
-
-    performNpcDialogAction(selectedNpcId)
-
-    if (!hadQuestAction) {
+    const shouldCloseDialog = performNpcDialogAction(selectedNpcId)
+    if (shouldCloseDialog) {
       handleBackToMain()
     }
   }

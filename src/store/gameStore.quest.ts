@@ -27,6 +27,7 @@ const QINGMANG_SKILL_ID = asSkillId('skill_sword_010_qingmang')
 type QuestSliceState = Pick<
   GameStoreState,
   | 'getActiveQuestDisplays'
+  | 'getCurrentQuestName'
   | 'getNpcDialogDisplay'
   | 'acceptQuest'
   | 'performNpcDialogAction'
@@ -50,6 +51,10 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
         },
       ]
     })
+  },
+
+  getCurrentQuestName: () => {
+    return get().getActiveQuestDisplays()[0]?.questName ?? '暂无'
   },
 
   getNpcDialogDisplay: (npcId) => {
@@ -198,7 +203,7 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
       ) {
         get().learnSkill(KAISHAN_SKILL_ID)
       }
-      return
+      return true
     }
 
     if (id === HERMIT_NPC_ID) {
@@ -211,7 +216,7 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
       if (!knowsSheying && (qingmangRuntime?.proficiency ?? 0) >= 30) {
         get().learnSkill(SHEYING_SKILL_ID)
       }
-      return
+      return true
     }
 
     if (id === SWORDSMAN_NPC_ID) {
@@ -222,11 +227,12 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
 
       if (!isFirstBloodCompleted && !activeFirstBlood) {
         get().acceptQuest(FIRST_BLOOD_QUEST_ID)
-        return
+        return false
       }
     }
 
     gameEventBus.emit({ type: 'DialogClosed', npcId: id })
+    return true
   },
 
   handleGameEvent: (event) => {
