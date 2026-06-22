@@ -114,3 +114,16 @@ export function calculateDerivedCharacterStats(character: CharacterState): Deriv
     totalBonuses,
   }
 }
+
+export function buildBattleReadyCharacter(character: CharacterState): CharacterState {
+  const derived = calculateDerivedCharacterStats(character)
+  return {
+    ...character,
+    hp: Math.min(character.hp, derived.maxHp),
+    qi: Math.min(character.qi, derived.maxQi),
+    maxHp: derived.maxHp,
+    maxQi: derived.maxQi,
+    attributes: derived.attributes,
+    speed: derived.speed,
+  }
+}

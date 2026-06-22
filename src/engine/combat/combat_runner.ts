@@ -1,13 +1,14 @@
 /**
  * @module combat/combat_runner
  * @layer engine
- * @description 时间轴战斗主循环：优先队列调度 + scoped 事件总线
+ * @description 时间轴战斗主循环：多功法入队 + scoped 事件总线 + 优先队列
  * @inputs player, enemy, rng?
  * @outputs BattleResult
- * @depends event_bus, priority_queue, damage_calc, loot, skillEngine, util/rng
+ * @depends event_bus, priority_queue, damage_calc, loot, skillEngine, skill_relation_engine, util/rng
  * @forbidden 禁止 import React、禁止访问 store
  */
 import { createScopedBus } from '../event_bus'
+import { getSynergySources } from '../skill_relation_engine'
 import { getMoveById, getSkillById } from '../skillEngine'
 import { createSeededRng, type Rng } from '../util/rng'
 import { calcDamage } from './damage_calc'
@@ -15,9 +16,9 @@ import { calcProficiencyGains } from './loot'
 import { PriorityQueue } from './priority_queue'
 import type { QueuePayload } from './types'
 import type { BattleEvent, BattleResult } from '../../types/battle'
-import type { CharacterState } from '../../types/character'
+import type { CharacterState, SkillRuntime } from '../../types/character'
 import type { SkillMove } from '../../types/skill'
-import type { MoveId, SkillId } from '../../types/id'
+import type { SkillId } from '../../types/id'
 
 const MAX_TICKS = 10_000
 
@@ -52,39 +53,75 @@ function cloneCombatant(character: CharacterState): CombatantState {
   }
 }
 
-function resolvePrimaryMove(
-  character: CharacterState,
-): { skillId: SkillId; moveId: MoveId; move: SkillMove } | undefined {
-  const skillId = character.equippedSkillIds[0]
-  if (!skillId) {
-    return undefined
+function getEquippedSkillIds(character: CharacterState): SkillId[] {
+  if (character.formation) {
+    return [
+      ...character.formation.external,
+      ...(character.formation.internal ? [character.formation.internal] : []),
+      ...(character.formation.qinggong ? [character.formation.qinggong] : []),
+      ...(character.formation.hard ? [character.formation.hard] : []),
+    ]
   }
+  return character.equippedSkillIds
+}
 
+function getRuntime(character: CharacterState, skillId: SkillId): SkillRuntime | undefined {
+  return character.learnedSkills.find((entry) => entry.skillId === skillId)
+}
+
+function resolveUnlockedMoves(character: CharacterState, skillId: SkillId): SkillMove[] {
   const skill = getSkillById(skillId)
-  if (!skill || skill.moves.length === 0) {
+  if (!skill) {
+    return []
+  }
+  const runtime = getRuntime(character, skillId)
+  if (!runtime) {
+    return skill.moves.filter((move) => move.unlockProficiency === 0)
+  }
+  return skill.moves.filter(
+    (move) => runtime.unlockedMoveIds.includes(move.id) || move.unlockProficiency === 0,
+  )
+}
+
+function resolveSkillChoice(
+  character: CharacterState,
+  skillId: SkillId,
+  currentQi: number,
+  rng: Rng,
+): SkillMove | undefined {
+  const moves = resolveUnlockedMoves(character, skillId)
+  if (moves.length === 0) {
     return undefined
   }
 
-  const runtime = character.learnedSkills.find((entry) => entry.skillId === skillId)
-  let move: SkillMove | undefined
-
-  if (runtime && runtime.unlockedMoveIds.length > 0) {
-    move = skill.moves.find((entry) => runtime.unlockedMoveIds.includes(entry.id))
+  const affordable = moves.filter((move) => move.qiCost <= currentQi)
+  const cheapestMove = [...moves].sort((left, right) => left.qiCost - right.qiCost)[0]
+  if (affordable.length === 0) {
+    return cheapestMove
   }
 
-  if (!move) {
-    move = skill.moves.find((entry) => entry.unlockProficiency === 0) ?? skill.moves[0]
-  }
+  const strongestMove = [...affordable].sort((left, right) => right.powerRatio - left.powerRatio)[0]
+  const runtime = getRuntime(character, skillId)
+  const finisherChance = Math.min(0.25 + ((runtime?.realmLevel ?? 1) - 1) * 0.08, 0.6)
 
-  return { skillId, moveId: move.id, move }
+  if (strongestMove && strongestMove !== cheapestMove && rng.next() < finisherChance) {
+    return strongestMove
+  }
+  return cheapestMove
 }
 
 function calcTriggerDelay(move: SkillMove, speed: number): number {
-  return move.cd * (100 / speed)
+  return Math.max(1, move.cd * (100 / speed))
 }
 
-function getOpponentId(actorId: string, playerId: string, enemyId: string): string {
-  return actorId === playerId ? enemyId : playerId
+function getDamageMultiplier(character: CharacterState, skillId: SkillId): number {
+  return getSynergySources(skillId).reduce((multiplier, relation) => {
+    const sourceRuntime = getRuntime(character, relation.sourceSkillId)
+    if (!sourceRuntime || sourceRuntime.proficiency < relation.requiredProficiency) {
+      return multiplier
+    }
+    return multiplier * relation.damageMultiplier
+  }, 1)
 }
 
 export function startBattle({
@@ -92,8 +129,6 @@ export function startBattle({
   enemy,
   rng = createSeededRng(0),
 }: StartBattleInput): BattleResult {
-  void rng
-
   scheduleCounter = 0
   const bus = createScopedBus()
   const queue = new PriorityQueue()
@@ -135,17 +170,13 @@ export function startBattle({
   }
 
   const enqueueInitial = (actor: CombatantState, targetId: string): void => {
-    const resolved = resolvePrimaryMove(actor.source)
-    if (!resolved) {
-      return
+    for (const skillId of getEquippedSkillIds(actor.source)) {
+      const move = resolveSkillChoice(actor.source, skillId, actor.qi, rng)
+      if (!move) {
+        continue
+      }
+      scheduleSkill(actor, { actorId: actor.id, targetId, skillId }, move, currentTime)
     }
-    const payload: QueuePayload = {
-      actorId: actor.id,
-      targetId,
-      skillId: resolved.skillId,
-      moveId: resolved.moveId,
-    }
-    scheduleSkill(actor, payload, resolved.move, currentTime)
   }
 
   enqueueInitial(combatants.get(player.id)!, enemy.id)
@@ -157,14 +188,9 @@ export function startBattle({
     }
 
     const actor = combatants.get(event.actorId)
-    const target = combatants.get(getOpponentId(event.actorId, player.id, enemy.id))
-    if (!actor || !target) {
-      return
-    }
-
-    const moveResult = getMoveById(event.moveId)
-    const move = moveResult?.move
-    if (!move) {
+    const target = combatants.get(event.actorId === player.id ? enemy.id : player.id)
+    const move = getMoveById(event.moveId)?.move
+    if (!actor || !target || !move) {
       return
     }
 
@@ -172,7 +198,6 @@ export function startBattle({
       actorId: event.actorId,
       targetId: target.id,
       skillId: event.skillId,
-      moveId: event.moveId,
     }
 
     if (actor.qi < move.qiCost) {
@@ -192,6 +217,7 @@ export function startBattle({
       attacker: actor.source,
       defender: target.source,
       move,
+      damageMultiplier: getDamageMultiplier(actor.source, event.skillId),
     }).amount
 
     target.hp = Math.max(0, target.hp - damage)
@@ -219,22 +245,31 @@ export function startBattle({
       break
     }
 
+    const actor = combatants.get(node.payload.actorId)
+    if (!actor) {
+      continue
+    }
+    const move = resolveSkillChoice(actor.source, node.payload.skillId, actor.qi, rng)
+    if (!move) {
+      continue
+    }
+
     currentTime = node.triggerAt
     recordEmit({
       type: 'SkillReady',
       actorId: node.payload.actorId,
       skillId: node.payload.skillId,
-      moveId: node.payload.moveId,
+      moveId: move.id,
       triggerAt: node.triggerAt,
     })
   }
 
   if (!battleEnded) {
-    const playerCombatant = combatants.get(player.id)!
-    const enemyCombatant = combatants.get(enemy.id)!
-    if (playerCombatant.hp > enemyCombatant.hp) {
+    const finalPlayer = combatants.get(player.id)!
+    const finalEnemy = combatants.get(enemy.id)!
+    if (finalPlayer.hp > finalEnemy.hp) {
       endBattle(player.id)
-    } else if (enemyCombatant.hp > playerCombatant.hp) {
+    } else if (finalEnemy.hp > finalPlayer.hp) {
       endBattle(enemy.id)
     } else {
       endBattle(player.id)

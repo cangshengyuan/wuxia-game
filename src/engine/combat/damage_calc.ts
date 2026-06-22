@@ -16,11 +16,21 @@ export interface CalcDamageInput {
   attacker: CharacterState
   defender: CharacterState
   move: SkillMove
+  damageMultiplier?: number
   rng?: Rng
 }
 
-export function calcDamage({ attacker, move }: CalcDamageInput): DamageResult {
-  const baseDamage = attacker.attributes.armStrength * 2
-  const amount = Math.round(baseDamage * move.powerRatio)
+export function calcDamage({
+  attacker,
+  defender,
+  move,
+  damageMultiplier = 1,
+}: CalcDamageInput): DamageResult {
+  const attackPower = attacker.attributes.armStrength * 2 + attacker.speed * 0.6
+  const defenseReduction = defender.attributes.constitution * 0.7
+  const amount = Math.max(
+    1,
+    Math.round((attackPower * move.powerRatio - defenseReduction) * damageMultiplier),
+  )
   return { amount, isCritical: false }
 }

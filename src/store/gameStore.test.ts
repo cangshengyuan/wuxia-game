@@ -133,6 +133,36 @@ describe('gameStore', () => {
     expect(display?.nextBreakthroughSummary).toContain('突破条件')
   })
 
+  it('equipSkill and unequipSkill update formation slots through store actions', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        learnedSkills: [
+          ...defaultPlayer.learnedSkills,
+          {
+            skillId: asSkillId('skill_sword_011_baihong'),
+            proficiency: 12,
+            realmLevel: 1,
+            insight: 0,
+            unlockedMoveIds: ['move_baihong_01', 'move_baihong_02'],
+          },
+        ],
+      },
+    })
+
+    useGameStore.getState().equipSkill('skill_sword_011_baihong')
+
+    expect(useGameStore.getState().player.formation?.external).toEqual([
+      asSkillId('skill_sword_011_baihong'),
+      asSkillId('skill_sword_010_qingmang'),
+    ])
+
+    useGameStore.getState().unequipSkill('skill_sword_011_baihong')
+    expect(useGameStore.getState().player.formation?.external).toEqual([
+      asSkillId('skill_sword_010_qingmang'),
+    ])
+  })
+
   it('dismissUnlockNotice removes notice by id', () => {
     useGameStore.setState({
       recentUnlocks: [

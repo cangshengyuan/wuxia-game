@@ -1,0 +1,34 @@
+[
+  {
+    "id": "skill_hard_050_tiebu",
+    "name": "铁布衫",
+    "category": "hard",
+    "tier": "low",
+    "description": "以硬功淬体，显著提升抗打能力。",
+    "maxProficiency": 30,
+    "tags": ["hard", "basic", "guard"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxHp": { "perProficiency": 0.8, "perRealm": 4, "maxBonus": 24 }, "constitution": { "perProficiency": 0.12, "perRealm": 1, "maxBonus": 5 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1.05, "insightChanceMultiplier": 0.95, "inheritanceCapRatio": 0.35 },
+    "moves": [
+      { "id": "move_tiebu_01", "name": "铁衣护身", "cd": 4, "qiCost": 6, "powerRatio": 0.7, "unlockProficiency": 0 },
+      { "id": "move_tiebu_02", "name": "沉肩硬靠", "cd": 5, "qiCost": 9, "powerRatio": 0.95, "unlockProficiency": 12 }
+    ]
+  },
+  {
+    "id": "skill_hard_051_shigang",
+    "name": "石罡身",
+    "category": "hard",
+    "tier": "low",
+    "description": "劲力沉实，强在立身不退。",
+    "maxProficiency": 30,
+    "tags": ["hard", "basic", "guard"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 20], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxHp": { "perProficiency": 0.7, "perRealm": 4, "maxBonus": 22 }, "constitution": { "perProficiency": 0.13, "perRealm": 1, "maxBonus": 5 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1.05, "insightChanceMultiplier": 0.95, "inheritanceCapRatio": 0.35 },
+    "moves": [
+      { "id": "move_shigang_01", "name": "沉石坠身", "cd": 4, "qiCost": 5, "powerRatio": 0.68, "unlockProficiency": 0 },
+      { "id": "move_shigang_02", "name": "罡气回震", "cd": 5, "qiCost": 8, "powerRatio": 0.92, "unlockProficiency": 10 }
+    ]
+  }
+]

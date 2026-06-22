@@ -5,6 +5,7 @@
  * @forbidden 禁止在 types 层 import engine/store/ui
  */
 import type { SkillId } from './id'
+import type { WeaponRequirement } from './skill'
 
 export interface CharacterAttributes {
   armStrength: number
@@ -20,6 +21,13 @@ export interface SkillRuntime {
   unlockedMoveIds: string[]
 }
 
+export interface SkillFormation {
+  external: SkillId[]
+  internal?: SkillId
+  qinggong?: SkillId
+  hard?: SkillId
+}
+
 export interface CharacterState {
   id: string
   name: string
@@ -31,5 +39,7 @@ export interface CharacterState {
   attributes: CharacterAttributes
   learnedSkills: SkillRuntime[]
   speed: number
+  formation?: SkillFormation
+  weaponType?: WeaponRequirement
   equippedSkillIds: SkillId[]
 }

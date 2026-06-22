@@ -62,6 +62,22 @@ export interface NpcDialogDisplay {
   primaryActionLabel?: string
 }
 
+export interface FormationSlotDisplay {
+  slotId: string
+  slotLabel: string
+  skillId?: SkillId
+  skillName?: string
+}
+
+export interface FormationSkillOptionDisplay {
+  skillId: SkillId
+  skillName: string
+  slotLabel: string
+  isEquipped: boolean
+  canEquip: boolean
+  reason?: string
+}
+
 export interface PersistedGameState {
   player: CharacterState
   currentSceneId: SceneId
@@ -83,6 +99,10 @@ export interface GameStoreState extends PersistedGameState {
   getSceneDestinations: () => SceneDestination[]
   getActiveQuestDisplays: () => QuestDisplay[]
   getNpcDialogDisplay: (npcId: NpcId | string) => NpcDialogDisplay | undefined
+  getFormationSlots: () => FormationSlotDisplay[]
+  getFormationSkillOptions: () => FormationSkillOptionDisplay[]
+  equipSkill: (skillId: SkillId | string) => void
+  unequipSkill: (skillId: SkillId | string) => void
   acceptQuest: (questId: QuestId | string) => void
   performNpcDialogAction: (npcId: NpcId | string) => void
   handleGameEvent: (event: GameEvent) => void

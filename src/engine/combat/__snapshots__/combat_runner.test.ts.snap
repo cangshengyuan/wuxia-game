@@ -16,7 +16,7 @@ exports[`combat_runner > runs a deterministic battle with fixed seed and player 
     "type": "SkillExecuted",
   },
   {
-    "amount": 38,
+    "amount": 41,
     "moveId": "move_qingmang_01",
     "sourceId": "player_001",
     "targetId": "enemy_001_bandit_grunt",
@@ -36,7 +36,7 @@ exports[`combat_runner > runs a deterministic battle with fixed seed and player 
     "type": "SkillExecuted",
   },
   {
-    "amount": 19,
+    "amount": 15,
     "moveId": "move_songfeng_01",
     "sourceId": "enemy_001_bandit_grunt",
     "targetId": "player_001",
@@ -56,7 +56,7 @@ exports[`combat_runner > runs a deterministic battle with fixed seed and player 
     "type": "SkillExecuted",
   },
   {
-    "amount": 38,
+    "amount": 41,
     "moveId": "move_qingmang_01",
     "sourceId": "player_001",
     "targetId": "enemy_001_bandit_grunt",
@@ -76,7 +76,7 @@ exports[`combat_runner > runs a deterministic battle with fixed seed and player 
     "type": "SkillExecuted",
   },
   {
-    "amount": 19,
+    "amount": 15,
     "moveId": "move_songfeng_01",
     "sourceId": "enemy_001_bandit_grunt",
     "targetId": "player_001",
@@ -96,7 +96,7 @@ exports[`combat_runner > runs a deterministic battle with fixed seed and player 
     "type": "SkillExecuted",
   },
   {
-    "amount": 38,
+    "amount": 41,
     "moveId": "move_qingmang_01",
     "sourceId": "player_001",
     "targetId": "enemy_001_bandit_grunt",

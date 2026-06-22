@@ -18,6 +18,7 @@ const PLAYBACK_INTERVAL_MS = 400
 
 export function BattlePage() {
   const player = useGameStore((state) => state.player)
+  const getFormationSlots = useGameStore((state) => state.getFormationSlots)
   const status = useBattleStore((state) => state.status)
   const events = useBattleStore((state) => state.events)
   const playbackIndex = useBattleStore((state) => state.playbackIndex)
@@ -44,6 +45,7 @@ export function BattlePage() {
 
   const visibleEvents = playbackIndex >= 0 ? events.slice(0, playbackIndex + 1) : []
   const isVictory = result?.winnerId === player.id
+  const formationSlots = getFormationSlots().filter((slot) => slot.skillName)
 
   return (
     <section className="battle-layout panel">
@@ -66,6 +68,16 @@ export function BattlePage() {
           maxQi={enemySnapshot.maxQi}
         />
       </div>
+
+      <ul className="event-log" aria-label="参战功法">
+        {formationSlots.map((slot) => (
+          <EventLogItem
+            key={slot.slotId}
+            index={0}
+            message={`${slot.slotLabel}：${slot.skillName}`}
+          />
+        ))}
+      </ul>
 
       {status === 'finished' && result ? (
         <p className="battle-layout__outcome" role="status">

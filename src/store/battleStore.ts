@@ -8,6 +8,7 @@
  * @forbidden 禁止 import React、禁止在 store 外部直接 mutate 战斗状态
  */
 import { create } from 'zustand'
+import { buildBattleReadyCharacter } from '../engine/character/attributes'
 import { startBattle as runCombat } from '../engine/combat/combat_runner'
 import { formatBattleEvent } from '../engine/combat/event_format'
 import {
@@ -56,6 +57,10 @@ const fallbackEnemy: CharacterState = {
   },
   learnedSkills: [],
   speed: 9,
+  formation: {
+    external: [],
+  },
+  weaponType: 'sword',
   equippedSkillIds: [],
 }
 
@@ -73,7 +78,7 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
   pendingResult: undefined,
 
   prepareBattle: (enemyId) => {
-    const player = useGameStore.getState().player
+    const player = buildBattleReadyCharacter(useGameStore.getState().player)
     const enemy = buildEnemyState(enemyId) ?? fallbackEnemy
     const snapshots = createSnapshotsFromCombatants(player, enemy)
 
@@ -91,7 +96,7 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
 
   startBattle: () => {
     const { enemy } = get()
-    const player = useGameStore.getState().player
+    const player = buildBattleReadyCharacter(useGameStore.getState().player)
     const battleResult = runCombat({ player, enemy })
 
     set({

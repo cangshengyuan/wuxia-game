@@ -10,6 +10,10 @@
 | skill_internal_002_tuna | 吐纳诀 | internal | data/skills/internal/index.json |
 | skill_internal_003_xiaozhou | 小周天功 | internal | data/skills/internal/index.json |
 | skill_internal_004_jingang | 金刚诀 | internal | data/skills/internal/index.json |
+| skill_hard_050_tiebu | 铁布衫 | hard | data/skills/hard/index.json |
+| skill_hard_051_shigang | 石罡身 | hard | data/skills/hard/index.json |
+| skill_qinggong_040_caoying | 草影步 | qinggong | data/skills/qinggong/index.json |
+| skill_qinggong_041_zhuifeng | 追风步 | qinggong | data/skills/qinggong/index.json |
 | skill_sword_010_qingmang | 青蟒剑法 | sword | data/skills/sword/index.json |
 | skill_sword_011_baihong | 白虹剑法 | sword | data/skills/sword/index.json |
 | skill_sword_012_liushui | 流水剑法 | sword | data/skills/sword/index.json |
@@ -28,6 +32,14 @@
 | move_xiaozhou_01 | skill_internal_003_xiaozhou | data/skills/internal/index.json |
 | move_xiaozhou_02 | skill_internal_003_xiaozhou | data/skills/internal/index.json |
 | move_jingang_01 | skill_internal_004_jingang | data/skills/internal/index.json |
+| move_tiebu_01 | skill_hard_050_tiebu | data/skills/hard/index.json |
+| move_tiebu_02 | skill_hard_050_tiebu | data/skills/hard/index.json |
+| move_shigang_01 | skill_hard_051_shigang | data/skills/hard/index.json |
+| move_shigang_02 | skill_hard_051_shigang | data/skills/hard/index.json |
+| move_caoying_01 | skill_qinggong_040_caoying | data/skills/qinggong/index.json |
+| move_caoying_02 | skill_qinggong_040_caoying | data/skills/qinggong/index.json |
+| move_zhuifeng_01 | skill_qinggong_041_zhuifeng | data/skills/qinggong/index.json |
+| move_zhuifeng_02 | skill_qinggong_041_zhuifeng | data/skills/qinggong/index.json |
 | move_qingmang_01 | skill_sword_010_qingmang | data/skills/sword/index.json |
 | move_qingmang_02 | skill_sword_010_qingmang | data/skills/sword/index.json |
 | move_qingmang_03 | skill_sword_010_qingmang | data/skills/sword/index.json |

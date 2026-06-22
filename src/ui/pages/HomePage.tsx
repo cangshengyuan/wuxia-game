@@ -9,6 +9,7 @@
  */
 import { useGameStore } from '../../store/gameStore'
 import { useUiStore } from '../../store/uiStore'
+import { FormationPanel } from '../panels/FormationPanel'
 import { SkillPanel } from '../panels/SkillPanel'
 
 export function HomePage() {
@@ -35,6 +36,7 @@ export function HomePage() {
       </section>
 
       <SkillPanel />
+      <FormationPanel />
     </>
   )
 }

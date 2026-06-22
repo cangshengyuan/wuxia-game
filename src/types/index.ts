@@ -18,7 +18,12 @@ export type {
   SkillExecutedEvent,
   SkillReadyEvent,
 } from './battle'
-export type { CharacterAttributes, CharacterState, SkillRuntime } from './character'
+export type {
+  CharacterAttributes,
+  CharacterState,
+  SkillFormation,
+  SkillRuntime,
+} from './character'
 export type {
   asEnemyId,
   asItemId,

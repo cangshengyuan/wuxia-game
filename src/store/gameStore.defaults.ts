@@ -42,5 +42,10 @@ export const defaultPlayer: CharacterState = {
     },
   ],
   speed: 12,
+  formation: {
+    external: [asSkillId('skill_sword_010_qingmang')],
+    internal: asSkillId('skill_internal_001_huntuan'),
+  },
+  weaponType: 'sword',
   equippedSkillIds: [asSkillId('skill_sword_010_qingmang')],
 }

@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { asQuestId } from '../../types/id'
+import { FormationPanel } from '../panels/FormationPanel'
 import { NpcList } from '../panels/NpcList'
 
 const FIRST_BLOOD_QUEST_ID = asQuestId('quest_main_001_first_blood')
@@ -128,6 +129,8 @@ export function ScenePage() {
           </div>
         </section>
       ) : null}
+
+      <FormationPanel />
     </section>
   )
 }

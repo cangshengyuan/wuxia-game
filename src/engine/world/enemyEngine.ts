@@ -8,6 +8,9 @@
  * @forbidden 禁止 import React、禁止访问 store、禁止修改 data 原始对象
  */
 import enemiesData from '../../data/enemies/index.json'
+import { inferFormationFromEquippedSkills } from '../character/formation'
+import { grantSkill } from '../character/skill_runtime'
+import { getSkillById } from '../skillEngine'
 import { asEnemyId, asSkillId } from '../../types/id'
 import type { EnemyId } from '../../types/id'
 import type { CharacterState } from '../../types/character'
@@ -89,8 +92,13 @@ export function buildEnemyState(enemyId: EnemyId | string): CharacterState | und
     qi: def.qi,
     maxQi: def.maxQi,
     attributes: { ...def.attributes },
-    learnedSkills: [],
+    learnedSkills: def.equippedSkillIds.flatMap((skillId) => {
+      const skillDef = getSkillById(skillId)
+      return skillDef ? [grantSkill(skillId, skillDef)] : []
+    }),
     speed: def.speed,
+    formation: inferFormationFromEquippedSkills(def.equippedSkillIds),
+    weaponType: 'sword',
     equippedSkillIds: [...def.equippedSkillIds],
   }
 }

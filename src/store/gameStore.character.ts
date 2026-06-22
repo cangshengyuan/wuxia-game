@@ -1,7 +1,7 @@
 /**
  * @module store/gameStore.character
  * @layer store
- * @description 角色功法与技能展示切片
+ * @description 角色功法展示、学习与战前编成切片
  * @inputs SkillId
  * @outputs canUpgradeSkill, upgradeSkill, getSkillDisplay, getLearnedSkillDisplays, learnSkill
  * @depends engine/character, engine/skillEngine
@@ -9,21 +9,45 @@
  */
 import {
   canUpgradeSkill as canUpgradeSkillEngine,
+  canUseMove,
   grantSkill,
   upgradeSkill as upgradeSkillEngine,
 } from '../engine/character/skill_runtime'
 import { calculateSkillAttributeBonuses } from '../engine/character/attributes'
+import {
+  canEquipSkill,
+  createEmptyFormation,
+  equipSkillInFormation,
+  flattenFormation,
+  getFormationSlot,
+  inferFormationFromEquippedSkills,
+  unequipSkillFromFormation,
+} from '../engine/character/formation'
 import { getSynergySources } from '../engine/skill_relation_engine'
 import { calculateInheritedProficiency } from '../engine/skill/inheritance'
 import { countSimilarSkills } from '../engine/skill/realm'
 import { getMoveById, getSkillById } from '../engine/skillEngine'
 import { asMoveId, asSkillId } from '../types/id'
 import type { UnlockNotice } from '../types/notice'
-import type { GameStoreSlice, GameStoreState, SkillDisplay } from './gameStore.types'
+import type {
+  FormationSkillOptionDisplay,
+  FormationSlotDisplay,
+  GameStoreSlice,
+  GameStoreState,
+  SkillDisplay,
+} from './gameStore.types'
 
 type CharacterSliceState = Pick<
   GameStoreState,
-  'canUpgradeSkill' | 'upgradeSkill' | 'getSkillDisplay' | 'getLearnedSkillDisplays' | 'learnSkill'
+  | 'canUpgradeSkill'
+  | 'upgradeSkill'
+  | 'getSkillDisplay'
+  | 'getLearnedSkillDisplays'
+  | 'getFormationSlots'
+  | 'getFormationSkillOptions'
+  | 'equipSkill'
+  | 'unequipSkill'
+  | 'learnSkill'
 >
 import { nextUnlockNoticeId } from './gameStore.battle'
 
@@ -108,6 +132,79 @@ function buildSkillDisplay(
   }
 }
 
+function getResolvedFormation(state: GameStoreState): ReturnType<typeof createEmptyFormation> {
+  return state.player.formation ?? inferFormationFromEquippedSkills(state.player.equippedSkillIds)
+}
+
+function buildFormationSlots(state: GameStoreState): FormationSlotDisplay[] {
+  const formation = getResolvedFormation(state)
+  const skillNameOf = (skillId: string | undefined): string | undefined => {
+    if (!skillId) {
+      return undefined
+    }
+    return getSkillById(skillId)?.name
+  }
+
+  return [
+    {
+      slotId: 'external_1',
+      slotLabel: '外功槽一',
+      skillId: formation.external[0],
+      skillName: skillNameOf(formation.external[0]),
+    },
+    {
+      slotId: 'external_2',
+      slotLabel: '外功槽二',
+      skillId: formation.external[1],
+      skillName: skillNameOf(formation.external[1]),
+    },
+    {
+      slotId: 'internal',
+      slotLabel: '内功槽',
+      skillId: formation.internal,
+      skillName: skillNameOf(formation.internal),
+    },
+    {
+      slotId: 'qinggong',
+      slotLabel: '轻功槽',
+      skillId: formation.qinggong,
+      skillName: skillNameOf(formation.qinggong),
+    },
+    {
+      slotId: 'hard',
+      slotLabel: '硬功槽',
+      skillId: formation.hard,
+      skillName: skillNameOf(formation.hard),
+    },
+  ]
+}
+
+function buildFormationSkillOptions(state: GameStoreState): FormationSkillOptionDisplay[] {
+  const formation = getResolvedFormation(state)
+  const equippedIds = new Set(flattenFormation(formation))
+
+  return state.player.learnedSkills.flatMap((runtime) => {
+    const skillDef = getSkillById(runtime.skillId)
+    if (!skillDef) {
+      return []
+    }
+    const eligibility = canEquipSkill(runtime, skillDef, state.player.weaponType)
+    const slot = getFormationSlot(skillDef.category)
+    const slotLabel = slot === 'external' ? '外功槽' : `${slot}槽`
+
+    return [
+      {
+        skillId: runtime.skillId,
+        skillName: skillDef.name,
+        slotLabel,
+        isEquipped: equippedIds.has(runtime.skillId),
+        canEquip: eligibility.canEquip,
+        ...(eligibility.reason ? { reason: eligibility.reason } : {}),
+      },
+    ]
+  })
+}
+
 export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, get) => ({
   canUpgradeSkill: (skillId) => {
     const runtime = get().player.learnedSkills.find((entry) => entry.skillId === skillId)
@@ -143,6 +240,55 @@ export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, g
     return get().player.learnedSkills.flatMap((runtime) => {
       const display = buildSkillDisplay(get(), runtime.skillId)
       return display ? [display] : []
+    })
+  },
+
+  getFormationSlots: () => {
+    return buildFormationSlots(get())
+  },
+
+  getFormationSkillOptions: () => {
+    return buildFormationSkillOptions(get())
+  },
+
+  equipSkill: (skillId) => {
+    const id = typeof skillId === 'string' ? asSkillId(skillId) : skillId
+    const { player } = get()
+    const runtime = player.learnedSkills.find((entry) => entry.skillId === id)
+    const skillDef = getSkillById(id)
+    if (!runtime || !skillDef) {
+      return
+    }
+
+    const nextFormation = equipSkillInFormation(
+      getResolvedFormation(get()),
+      runtime,
+      skillDef,
+      player.weaponType,
+    )
+
+    set({
+      player: {
+        ...player,
+        formation: nextFormation,
+        equippedSkillIds: flattenFormation(nextFormation).filter((entry) => {
+          const equippedRuntime = player.learnedSkills.find((skill) => skill.skillId === entry)
+          return equippedRuntime ? canUseMove(equippedRuntime, equippedRuntime.unlockedMoveIds[0] ?? '') : false
+        }),
+      },
+    })
+  },
+
+  unequipSkill: (skillId) => {
+    const id = typeof skillId === 'string' ? asSkillId(skillId) : skillId
+    const { player } = get()
+    const nextFormation = unequipSkillFromFormation(getResolvedFormation(get()), id)
+    set({
+      player: {
+        ...player,
+        formation: nextFormation,
+        equippedSkillIds: flattenFormation(nextFormation),
+      },
     })
   },
 
