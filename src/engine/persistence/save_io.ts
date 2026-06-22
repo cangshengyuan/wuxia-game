@@ -2,23 +2,23 @@
  * @module engine/persistence/save_io
  * @layer engine
  * @description 存档读写 localStorage
- * @inputs SaveV2
- * @outputs SaveV2 | null
+ * @inputs SaveData
+ * @outputs SaveData | null
  * @depends engine/persistence/save_schema
  * @forbidden 禁止 import React、禁止访问 store、禁止访问 ui
  */
-import { migrateSave, SAVE_VERSION, type SaveV2 } from './save_schema'
+import { migrateSave, SAVE_VERSION, type SaveData } from './save_schema'
 
 export const STORAGE_KEY = 'wuxia-game-save'
 
-export function saveToStorage(save: SaveV2): void {
+export function saveToStorage(save: SaveData): void {
   if (save.version !== SAVE_VERSION) {
     throw new Error(`Unsupported save version: ${String(save.version)}`)
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save))
 }
 
-export function loadFromStorage(): SaveV2 | null {
+export function loadFromStorage(): SaveData | null {
   const raw = localStorage.getItem(STORAGE_KEY)
   if (!raw) {
     return null

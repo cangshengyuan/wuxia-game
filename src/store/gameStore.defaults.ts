@@ -29,11 +29,15 @@ export const defaultPlayer: CharacterState = {
     {
       skillId: asSkillId('skill_sword_010_qingmang'),
       proficiency: 0,
+      realmLevel: 1,
+      insight: 0,
       unlockedMoveIds: ['move_qingmang_01'],
     },
     {
       skillId: asSkillId('skill_internal_001_huntuan'),
       proficiency: 0,
+      realmLevel: 1,
+      insight: 0,
       unlockedMoveIds: ['move_huntuan_01'],
     },
   ],

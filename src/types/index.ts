@@ -39,7 +39,23 @@ export type {
 } from './id'
 export type { ItemDefinition } from './item'
 export type { UnlockNotice } from './notice'
-export type { SkillCategory, SkillDefinition, SkillMove } from './skill'
+export type {
+  AttributeGrowthEntry,
+  SkillAttributeGrowth,
+  SkillCategory,
+  SkillDefinition,
+  SkillGrowthCurve,
+  SkillMove,
+  SkillRealmDefinition,
+  SkillTier,
+  WeaponRequirement,
+} from './skill'
+export type {
+  SkillInheritanceRelation,
+  SkillRelation,
+  SkillSimilarityRelation,
+  SkillSynergyRelation,
+} from './skill_relation'
 export type {
   DialogClosedEvent,
   BattleEndedWorldEvent,

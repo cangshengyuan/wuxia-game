@@ -19,13 +19,15 @@ import { asSkillId } from '../types/id'
 describe('skillEngine', () => {
   it('loads and validates skill catalog from JSON', () => {
     const all = listAllSkills()
-    expect(all.length).toBeGreaterThanOrEqual(8)
+    expect(all.length).toBeGreaterThanOrEqual(11)
   })
 
   it('getSkillById finds huntuan gong', () => {
     const skill = getSkillById(asSkillId('skill_internal_001_huntuan'))
     expect(skill?.name).toBe('混元功')
     expect(skill?.moves[0]?.unlockProficiency).toBe(0)
+    expect(skill?.tags).toContain('internal_qi')
+    expect(skill?.realm.maxLevel).toBe(3)
   })
 
   it('getMoveById finds move across catalog', () => {
@@ -46,6 +48,8 @@ describe('skillEngine', () => {
       for (const move of skill.moves) {
         expect(move.unlockProficiency).toBeGreaterThanOrEqual(0)
       }
+      expect(skill.growthCurve.inheritanceCapRatio).toBeGreaterThan(0)
+      expect(skill.realm.breakthroughProficiency.length).toBe(skill.realm.maxLevel - skill.realm.minLevel)
     }
   })
 })

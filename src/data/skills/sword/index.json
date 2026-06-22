@@ -4,33 +4,17 @@
     "name": "青蟒剑法",
     "category": "sword",
     "tier": "low",
-    "description": "华山入门剑法，重在基础身法与连刺。",
+    "description": "蛇形入门剑法，重在基础身法与连刺。",
     "maxProficiency": 30,
+    "tags": ["sword", "snake_style", "basic"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 }, "speed": { "perProficiency": 0.06, "perRealm": 1, "maxBonus": 3 } },
+    "growthCurve": { "proficiencyMultiplier": 1, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.4 },
+    "weaponRequirement": "sword",
     "moves": [
-      {
-        "id": "move_qingmang_01",
-        "name": "青蟒出洞",
-        "cd": 3,
-        "qiCost": 10,
-        "powerRatio": 1.35,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_qingmang_02",
-        "name": "蟒尾横扫",
-        "cd": 5,
-        "qiCost": 12,
-        "powerRatio": 1.1,
-        "unlockProficiency": 10
-      },
-      {
-        "id": "move_qingmang_03",
-        "name": "青蟒缠身",
-        "cd": 6,
-        "qiCost": 15,
-        "powerRatio": 1.25,
-        "unlockProficiency": 18
-      }
+      { "id": "move_qingmang_01", "name": "青蟒出洞", "cd": 3, "qiCost": 10, "powerRatio": 1.35, "unlockProficiency": 0 },
+      { "id": "move_qingmang_02", "name": "蟒尾横扫", "cd": 5, "qiCost": 12, "powerRatio": 1.1, "unlockProficiency": 10 },
+      { "id": "move_qingmang_03", "name": "青蟒缠身", "cd": 6, "qiCost": 15, "powerRatio": 1.25, "unlockProficiency": 18 }
     ]
   },
   {
@@ -40,23 +24,14 @@
     "tier": "low",
     "description": "剑光如虹，以快制胜。",
     "maxProficiency": 30,
+    "tags": ["sword", "basic", "swift"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 20], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.07, "perRealm": 1, "maxBonus": 3 }, "speed": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 } },
+    "growthCurve": { "proficiencyMultiplier": 1.05, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.35 },
+    "weaponRequirement": "sword",
     "moves": [
-      {
-        "id": "move_baihong_01",
-        "name": "白虹贯日",
-        "cd": 3,
-        "qiCost": 9,
-        "powerRatio": 1.2,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_baihong_02",
-        "name": "长虹落日",
-        "cd": 5,
-        "qiCost": 13,
-        "powerRatio": 1.15,
-        "unlockProficiency": 12
-      }
+      { "id": "move_baihong_01", "name": "白虹贯日", "cd": 3, "qiCost": 9, "powerRatio": 1.2, "unlockProficiency": 0 },
+      { "id": "move_baihong_02", "name": "长虹落日", "cd": 5, "qiCost": 13, "powerRatio": 1.15, "unlockProficiency": 12 }
     ]
   },
   {
@@ -66,31 +41,15 @@
     "tier": "low",
     "description": "剑势连绵不绝，如江河奔涌。",
     "maxProficiency": 30,
+    "tags": ["sword", "basic", "flowing"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [12, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 }, "constitution": { "perProficiency": 0.04, "perRealm": 1, "maxBonus": 2 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1.1, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.35 },
+    "weaponRequirement": "sword",
     "moves": [
-      {
-        "id": "move_liushui_01",
-        "name": "流水不息",
-        "cd": 4,
-        "qiCost": 8,
-        "powerRatio": 1.0,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_liushui_02",
-        "name": "惊涛拍岸",
-        "cd": 6,
-        "qiCost": 14,
-        "powerRatio": 1.3,
-        "unlockProficiency": 14
-      },
-      {
-        "id": "move_liushui_03",
-        "name": "怒涛裂岸",
-        "cd": 7,
-        "qiCost": 16,
-        "powerRatio": 1.4,
-        "unlockProficiency": 22
-      }
+      { "id": "move_liushui_01", "name": "流水不息", "cd": 4, "qiCost": 8, "powerRatio": 1, "unlockProficiency": 0 },
+      { "id": "move_liushui_02", "name": "惊涛拍岸", "cd": 6, "qiCost": 14, "powerRatio": 1.3, "unlockProficiency": 14 },
+      { "id": "move_liushui_03", "name": "怒涛裂岸", "cd": 7, "qiCost": 16, "powerRatio": 1.4, "unlockProficiency": 22 }
     ]
   },
   {
@@ -100,23 +59,65 @@
     "tier": "low",
     "description": "剑意如松风徐来，轻灵飘逸。",
     "maxProficiency": 30,
+    "tags": ["sword", "basic", "wind"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [8, 18], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "speed": { "perProficiency": 0.09, "perRealm": 1, "maxBonus": 4 }, "agility": { "perProficiency": 0.07, "perRealm": 1, "maxBonus": 4 } },
+    "growthCurve": { "proficiencyMultiplier": 1.1, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 0.95, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.35 },
+    "weaponRequirement": "sword",
     "moves": [
-      {
-        "id": "move_songfeng_01",
-        "name": "松风初起",
-        "cd": 3,
-        "qiCost": 7,
-        "powerRatio": 0.95,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_songfeng_02",
-        "name": "风过松林",
-        "cd": 4,
-        "qiCost": 11,
-        "powerRatio": 1.05,
-        "unlockProficiency": 8
-      }
+      { "id": "move_songfeng_01", "name": "松风初起", "cd": 3, "qiCost": 7, "powerRatio": 0.95, "unlockProficiency": 0 },
+      { "id": "move_songfeng_02", "name": "风过松林", "cd": 4, "qiCost": 11, "powerRatio": 1.05, "unlockProficiency": 8 }
+    ]
+  },
+  {
+    "id": "skill_sword_014_shexing",
+    "name": "蛇行剑路",
+    "category": "sword",
+    "tier": "low",
+    "description": "讲究步随剑走，为蛇系剑法打根基。",
+    "maxProficiency": 30,
+    "tags": ["sword", "snake_style", "basic"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "speed": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 5 }, "agility": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 } },
+    "growthCurve": { "proficiencyMultiplier": 1.05, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.4 },
+    "weaponRequirement": "sword",
+    "moves": [
+      { "id": "move_shexing_01", "name": "蛇影绕步", "cd": 3, "qiCost": 8, "powerRatio": 0.95, "unlockProficiency": 0 },
+      { "id": "move_shexing_02", "name": "鳞光点杀", "cd": 5, "qiCost": 12, "powerRatio": 1.15, "unlockProficiency": 12 }
+    ]
+  },
+  {
+    "id": "skill_sword_020_sheying",
+    "name": "蛇影剑谱",
+    "category": "sword",
+    "tier": "mid",
+    "description": "蛇形剑路的进阶套路，身法与剑势并重。",
+    "maxProficiency": 60,
+    "tags": ["sword", "snake_style", "advanced"],
+    "realm": { "minLevel": 1, "maxLevel": 4, "breakthroughProficiency": [18, 36, 54], "insightThresholds": [3, 5, 7], "similarSkillRequired": [2, 2, 3] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.11, "perRealm": 2, "maxBonus": 10 }, "speed": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 6 } },
+    "growthCurve": { "proficiencyMultiplier": 0.9, "battleGainMultiplier": 1.15, "breakthroughCostMultiplier": 1.2, "insightChanceMultiplier": 1.1, "inheritanceCapRatio": 0.45 },
+    "weaponRequirement": "sword",
+    "moves": [
+      { "id": "move_sheying_01", "name": "蛇影连绞", "cd": 3, "qiCost": 12, "powerRatio": 1.3, "unlockProficiency": 0 },
+      { "id": "move_sheying_02", "name": "鳞甲反噬", "cd": 5, "qiCost": 18, "powerRatio": 1.55, "unlockProficiency": 28 }
+    ]
+  },
+  {
+    "id": "skill_sword_030_tianmang",
+    "name": "天蟒剑典",
+    "category": "sword",
+    "tier": "high",
+    "description": "蛇系剑法的高阶传承，重杀机与威压。",
+    "maxProficiency": 90,
+    "tags": ["sword", "snake_style", "advanced"],
+    "realm": { "minLevel": 1, "maxLevel": 5, "breakthroughProficiency": [24, 42, 66, 84], "insightThresholds": [4, 6, 8, 10], "similarSkillRequired": [2, 3, 3, 4] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.13, "perRealm": 2, "maxBonus": 14 }, "speed": { "perProficiency": 0.06, "perRealm": 1, "maxBonus": 8 }, "constitution": { "perProficiency": 0.05, "perRealm": 1, "maxBonus": 6 } },
+    "growthCurve": { "proficiencyMultiplier": 0.85, "battleGainMultiplier": 1.2, "breakthroughCostMultiplier": 1.35, "insightChanceMultiplier": 1.15, "inheritanceCapRatio": 0.5 },
+    "weaponRequirement": "sword",
+    "moves": [
+      { "id": "move_tianmang_01", "name": "天蟒噬心", "cd": 4, "qiCost": 16, "powerRatio": 1.6, "unlockProficiency": 0 },
+      { "id": "move_tianmang_02", "name": "玄鳞镇岳", "cd": 6, "qiCost": 24, "powerRatio": 1.9, "unlockProficiency": 40 }
     ]
   }
 ]

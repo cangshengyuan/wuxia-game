@@ -19,6 +19,25 @@ const skillDef: SkillDefinition = {
   tier: 'low',
   description: 'test',
   maxProficiency: 30,
+  tags: ['sword', 'basic'],
+  realm: {
+    minLevel: 1,
+    maxLevel: 3,
+    breakthroughProficiency: [10, 20],
+    insightThresholds: [2, 4],
+    similarSkillRequired: [1, 2],
+  },
+  attributeGrowth: {
+    armStrength: { perProficiency: 0.08, perRealm: 1, maxBonus: 4 },
+  },
+  growthCurve: {
+    proficiencyMultiplier: 1,
+    battleGainMultiplier: 1,
+    breakthroughCostMultiplier: 1,
+    insightChanceMultiplier: 1,
+    inheritanceCapRatio: 0.4,
+  },
+  weaponRequirement: 'sword',
   moves: [
     {
       id: asMoveId('move_qingmang_01'),
@@ -43,6 +62,8 @@ describe('grantSkill', () => {
   it('creates runtime with proficiency 0 and initial moves unlocked', () => {
     const runtime = grantSkill(skillDef.id, skillDef)
     expect(runtime.proficiency).toBe(0)
+    expect(runtime.realmLevel).toBe(1)
+    expect(runtime.insight).toBe(0)
     expect(runtime.unlockedMoveIds).toEqual(['move_qingmang_01'])
   })
 })

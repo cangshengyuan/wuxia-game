@@ -7,6 +7,39 @@
 import type { MoveId, SkillId } from './id'
 
 export type SkillCategory = 'internal' | 'external' | 'hard' | 'qinggong' | 'sword'
+export type SkillTier = 'low' | 'mid' | 'high'
+export type WeaponRequirement = 'sword' | 'unarmed'
+
+export interface AttributeGrowthEntry {
+  perProficiency: number
+  perRealm: number
+  maxBonus: number
+}
+
+export interface SkillAttributeGrowth {
+  armStrength?: AttributeGrowthEntry
+  agility?: AttributeGrowthEntry
+  constitution?: AttributeGrowthEntry
+  maxHp?: AttributeGrowthEntry
+  maxQi?: AttributeGrowthEntry
+  speed?: AttributeGrowthEntry
+}
+
+export interface SkillGrowthCurve {
+  proficiencyMultiplier: number
+  battleGainMultiplier: number
+  breakthroughCostMultiplier: number
+  insightChanceMultiplier: number
+  inheritanceCapRatio: number
+}
+
+export interface SkillRealmDefinition {
+  minLevel: number
+  maxLevel: number
+  breakthroughProficiency: number[]
+  insightThresholds: number[]
+  similarSkillRequired: number[]
+}
 
 export interface SkillMove {
   id: MoveId
@@ -23,8 +56,13 @@ export interface SkillDefinition {
   id: SkillId
   name: string
   category: SkillCategory
-  tier: 'low' | 'mid' | 'high'
+  tier: SkillTier
   description: string
   maxProficiency: number
+  tags: string[]
+  realm: SkillRealmDefinition
+  attributeGrowth: SkillAttributeGrowth
+  growthCurve: SkillGrowthCurve
+  weaponRequirement?: WeaponRequirement
   moves: SkillMove[]
 }

@@ -14,6 +14,9 @@
 | skill_sword_011_baihong | 白虹剑法 | sword | data/skills/sword/index.json |
 | skill_sword_012_liushui | 流水剑法 | sword | data/skills/sword/index.json |
 | skill_sword_013_songfeng | 松风剑法 | sword | data/skills/sword/index.json |
+| skill_sword_014_shexing | 蛇行剑路 | sword | data/skills/sword/index.json |
+| skill_sword_020_sheying | 蛇影剑谱 | sword | data/skills/sword/index.json |
+| skill_sword_030_tianmang | 天蟒剑典 | sword | data/skills/sword/index.json |
 
 ## 招式 (move_*)
 
@@ -35,6 +38,26 @@
 | move_liushui_03 | skill_sword_012_liushui | data/skills/sword/index.json |
 | move_songfeng_01 | skill_sword_013_songfeng | data/skills/sword/index.json |
 | move_songfeng_02 | skill_sword_013_songfeng | data/skills/sword/index.json |
+| move_shexing_01 | skill_sword_014_shexing | data/skills/sword/index.json |
+| move_shexing_02 | skill_sword_014_shexing | data/skills/sword/index.json |
+| move_sheying_01 | skill_sword_020_sheying | data/skills/sword/index.json |
+| move_sheying_02 | skill_sword_020_sheying | data/skills/sword/index.json |
+| move_tianmang_01 | skill_sword_030_tianmang | data/skills/sword/index.json |
+| move_tianmang_02 | skill_sword_030_tianmang | data/skills/sword/index.json |
+
+## 功法关系 (rel_*)
+
+| ID | 类型 | 说明 | 文件 |
+|----|------|------|------|
+| rel_inherit_001_qingmang_sheying | inheritance | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
+| rel_inherit_002_shexing_sheying | inheritance | 蛇行剑路 → 蛇影剑谱 | data/skill_relations/index.json |
+| rel_inherit_003_sheying_tianmang | inheritance | 蛇影剑谱 → 天蟒剑典 | data/skill_relations/index.json |
+| rel_synergy_001_qingmang_sheying | synergy | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
+| rel_synergy_002_shexing_tianmang | synergy | 蛇行剑路 → 天蟒剑典 | data/skill_relations/index.json |
+| rel_synergy_003_songfeng_baihong | synergy | 松风剑法 → 白虹剑法 | data/skill_relations/index.json |
+| rel_similarity_001_qingmang_sheying | similarity | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
+| rel_similarity_002_shexing_sheying | similarity | 蛇行剑路 → 蛇影剑谱 | data/skill_relations/index.json |
+| rel_similarity_003_sheying_tianmang | similarity | 蛇影剑谱 → 天蟒剑典 | data/skill_relations/index.json |
 
 ## 敌人 (enemy_*)
 

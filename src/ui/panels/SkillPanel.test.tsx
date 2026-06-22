@@ -71,6 +71,8 @@ describe('SkillPanel', () => {
           {
             skillId: asSkillId('skill_sword_010_qingmang'),
             proficiency: 7,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: ['move_qingmang_01', 'move_qingmang_02'],
           },
         ],
@@ -91,6 +93,8 @@ describe('SkillPanel', () => {
           {
             skillId: asSkillId('skill_sword_010_qingmang'),
             proficiency: 0,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: [],
           },
         ],
@@ -110,6 +114,8 @@ describe('SkillPanel', () => {
           {
             skillId: asSkillId('skill_nonexistent_fake'),
             proficiency: 0,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: [],
           },
           ...defaultPlayer.learnedSkills,

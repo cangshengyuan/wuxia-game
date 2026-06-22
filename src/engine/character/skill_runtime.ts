@@ -19,6 +19,8 @@ export function grantSkill(skillId: SkillId, skillDef: SkillDefinition): SkillRu
   return {
     skillId,
     proficiency: 0,
+    realmLevel: skillDef.realm.minLevel,
+    insight: 0,
     unlockedMoveIds,
   }
 }

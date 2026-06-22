@@ -6,16 +6,11 @@
     "tier": "low",
     "description": "平稳运气，提升续战能力。",
     "maxProficiency": 30,
-    "moves": [
-      {
-        "id": "move_huntuan_01",
-        "name": "混元运气",
-        "cd": 5,
-        "qiCost": 8,
-        "powerRatio": 0.8,
-        "unlockProficiency": 0
-      }
-    ]
+    "tags": ["internal_qi", "basic"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxQi": { "perProficiency": 0.45, "perRealm": 2, "maxBonus": 12 }, "constitution": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 } },
+    "growthCurve": { "proficiencyMultiplier": 1, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.35 },
+    "moves": [{ "id": "move_huntuan_01", "name": "混元运气", "cd": 5, "qiCost": 8, "powerRatio": 0.8, "unlockProficiency": 0 }]
   },
   {
     "id": "skill_internal_002_tuna",
@@ -24,23 +19,13 @@
     "tier": "low",
     "description": "以呼吸调息，缓慢恢复内力。",
     "maxProficiency": 30,
+    "tags": ["internal_qi", "healing"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 20], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxQi": { "perProficiency": 0.5, "perRealm": 2, "maxBonus": 14 }, "speed": { "perProficiency": 0.05, "perRealm": 1, "maxBonus": 3 } },
+    "growthCurve": { "proficiencyMultiplier": 1.05, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.35 },
     "moves": [
-      {
-        "id": "move_tuna_01",
-        "name": "深长吐纳",
-        "cd": 6,
-        "qiCost": 5,
-        "powerRatio": 0.6,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_tuna_02",
-        "name": "气海充盈",
-        "cd": 8,
-        "qiCost": 12,
-        "powerRatio": 0.9,
-        "unlockProficiency": 12
-      }
+      { "id": "move_tuna_01", "name": "深长吐纳", "cd": 6, "qiCost": 5, "powerRatio": 0.6, "unlockProficiency": 0 },
+      { "id": "move_tuna_02", "name": "气海充盈", "cd": 8, "qiCost": 12, "powerRatio": 0.9, "unlockProficiency": 12 }
     ]
   },
   {
@@ -50,23 +35,13 @@
     "tier": "low",
     "description": "引导内力沿任督二脉小循环。",
     "maxProficiency": 30,
+    "tags": ["internal_qi", "meridian"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [12, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxQi": { "perProficiency": 0.55, "perRealm": 2, "maxBonus": 15 }, "constitution": { "perProficiency": 0.06, "perRealm": 1, "maxBonus": 3 } },
+    "growthCurve": { "proficiencyMultiplier": 1.1, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1.05, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.4 },
     "moves": [
-      {
-        "id": "move_xiaozhou_01",
-        "name": "周天导引",
-        "cd": 5,
-        "qiCost": 10,
-        "powerRatio": 0.75,
-        "unlockProficiency": 0
-      },
-      {
-        "id": "move_xiaozhou_02",
-        "name": "气脉贯通",
-        "cd": 7,
-        "qiCost": 14,
-        "powerRatio": 1.0,
-        "unlockProficiency": 15
-      }
+      { "id": "move_xiaozhou_01", "name": "周天导引", "cd": 5, "qiCost": 10, "powerRatio": 0.75, "unlockProficiency": 0 },
+      { "id": "move_xiaozhou_02", "name": "气脉贯通", "cd": 7, "qiCost": 14, "powerRatio": 1, "unlockProficiency": 15 }
     ]
   },
   {
@@ -76,15 +51,10 @@
     "tier": "low",
     "description": "锤炼筋骨，提升抗击打能力。",
     "maxProficiency": 30,
-    "moves": [
-      {
-        "id": "move_jingang_01",
-        "name": "金刚护体",
-        "cd": 4,
-        "qiCost": 6,
-        "powerRatio": 0.7,
-        "unlockProficiency": 0
-      }
-    ]
+    "tags": ["internal_qi", "body_temper"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [12, 24], "insightThresholds": [2, 5], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "maxHp": { "perProficiency": 0.55, "perRealm": 3, "maxBonus": 18 }, "constitution": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 5 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1.1, "insightChanceMultiplier": 0.95, "inheritanceCapRatio": 0.35 },
+    "moves": [{ "id": "move_jingang_01", "name": "金刚护体", "cd": 4, "qiCost": 6, "powerRatio": 0.7, "unlockProficiency": 0 }]
   }
 ]

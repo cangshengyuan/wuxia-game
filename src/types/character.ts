@@ -15,6 +15,8 @@ export interface CharacterAttributes {
 export interface SkillRuntime {
   skillId: SkillId
   proficiency: number
+  realmLevel: number
+  insight: number
   unlockedMoveIds: string[]
 }
 

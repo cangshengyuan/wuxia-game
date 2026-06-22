@@ -12,7 +12,7 @@ import type { QuestId, SceneId } from '../../types/id'
 import type { CharacterAttributes, CharacterState, SkillRuntime } from '../../types/character'
 import type { ActiveQuest } from '../../types/world'
 
-export const SAVE_VERSION = 2 as const
+export const SAVE_VERSION = 3 as const
 
 export interface SaveV1 {
   version: 1
@@ -22,6 +22,14 @@ export interface SaveV1 {
 }
 
 export interface SaveV2 {
+  version: 2
+  player: CharacterState
+  currentSceneId: SceneId
+  completedQuests: QuestId[]
+  activeQuests: ActiveQuest[]
+}
+
+export interface SaveV3 {
   version: typeof SAVE_VERSION
   player: CharacterState
   currentSceneId: SceneId
@@ -29,7 +37,7 @@ export interface SaveV2 {
   activeQuests: ActiveQuest[]
 }
 
-export type SaveData = SaveV2
+export type SaveData = SaveV3
 
 const defaultSceneId = asSceneId('scene_001_village')
 
@@ -50,11 +58,15 @@ const defaultPlayer: CharacterState = {
     {
       skillId: asSkillId('skill_sword_010_qingmang'),
       proficiency: 0,
+      realmLevel: 1,
+      insight: 0,
       unlockedMoveIds: ['move_qingmang_01'],
     },
     {
       skillId: asSkillId('skill_internal_001_huntuan'),
       proficiency: 0,
+      realmLevel: 1,
+      insight: 0,
       unlockedMoveIds: ['move_huntuan_01'],
     },
   ],
@@ -62,7 +74,7 @@ const defaultPlayer: CharacterState = {
   equippedSkillIds: [asSkillId('skill_sword_010_qingmang')],
 }
 
-export function createDefaultSave(): SaveV2 {
+export function createDefaultSave(): SaveV3 {
   return {
     version: SAVE_VERSION,
     player: structuredClone(defaultPlayer),
@@ -89,7 +101,12 @@ function isSkillRuntime(value: unknown): value is SkillRuntime {
     return false
   }
   const runtime = value as Record<string, unknown>
-  if (typeof runtime.skillId !== 'string' || typeof runtime.proficiency !== 'number') {
+  if (
+    typeof runtime.skillId !== 'string' ||
+    typeof runtime.proficiency !== 'number' ||
+    typeof runtime.realmLevel !== 'number' ||
+    typeof runtime.insight !== 'number'
+  ) {
     return false
   }
   if (!Array.isArray(runtime.unlockedMoveIds)) {
@@ -164,6 +181,29 @@ export function isSaveV2(value: unknown): value is SaveV2 {
     return false
   }
   const save = value as Record<string, unknown>
+  if (save.version !== 2) {
+    return false
+  }
+  if (typeof save.currentSceneId !== 'string') {
+    return false
+  }
+  if (!Array.isArray(save.completedQuests)) {
+    return false
+  }
+  if (!save.completedQuests.every((questId) => typeof questId === 'string')) {
+    return false
+  }
+  if (!Array.isArray(save.activeQuests) || !save.activeQuests.every(isActiveQuest)) {
+    return false
+  }
+  return isCharacterState(save.player)
+}
+
+export function isSaveV3(value: unknown): value is SaveV3 {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const save = value as Record<string, unknown>
   if (save.version !== SAVE_VERSION) {
     return false
   }
@@ -182,22 +222,46 @@ export function isSaveV2(value: unknown): value is SaveV2 {
   return isCharacterState(save.player)
 }
 
-function migrateV1ToV2(save: SaveV1): SaveV2 {
+function enrichPlayerRuntime(player: CharacterState): CharacterState {
+  return {
+    ...player,
+    learnedSkills: player.learnedSkills.map((runtime) => ({
+      ...runtime,
+      realmLevel: runtime.realmLevel ?? 1,
+      insight: runtime.insight ?? 0,
+    })),
+  }
+}
+
+function migrateV1ToV3(save: SaveV1): SaveV3 {
   return {
     version: SAVE_VERSION,
-    player: save.player,
+    player: enrichPlayerRuntime(save.player),
     currentSceneId: save.currentSceneId,
     completedQuests: save.completedQuests.map((questId) => asQuestId(questId)),
     activeQuests: [],
   }
 }
 
-export function migrateSave(raw: unknown): SaveV2 | null {
-  if (isSaveV2(raw)) {
+function migrateV2ToV3(save: SaveV2): SaveV3 {
+  return {
+    version: SAVE_VERSION,
+    player: enrichPlayerRuntime(save.player),
+    currentSceneId: save.currentSceneId,
+    completedQuests: save.completedQuests.map((questId) => asQuestId(questId)),
+    activeQuests: save.activeQuests,
+  }
+}
+
+export function migrateSave(raw: unknown): SaveV3 | null {
+  if (isSaveV3(raw)) {
     return raw
   }
+  if (isSaveV2(raw)) {
+    return migrateV2ToV3(raw)
+  }
   if (isSaveV1(raw)) {
-    return migrateV1ToV2(raw)
+    return migrateV1ToV3(raw)
   }
   return null
 }

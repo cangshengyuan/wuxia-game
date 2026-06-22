@@ -66,6 +66,8 @@ describe('gameStore', () => {
           {
             skillId: asSkillId('skill_sword_010_qingmang'),
             proficiency: 9,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: ['move_qingmang_01'],
           },
           ...defaultPlayer.learnedSkills.slice(1),
@@ -244,6 +246,8 @@ describe('gameStore', () => {
           {
             skillId: asSkillId('skill_sword_010_qingmang'),
             proficiency: 7,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: ['move_qingmang_01'],
           },
           ...defaultPlayer.learnedSkills.slice(1),
@@ -297,6 +301,8 @@ describe('gameStore', () => {
           {
             skillId: asSkillId('skill_sword_010_qingmang'),
             proficiency: 1,
+            realmLevel: 1,
+            insight: 0,
             unlockedMoveIds: ['move_qingmang_01'],
           },
           ...defaultPlayer.learnedSkills.slice(1),
