@@ -30,5 +30,21 @@
       { "id": "move_shigang_01", "name": "沉石坠身", "cd": 4, "qiCost": 5, "powerRatio": 0.68, "unlockProficiency": 0 },
       { "id": "move_shigang_02", "name": "罡气回震", "cd": 5, "qiCost": 8, "powerRatio": 0.92, "unlockProficiency": 10 }
     ]
+  },
+  {
+    "id": "skill_hard_120_jinzhong",
+    "name": "金钟罩",
+    "category": "hard",
+    "tier": "mid",
+    "description": "以护体罡劲化解冲击的中阶硬功。",
+    "maxProficiency": 60,
+    "tags": ["hard", "advanced", "guard"],
+    "realm": { "minLevel": 1, "maxLevel": 4, "breakthroughProficiency": [18, 34, 52], "insightThresholds": [3, 5, 7], "similarSkillRequired": [2, 2, 3] },
+    "attributeGrowth": { "maxHp": { "perProficiency": 0.95, "perRealm": 5, "maxBonus": 34 }, "constitution": { "perProficiency": 0.16, "perRealm": 1, "maxBonus": 10 } },
+    "growthCurve": { "proficiencyMultiplier": 0.9, "battleGainMultiplier": 1.08, "breakthroughCostMultiplier": 1.2, "insightChanceMultiplier": 1.02, "inheritanceCapRatio": 0.45 },
+    "moves": [
+      { "id": "move_jinzhong_01", "name": "金钟覆体", "cd": 4, "qiCost": 8, "powerRatio": 0.82, "unlockProficiency": 0 },
+      { "id": "move_jinzhong_02", "name": "钟劲反震", "cd": 6, "qiCost": 12, "powerRatio": 1.02, "unlockProficiency": 24 }
+    ]
   }
 ]

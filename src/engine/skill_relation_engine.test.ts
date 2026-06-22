@@ -28,7 +28,7 @@ describe('skill_relation_engine', () => {
   })
 
   it('finds inheritance sources for sheying and keeps catalog non-empty', () => {
-    expect(listAllSkillRelations().length).toBeGreaterThanOrEqual(9)
+    expect(listAllSkillRelations().length).toBeGreaterThanOrEqual(18)
     const sources = getInheritanceSources('skill_sword_020_sheying')
     expect(sources).toHaveLength(2)
     expect(sources.every((relation) => relation.targetSkillId === 'skill_sword_020_sheying')).toBe(

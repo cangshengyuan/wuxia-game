@@ -84,6 +84,10 @@ export const createBattleSlice: GameStoreSlice<BattleSliceState> = (set, get) =>
       },
       recentUnlocks: [...get().recentUnlocks, ...newUnlocks],
     })
+
+    for (const skillId of result.skillRewards ?? []) {
+      get().learnSkill(skillId)
+    }
   },
 
   dismissUnlockNotice: (id) => {

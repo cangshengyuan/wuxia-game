@@ -30,6 +30,7 @@ export interface EnemyDefinition {
   maxQi: number
   attributes: CharacterAttributes
   equippedSkillIds: SkillId[]
+  skillRewards?: SkillId[]
   speed: number
 }
 

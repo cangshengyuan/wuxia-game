@@ -51,6 +51,9 @@ function isEnemyDefinition(value: unknown): value is EnemyDefinition {
   return e.equippedSkillIds.every(
     (sid) => typeof sid === 'string' && sid.startsWith('skill_'),
   )
+    && (e.skillRewards === undefined || (Array.isArray(e.skillRewards) && e.skillRewards.every(
+      (sid) => typeof sid === 'string' && sid.startsWith('skill_'),
+    )))
 }
 
 function normalizeEnemy(raw: Record<string, unknown>): EnemyDefinition {
@@ -64,6 +67,9 @@ function normalizeEnemy(raw: Record<string, unknown>): EnemyDefinition {
     maxQi: raw.maxQi as number,
     attributes: raw.attributes as EnemyDefinition['attributes'],
     equippedSkillIds: (raw.equippedSkillIds as string[]).map(asSkillId),
+    ...(raw.skillRewards !== undefined
+      ? { skillRewards: (raw.skillRewards as string[]).map(asSkillId) }
+      : {}),
     speed: raw.speed as number,
   }
 }

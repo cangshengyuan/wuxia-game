@@ -1,0 +1,18 @@
+[
+  {
+    "id": "skill_external_060_kaishan",
+    "name": "开山掌",
+    "category": "external",
+    "tier": "low",
+    "description": "朴实刚猛的掌法，适合作为副外功。",
+    "maxProficiency": 30,
+    "tags": ["external", "basic", "palm"],
+    "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 20], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
+    "attributeGrowth": { "armStrength": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 5 }, "constitution": { "perProficiency": 0.05, "perRealm": 1, "maxBonus": 2 } },
+    "growthCurve": { "proficiencyMultiplier": 1, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.35 },
+    "moves": [
+      { "id": "move_kaishan_01", "name": "劈山断石", "cd": 3, "qiCost": 7, "powerRatio": 1.05, "unlockProficiency": 0 },
+      { "id": "move_kaishan_02", "name": "震岳开碑", "cd": 5, "qiCost": 11, "powerRatio": 1.2, "unlockProficiency": 12 }
+    ]
+  }
+]

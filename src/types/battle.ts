@@ -80,4 +80,5 @@ export interface BattleResult {
   finalEnemyHp: number
   finalEnemyQi: number
   proficiencyGains: ProficiencyGain[]
+  skillRewards?: SkillId[]
 }

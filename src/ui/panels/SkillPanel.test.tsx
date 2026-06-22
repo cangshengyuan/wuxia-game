@@ -106,6 +106,34 @@ describe('SkillPanel', () => {
     expect(screen.getByText('已解锁招式：无')).toBeInTheDocument()
   })
 
+  it('renders active synergy text when a linked skill condition is met', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        learnedSkills: [
+          {
+            skillId: asSkillId('skill_sword_010_qingmang'),
+            proficiency: 18,
+            realmLevel: 1,
+            insight: 0,
+            unlockedMoveIds: ['move_qingmang_01', 'move_qingmang_02', 'move_qingmang_03'],
+          },
+          {
+            skillId: asSkillId('skill_sword_020_sheying'),
+            proficiency: 8,
+            realmLevel: 1,
+            insight: 0,
+            unlockedMoveIds: ['move_sheying_01'],
+          },
+        ],
+      },
+    })
+
+    render(<SkillPanel />)
+
+    expect(screen.getByText(/青蟒剑法：伤害 x1.18，收益 x1.10/)).toBeInTheDocument()
+  })
+
   it('skips skills that cannot be displayed', () => {
     useGameStore.setState({
       player: {

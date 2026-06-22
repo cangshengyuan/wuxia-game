@@ -7,6 +7,7 @@
  * @depends types, data
  * @forbidden 禁止 import React、禁止访问 store、禁止修改 data 原始对象
  */
+import externalSkills from '../data/skills/external/index.json'
 import internalSkills from '../data/skills/internal/index.json'
 import hardSkills from '../data/skills/hard/index.json'
 import qinggongSkills from '../data/skills/qinggong/index.json'
@@ -184,7 +185,13 @@ function normalizeSkill(raw: Record<string, unknown>): SkillDefinition {
   }
 }
 
-const rawSkills: unknown[] = [...internalSkills, ...hardSkills, ...qinggongSkills, ...swordSkills]
+const rawSkills: unknown[] = [
+  ...externalSkills,
+  ...internalSkills,
+  ...hardSkills,
+  ...qinggongSkills,
+  ...swordSkills,
+]
 const skillCatalog: SkillDefinition[] = rawSkills
   .filter(isSkillDefinition)
   .map((skill) => normalizeSkill(skill as unknown as Record<string, unknown>))

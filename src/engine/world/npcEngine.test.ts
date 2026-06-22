@@ -14,7 +14,7 @@ import { asSceneId } from '../../types/id'
 describe('npcEngine', () => {
   it('lists village swordsman in newbie village', () => {
     const npcs = listNpcsByScene(asSceneId('scene_001_village'))
-    expect(npcs).toHaveLength(1)
+    expect(npcs).toHaveLength(3)
     expect(npcs[0]?.name).toBe('村口剑客')
   })
 

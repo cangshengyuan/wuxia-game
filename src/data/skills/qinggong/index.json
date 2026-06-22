@@ -30,5 +30,37 @@
       { "id": "move_zhuifeng_01", "name": "风前疾走", "cd": 2, "qiCost": 4, "powerRatio": 0.72, "unlockProficiency": 0 },
       { "id": "move_zhuifeng_02", "name": "风回掠影", "cd": 3, "qiCost": 8, "powerRatio": 0.95, "unlockProficiency": 12 }
     ]
+  },
+  {
+    "id": "skill_qinggong_120_feixu",
+    "name": "飞絮身法",
+    "category": "qinggong",
+    "tier": "mid",
+    "description": "借风借势，身法轻盈如絮。",
+    "maxProficiency": 60,
+    "tags": ["qinggong", "advanced", "swift"],
+    "realm": { "minLevel": 1, "maxLevel": 4, "breakthroughProficiency": [16, 32, 50], "insightThresholds": [3, 5, 7], "similarSkillRequired": [2, 2, 3] },
+    "attributeGrowth": { "speed": { "perProficiency": 0.2, "perRealm": 2, "maxBonus": 12 }, "agility": { "perProficiency": 0.12, "perRealm": 1, "maxBonus": 8 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1.12, "breakthroughCostMultiplier": 1.18, "insightChanceMultiplier": 1.08, "inheritanceCapRatio": 0.45 },
+    "moves": [
+      { "id": "move_feixu_01", "name": "飞絮借风", "cd": 2, "qiCost": 6, "powerRatio": 0.88, "unlockProficiency": 0 },
+      { "id": "move_feixu_02", "name": "轻絮落肩", "cd": 3, "qiCost": 10, "powerRatio": 1.05, "unlockProficiency": 22 }
+    ]
+  },
+  {
+    "id": "skill_qinggong_130_tayun",
+    "name": "踏云纵",
+    "category": "qinggong",
+    "tier": "high",
+    "description": "高阶轻功，讲究凌空借势。",
+    "maxProficiency": 90,
+    "tags": ["qinggong", "advanced", "swift"],
+    "realm": { "minLevel": 1, "maxLevel": 5, "breakthroughProficiency": [22, 40, 62, 82], "insightThresholds": [4, 6, 8, 10], "similarSkillRequired": [2, 3, 3, 4] },
+    "attributeGrowth": { "speed": { "perProficiency": 0.24, "perRealm": 2, "maxBonus": 16 }, "agility": { "perProficiency": 0.14, "perRealm": 1, "maxBonus": 10 } },
+    "growthCurve": { "proficiencyMultiplier": 0.9, "battleGainMultiplier": 1.15, "breakthroughCostMultiplier": 1.28, "insightChanceMultiplier": 1.12, "inheritanceCapRatio": 0.5 },
+    "moves": [
+      { "id": "move_tayun_01", "name": "踏云借月", "cd": 2, "qiCost": 8, "powerRatio": 0.95, "unlockProficiency": 0 },
+      { "id": "move_tayun_02", "name": "云回天纵", "cd": 3, "qiCost": 12, "powerRatio": 1.12, "unlockProficiency": 28 }
+    ]
   }
 ]

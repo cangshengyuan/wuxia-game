@@ -11,13 +11,18 @@ import { gameEventBus } from '../engine/game_event_bus'
 import { advanceQuest, getCurrentObjectiveDescription } from '../engine/quest/quest_engine'
 import { getNpcById } from '../engine/world/npcEngine'
 import { getQuestById } from '../engine/world/questEngine'
-import { asNpcId, asQuestId } from '../types/id'
+import { asNpcId, asQuestId, asSkillId } from '../types/id'
 import type { QuestId } from '../types/id'
 import type { GameEvent } from '../types/event'
 import type { GameStoreSlice, GameStoreState } from './gameStore.types'
 
 const FIRST_BLOOD_QUEST_ID = asQuestId('quest_main_001_first_blood')
 const SWORDSMAN_NPC_ID = asNpcId('npc_001_village_swordsman')
+const TRAINER_NPC_ID = asNpcId('npc_002_village_trainer')
+const HERMIT_NPC_ID = asNpcId('npc_003_village_hermit')
+const KAISHAN_SKILL_ID = asSkillId('skill_external_060_kaishan')
+const SHEYING_SKILL_ID = asSkillId('skill_sword_020_sheying')
+const QINGMANG_SKILL_ID = asSkillId('skill_sword_010_qingmang')
 
 type QuestSliceState = Pick<
   GameStoreState,
@@ -59,6 +64,43 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
       (activeQuest) => activeQuest.questId === FIRST_BLOOD_QUEST_ID,
     )
     const isFirstBloodCompleted = get().completedQuests.includes(FIRST_BLOOD_QUEST_ID)
+
+    if (id === TRAINER_NPC_ID) {
+      const knowsKaishan = get().player.learnedSkills.some(
+        (skill) => skill.skillId === KAISHAN_SKILL_ID,
+      )
+      return {
+        npcId: npc.id,
+        npcName: npc.name,
+        npcDescription: npc.description ?? '（暂无描述）',
+        message: knowsKaishan
+          ? '「开山掌讲究先立身，再发力。」'
+          : '「你若愿学一门副外功，我可传你开山掌。」',
+        ...(knowsKaishan ? {} : { primaryActionLabel: '请教掌法' }),
+      }
+    }
+
+    if (id === HERMIT_NPC_ID) {
+      const qingmangRuntime = get().player.learnedSkills.find(
+        (skill) => skill.skillId === QINGMANG_SKILL_ID,
+      )
+      const knowsSheying = get().player.learnedSkills.some(
+        (skill) => skill.skillId === SHEYING_SKILL_ID,
+      )
+      const isReadyForSheying = (qingmangRuntime?.proficiency ?? 0) >= 30
+
+      return {
+        npcId: npc.id,
+        npcName: npc.name,
+        npcDescription: npc.description ?? '（暂无描述）',
+        message: knowsSheying
+          ? '「你已得蛇影剑谱，接下来重在把连携练活。」'
+          : isReadyForSheying
+            ? '「青蟒根基已成，我可将蛇影剑谱传你。」'
+            : '「先把青蟒剑法练满三十重熟练，再来谈更高一层的蛇系剑路。」',
+        ...(!knowsSheying && isReadyForSheying ? { primaryActionLabel: '请教剑谱' } : {}),
+      }
+    }
 
     if (!quest || id !== SWORDSMAN_NPC_ID) {
       return {
@@ -148,6 +190,30 @@ export const createQuestSlice: GameStoreSlice<QuestSliceState> = (set, get) => (
 
   performNpcDialogAction: (npcId) => {
     const id = typeof npcId === 'string' ? asNpcId(npcId) : npcId
+    if (id === TRAINER_NPC_ID) {
+      if (
+        !get().player.learnedSkills.some(
+          (skill) => skill.skillId === KAISHAN_SKILL_ID,
+        )
+      ) {
+        get().learnSkill(KAISHAN_SKILL_ID)
+      }
+      return
+    }
+
+    if (id === HERMIT_NPC_ID) {
+      const qingmangRuntime = get().player.learnedSkills.find(
+        (skill) => skill.skillId === QINGMANG_SKILL_ID,
+      )
+      const knowsSheying = get().player.learnedSkills.some(
+        (skill) => skill.skillId === SHEYING_SKILL_ID,
+      )
+      if (!knowsSheying && (qingmangRuntime?.proficiency ?? 0) >= 30) {
+        get().learnSkill(SHEYING_SKILL_ID)
+      }
+      return
+    }
+
     if (id === SWORDSMAN_NPC_ID) {
       const activeFirstBlood = get().activeQuests.find(
         (activeQuest) => activeQuest.questId === FIRST_BLOOD_QUEST_ID,

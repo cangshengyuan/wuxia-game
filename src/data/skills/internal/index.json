@@ -56,5 +56,37 @@
     "attributeGrowth": { "maxHp": { "perProficiency": 0.55, "perRealm": 3, "maxBonus": 18 }, "constitution": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 5 } },
     "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1.1, "insightChanceMultiplier": 0.95, "inheritanceCapRatio": 0.35 },
     "moves": [{ "id": "move_jingang_01", "name": "金刚护体", "cd": 4, "qiCost": 6, "powerRatio": 0.7, "unlockProficiency": 0 }]
+  },
+  {
+    "id": "skill_internal_020_guiyuan",
+    "name": "归元功",
+    "category": "internal",
+    "tier": "mid",
+    "description": "内息归一，兼顾内力与体魄的中阶心法。",
+    "maxProficiency": 60,
+    "tags": ["internal_qi", "advanced"],
+    "realm": { "minLevel": 1, "maxLevel": 4, "breakthroughProficiency": [18, 34, 52], "insightThresholds": [3, 5, 7], "similarSkillRequired": [2, 2, 3] },
+    "attributeGrowth": { "maxQi": { "perProficiency": 0.65, "perRealm": 3, "maxBonus": 24 }, "constitution": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 8 }, "maxHp": { "perProficiency": 0.4, "perRealm": 2, "maxBonus": 16 } },
+    "growthCurve": { "proficiencyMultiplier": 0.95, "battleGainMultiplier": 1.1, "breakthroughCostMultiplier": 1.2, "insightChanceMultiplier": 1.08, "inheritanceCapRatio": 0.45 },
+    "moves": [
+      { "id": "move_guiyuan_01", "name": "归元抱一", "cd": 5, "qiCost": 10, "powerRatio": 0.92, "unlockProficiency": 0 },
+      { "id": "move_guiyuan_02", "name": "元息周转", "cd": 7, "qiCost": 16, "powerRatio": 1.15, "unlockProficiency": 24 }
+    ]
+  },
+  {
+    "id": "skill_internal_030_taixuan",
+    "name": "太玄真息",
+    "category": "internal",
+    "tier": "high",
+    "description": "高阶真息法门，重在绵长内力与全身统合。",
+    "maxProficiency": 90,
+    "tags": ["internal_qi", "advanced"],
+    "realm": { "minLevel": 1, "maxLevel": 5, "breakthroughProficiency": [24, 42, 66, 84], "insightThresholds": [4, 6, 8, 10], "similarSkillRequired": [2, 3, 3, 4] },
+    "attributeGrowth": { "maxQi": { "perProficiency": 0.78, "perRealm": 4, "maxBonus": 34 }, "constitution": { "perProficiency": 0.12, "perRealm": 1, "maxBonus": 10 }, "maxHp": { "perProficiency": 0.48, "perRealm": 3, "maxBonus": 20 } },
+    "growthCurve": { "proficiencyMultiplier": 0.9, "battleGainMultiplier": 1.15, "breakthroughCostMultiplier": 1.3, "insightChanceMultiplier": 1.12, "inheritanceCapRatio": 0.5 },
+    "moves": [
+      { "id": "move_taixuan_01", "name": "太玄归藏", "cd": 6, "qiCost": 14, "powerRatio": 1.1, "unlockProficiency": 0 },
+      { "id": "move_taixuan_02", "name": "真息化罡", "cd": 8, "qiCost": 22, "powerRatio": 1.35, "unlockProficiency": 36 }
+    ]
   }
 ]

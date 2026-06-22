@@ -1,92 +1,20 @@
 [
-  {
-    "id": "rel_inherit_001_qingmang_sheying",
-    "type": "inheritance",
-    "sourceSkillId": "skill_sword_010_qingmang",
-    "targetSkillId": "skill_sword_020_sheying",
-    "description": "青蟒剑法的蛇形刺击经验可转化为蛇影剑谱基础熟练。",
-    "transferRatio": 0.55,
-    "sameTierBonus": 0.15,
-    "crossTierPenalty": 0.22,
-    "maxInitialRatio": 0.4,
-    "minSourceProficiency": 8
-  },
-  {
-    "id": "rel_inherit_002_shexing_sheying",
-    "type": "inheritance",
-    "sourceSkillId": "skill_sword_014_shexing",
-    "targetSkillId": "skill_sword_020_sheying",
-    "description": "蛇行剑路的步法根基可转化为蛇影剑谱的起手熟练。",
-    "transferRatio": 0.6,
-    "sameTierBonus": 0.12,
-    "crossTierPenalty": 0.2,
-    "maxInitialRatio": 0.4,
-    "minSourceProficiency": 8
-  },
-  {
-    "id": "rel_inherit_003_sheying_tianmang",
-    "type": "inheritance",
-    "sourceSkillId": "skill_sword_020_sheying",
-    "targetSkillId": "skill_sword_030_tianmang",
-    "description": "蛇影剑谱的成套套路会为天蟒剑典提供衰减后的基础熟练。",
-    "transferRatio": 0.48,
-    "sameTierBonus": 0.1,
-    "crossTierPenalty": 0.28,
-    "maxInitialRatio": 0.45,
-    "minSourceProficiency": 16
-  },
-  {
-    "id": "rel_synergy_001_qingmang_sheying",
-    "type": "synergy",
-    "sourceSkillId": "skill_sword_010_qingmang",
-    "targetSkillId": "skill_sword_020_sheying",
-    "description": "青蟒剑法练至精熟后，可提升蛇影剑谱的杀伤与收益。",
-    "requiredProficiency": 18,
-    "damageMultiplier": 1.18,
-    "battleGainMultiplier": 1.1
-  },
-  {
-    "id": "rel_synergy_002_shexing_tianmang",
-    "type": "synergy",
-    "sourceSkillId": "skill_sword_014_shexing",
-    "targetSkillId": "skill_sword_030_tianmang",
-    "description": "蛇行步法圆熟后，可让天蟒剑典更快抓到出手时机。",
-    "requiredProficiency": 15,
-    "damageMultiplier": 1.12,
-    "battleGainMultiplier": 1.08
-  },
-  {
-    "id": "rel_synergy_003_songfeng_baihong",
-    "type": "synergy",
-    "sourceSkillId": "skill_sword_013_songfeng",
-    "targetSkillId": "skill_sword_011_baihong",
-    "description": "松风剑法的轻灵步调，可让白虹剑法更易打出先手。",
-    "requiredProficiency": 12,
-    "damageMultiplier": 1.08,
-    "battleGainMultiplier": 1.05
-  },
-  {
-    "id": "rel_similarity_001_qingmang_sheying",
-    "type": "similarity",
-    "sourceSkillId": "skill_sword_010_qingmang",
-    "targetSkillId": "skill_sword_020_sheying",
-    "description": "青蟒剑法与蛇影剑谱同属蛇形连刺一路。",
-    "similarity": 0.88
-  },
-  {
-    "id": "rel_similarity_002_shexing_sheying",
-    "type": "similarity",
-    "sourceSkillId": "skill_sword_014_shexing",
-    "targetSkillId": "skill_sword_020_sheying",
-    "description": "蛇行剑路与蛇影剑谱在步法节奏上高度相似。",
-    "similarity": 0.92
-  },
-  {
-    "id": "rel_similarity_003_sheying_tianmang",
-    "type": "similarity",
-    "sourceSkillId": "skill_sword_020_sheying",
-    "targetSkillId": "skill_sword_030_tianmang",
-    "description": "蛇影剑谱是通往天蟒剑典的重要过渡剑路。",
-    "similarity": 0.95
-  }
+  { "id": "rel_inherit_001_qingmang_sheying", "type": "inheritance", "sourceSkillId": "skill_sword_010_qingmang", "targetSkillId": "skill_sword_020_sheying", "description": "青蟒剑法的蛇形刺击经验可转化为蛇影剑谱基础熟练。", "transferRatio": 0.55, "sameTierBonus": 0.15, "crossTierPenalty": 0.22, "maxInitialRatio": 0.4, "minSourceProficiency": 8 },
+  { "id": "rel_inherit_002_shexing_sheying", "type": "inheritance", "sourceSkillId": "skill_sword_014_shexing", "targetSkillId": "skill_sword_020_sheying", "description": "蛇行剑路的步法根基可转化为蛇影剑谱的起手熟练。", "transferRatio": 0.6, "sameTierBonus": 0.12, "crossTierPenalty": 0.2, "maxInitialRatio": 0.4, "minSourceProficiency": 8 },
+  { "id": "rel_inherit_003_sheying_tianmang", "type": "inheritance", "sourceSkillId": "skill_sword_020_sheying", "targetSkillId": "skill_sword_030_tianmang", "description": "蛇影剑谱的成套套路会为天蟒剑典提供衰减后的基础熟练。", "transferRatio": 0.48, "sameTierBonus": 0.1, "crossTierPenalty": 0.28, "maxInitialRatio": 0.45, "minSourceProficiency": 16 },
+  { "id": "rel_inherit_004_caoying_feixu", "type": "inheritance", "sourceSkillId": "skill_qinggong_040_caoying", "targetSkillId": "skill_qinggong_120_feixu", "description": "草影步的轻身节奏可迁移到飞絮身法。", "transferRatio": 0.58, "sameTierBonus": 0.12, "crossTierPenalty": 0.2, "maxInitialRatio": 0.4, "minSourceProficiency": 8 },
+  { "id": "rel_inherit_005_zhuifeng_feixu", "type": "inheritance", "sourceSkillId": "skill_qinggong_041_zhuifeng", "targetSkillId": "skill_qinggong_120_feixu", "description": "追风步的抢先手经验可转换为飞絮身法的起步熟练。", "transferRatio": 0.55, "sameTierBonus": 0.14, "crossTierPenalty": 0.2, "maxInitialRatio": 0.4, "minSourceProficiency": 8 },
+  { "id": "rel_inherit_006_feixu_tayun", "type": "inheritance", "sourceSkillId": "skill_qinggong_120_feixu", "targetSkillId": "skill_qinggong_130_tayun", "description": "飞絮身法的空中借势经验可为踏云纵提供基础。", "transferRatio": 0.48, "sameTierBonus": 0.1, "crossTierPenalty": 0.28, "maxInitialRatio": 0.45, "minSourceProficiency": 16 },
+  { "id": "rel_synergy_001_qingmang_sheying", "type": "synergy", "sourceSkillId": "skill_sword_010_qingmang", "targetSkillId": "skill_sword_020_sheying", "description": "青蟒剑法练至精熟后，可提升蛇影剑谱的杀伤与收益。", "requiredProficiency": 18, "damageMultiplier": 1.18, "battleGainMultiplier": 1.1 },
+  { "id": "rel_synergy_002_shexing_tianmang", "type": "synergy", "sourceSkillId": "skill_sword_014_shexing", "targetSkillId": "skill_sword_030_tianmang", "description": "蛇行步法圆熟后，可让天蟒剑典更快抓到出手时机。", "requiredProficiency": 15, "damageMultiplier": 1.12, "battleGainMultiplier": 1.08 },
+  { "id": "rel_synergy_003_songfeng_baihong", "type": "synergy", "sourceSkillId": "skill_sword_013_songfeng", "targetSkillId": "skill_sword_011_baihong", "description": "松风剑法的轻灵步调，可让白虹剑法更易打出先手。", "requiredProficiency": 12, "damageMultiplier": 1.08, "battleGainMultiplier": 1.05 },
+  { "id": "rel_synergy_004_caoying_feixu", "type": "synergy", "sourceSkillId": "skill_qinggong_040_caoying", "targetSkillId": "skill_qinggong_120_feixu", "description": "草影步练熟后，可提升飞絮身法的抢节奏能力。", "requiredProficiency": 16, "damageMultiplier": 1.1, "battleGainMultiplier": 1.08 },
+  { "id": "rel_synergy_005_zhuifeng_tayun", "type": "synergy", "sourceSkillId": "skill_qinggong_041_zhuifeng", "targetSkillId": "skill_qinggong_130_tayun", "description": "追风步的爆发步伐，可让踏云纵更快切入。", "requiredProficiency": 18, "damageMultiplier": 1.12, "battleGainMultiplier": 1.08 },
+  { "id": "rel_synergy_006_feixu_tayun", "type": "synergy", "sourceSkillId": "skill_qinggong_120_feixu", "targetSkillId": "skill_qinggong_130_tayun", "description": "飞絮身法大成后，能显著强化踏云纵。", "requiredProficiency": 24, "damageMultiplier": 1.15, "battleGainMultiplier": 1.1 },
+  { "id": "rel_similarity_001_qingmang_sheying", "type": "similarity", "sourceSkillId": "skill_sword_010_qingmang", "targetSkillId": "skill_sword_020_sheying", "description": "青蟒剑法与蛇影剑谱同属蛇形连刺一路。", "similarity": 0.88 },
+  { "id": "rel_similarity_002_shexing_sheying", "type": "similarity", "sourceSkillId": "skill_sword_014_shexing", "targetSkillId": "skill_sword_020_sheying", "description": "蛇行剑路与蛇影剑谱在步法节奏上高度相似。", "similarity": 0.92 },
+  { "id": "rel_similarity_003_sheying_tianmang", "type": "similarity", "sourceSkillId": "skill_sword_020_sheying", "targetSkillId": "skill_sword_030_tianmang", "description": "蛇影剑谱是通往天蟒剑典的重要过渡剑路。", "similarity": 0.95 },
+  { "id": "rel_similarity_004_caoying_feixu", "type": "similarity", "sourceSkillId": "skill_qinggong_040_caoying", "targetSkillId": "skill_qinggong_120_feixu", "description": "草影步与飞絮身法同走轻灵飘忽一路。", "similarity": 0.88 },
+  { "id": "rel_similarity_005_zhuifeng_feixu", "type": "similarity", "sourceSkillId": "skill_qinggong_041_zhuifeng", "targetSkillId": "skill_qinggong_120_feixu", "description": "追风步与飞絮身法都强调抢先身位。", "similarity": 0.9 },
+  { "id": "rel_similarity_006_feixu_tayun", "type": "similarity", "sourceSkillId": "skill_qinggong_120_feixu", "targetSkillId": "skill_qinggong_130_tayun", "description": "飞絮身法是踏云纵的重要过渡身法。", "similarity": 0.95 }
 ]

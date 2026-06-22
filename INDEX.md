@@ -10,10 +10,16 @@
 | skill_internal_002_tuna | 吐纳诀 | internal | data/skills/internal/index.json |
 | skill_internal_003_xiaozhou | 小周天功 | internal | data/skills/internal/index.json |
 | skill_internal_004_jingang | 金刚诀 | internal | data/skills/internal/index.json |
+| skill_internal_020_guiyuan | 归元功 | internal | data/skills/internal/index.json |
+| skill_internal_030_taixuan | 太玄真息 | internal | data/skills/internal/index.json |
+| skill_external_060_kaishan | 开山掌 | external | data/skills/external/index.json |
 | skill_hard_050_tiebu | 铁布衫 | hard | data/skills/hard/index.json |
 | skill_hard_051_shigang | 石罡身 | hard | data/skills/hard/index.json |
+| skill_hard_120_jinzhong | 金钟罩 | hard | data/skills/hard/index.json |
 | skill_qinggong_040_caoying | 草影步 | qinggong | data/skills/qinggong/index.json |
 | skill_qinggong_041_zhuifeng | 追风步 | qinggong | data/skills/qinggong/index.json |
+| skill_qinggong_120_feixu | 飞絮身法 | qinggong | data/skills/qinggong/index.json |
+| skill_qinggong_130_tayun | 踏云纵 | qinggong | data/skills/qinggong/index.json |
 | skill_sword_010_qingmang | 青蟒剑法 | sword | data/skills/sword/index.json |
 | skill_sword_011_baihong | 白虹剑法 | sword | data/skills/sword/index.json |
 | skill_sword_012_liushui | 流水剑法 | sword | data/skills/sword/index.json |
@@ -32,14 +38,26 @@
 | move_xiaozhou_01 | skill_internal_003_xiaozhou | data/skills/internal/index.json |
 | move_xiaozhou_02 | skill_internal_003_xiaozhou | data/skills/internal/index.json |
 | move_jingang_01 | skill_internal_004_jingang | data/skills/internal/index.json |
+| move_guiyuan_01 | skill_internal_020_guiyuan | data/skills/internal/index.json |
+| move_guiyuan_02 | skill_internal_020_guiyuan | data/skills/internal/index.json |
+| move_taixuan_01 | skill_internal_030_taixuan | data/skills/internal/index.json |
+| move_taixuan_02 | skill_internal_030_taixuan | data/skills/internal/index.json |
+| move_kaishan_01 | skill_external_060_kaishan | data/skills/external/index.json |
+| move_kaishan_02 | skill_external_060_kaishan | data/skills/external/index.json |
 | move_tiebu_01 | skill_hard_050_tiebu | data/skills/hard/index.json |
 | move_tiebu_02 | skill_hard_050_tiebu | data/skills/hard/index.json |
 | move_shigang_01 | skill_hard_051_shigang | data/skills/hard/index.json |
 | move_shigang_02 | skill_hard_051_shigang | data/skills/hard/index.json |
+| move_jinzhong_01 | skill_hard_120_jinzhong | data/skills/hard/index.json |
+| move_jinzhong_02 | skill_hard_120_jinzhong | data/skills/hard/index.json |
 | move_caoying_01 | skill_qinggong_040_caoying | data/skills/qinggong/index.json |
 | move_caoying_02 | skill_qinggong_040_caoying | data/skills/qinggong/index.json |
 | move_zhuifeng_01 | skill_qinggong_041_zhuifeng | data/skills/qinggong/index.json |
 | move_zhuifeng_02 | skill_qinggong_041_zhuifeng | data/skills/qinggong/index.json |
+| move_feixu_01 | skill_qinggong_120_feixu | data/skills/qinggong/index.json |
+| move_feixu_02 | skill_qinggong_120_feixu | data/skills/qinggong/index.json |
+| move_tayun_01 | skill_qinggong_130_tayun | data/skills/qinggong/index.json |
+| move_tayun_02 | skill_qinggong_130_tayun | data/skills/qinggong/index.json |
 | move_qingmang_01 | skill_sword_010_qingmang | data/skills/sword/index.json |
 | move_qingmang_02 | skill_sword_010_qingmang | data/skills/sword/index.json |
 | move_qingmang_03 | skill_sword_010_qingmang | data/skills/sword/index.json |
@@ -64,12 +82,21 @@
 | rel_inherit_001_qingmang_sheying | inheritance | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
 | rel_inherit_002_shexing_sheying | inheritance | 蛇行剑路 → 蛇影剑谱 | data/skill_relations/index.json |
 | rel_inherit_003_sheying_tianmang | inheritance | 蛇影剑谱 → 天蟒剑典 | data/skill_relations/index.json |
+| rel_inherit_004_caoying_feixu | inheritance | 草影步 → 飞絮身法 | data/skill_relations/index.json |
+| rel_inherit_005_zhuifeng_feixu | inheritance | 追风步 → 飞絮身法 | data/skill_relations/index.json |
+| rel_inherit_006_feixu_tayun | inheritance | 飞絮身法 → 踏云纵 | data/skill_relations/index.json |
 | rel_synergy_001_qingmang_sheying | synergy | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
 | rel_synergy_002_shexing_tianmang | synergy | 蛇行剑路 → 天蟒剑典 | data/skill_relations/index.json |
 | rel_synergy_003_songfeng_baihong | synergy | 松风剑法 → 白虹剑法 | data/skill_relations/index.json |
+| rel_synergy_004_caoying_feixu | synergy | 草影步 → 飞絮身法 | data/skill_relations/index.json |
+| rel_synergy_005_zhuifeng_tayun | synergy | 追风步 → 踏云纵 | data/skill_relations/index.json |
+| rel_synergy_006_feixu_tayun | synergy | 飞絮身法 → 踏云纵 | data/skill_relations/index.json |
 | rel_similarity_001_qingmang_sheying | similarity | 青蟒剑法 → 蛇影剑谱 | data/skill_relations/index.json |
 | rel_similarity_002_shexing_sheying | similarity | 蛇行剑路 → 蛇影剑谱 | data/skill_relations/index.json |
 | rel_similarity_003_sheying_tianmang | similarity | 蛇影剑谱 → 天蟒剑典 | data/skill_relations/index.json |
+| rel_similarity_004_caoying_feixu | similarity | 草影步 → 飞絮身法 | data/skill_relations/index.json |
+| rel_similarity_005_zhuifeng_feixu | similarity | 追风步 → 飞絮身法 | data/skill_relations/index.json |
+| rel_similarity_006_feixu_tayun | similarity | 飞絮身法 → 踏云纵 | data/skill_relations/index.json |
 
 ## 敌人 (enemy_*)
 
@@ -91,6 +118,8 @@
 | ID | 名称 | 文件 |
 |----|------|------|
 | npc_001_village_swordsman | 村口剑客 | data/npcs/index.json |
+| npc_002_village_trainer | 武馆教头 | data/npcs/index.json |
+| npc_003_village_hermit | 隐居异士 | data/npcs/index.json |
 
 ## 任务 (quest_*)
 

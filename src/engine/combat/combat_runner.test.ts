@@ -205,4 +205,99 @@ describe('combat_runner', () => {
 
     expect(sturdyResult.finalPlayerHp).toBeGreaterThan(plainResult.finalPlayerHp)
   })
+
+  it('can change battle winner through pre-battle formation choices', () => {
+    const enemy = buildEnemyState('enemy_002_bandit_boss')!
+    const playerCore: CharacterState = {
+      ...testPlayer,
+      hp: 90,
+      maxHp: 100,
+      qi: 36,
+      maxQi: 36,
+      attributes: {
+        armStrength: 12,
+        agility: 10,
+        constitution: 11,
+      },
+      learnedSkills: [
+        {
+          skillId: asSkillId('skill_sword_010_qingmang'),
+          proficiency: 24,
+          realmLevel: 3,
+          insight: 0,
+          unlockedMoveIds: ['move_qingmang_01', 'move_qingmang_02', 'move_qingmang_03'],
+        },
+        {
+          skillId: asSkillId('skill_internal_001_huntuan'),
+          proficiency: 24,
+          realmLevel: 3,
+          insight: 0,
+          unlockedMoveIds: ['move_huntuan_01'],
+        },
+        {
+          skillId: asSkillId('skill_sword_011_baihong'),
+          proficiency: 24,
+          realmLevel: 2,
+          insight: 0,
+          unlockedMoveIds: ['move_baihong_01', 'move_baihong_02'],
+        },
+        {
+          skillId: asSkillId('skill_qinggong_040_caoying'),
+          proficiency: 26,
+          realmLevel: 3,
+          insight: 0,
+          unlockedMoveIds: ['move_caoying_01', 'move_caoying_02'],
+        },
+        {
+          skillId: asSkillId('skill_hard_050_tiebu'),
+          proficiency: 26,
+          realmLevel: 3,
+          insight: 0,
+          unlockedMoveIds: ['move_tiebu_01', 'move_tiebu_02'],
+        },
+      ],
+    }
+
+    const plainResult = startBattle({
+      player: buildBattleReadyCharacter({
+        ...playerCore,
+        formation: {
+          external: [asSkillId('skill_sword_010_qingmang')],
+          internal: asSkillId('skill_internal_001_huntuan'),
+        },
+        equippedSkillIds: [
+          asSkillId('skill_sword_010_qingmang'),
+          asSkillId('skill_internal_001_huntuan'),
+        ],
+      }),
+      enemy,
+      rng: createSeededRng(21),
+    })
+    const formedResult = startBattle({
+      player: buildBattleReadyCharacter({
+        ...playerCore,
+        formation: {
+          external: [
+            asSkillId('skill_sword_010_qingmang'),
+            asSkillId('skill_sword_011_baihong'),
+          ],
+          internal: asSkillId('skill_internal_001_huntuan'),
+          qinggong: asSkillId('skill_qinggong_040_caoying'),
+          hard: asSkillId('skill_hard_050_tiebu'),
+        },
+        equippedSkillIds: [
+          asSkillId('skill_sword_010_qingmang'),
+          asSkillId('skill_sword_011_baihong'),
+          asSkillId('skill_internal_001_huntuan'),
+          asSkillId('skill_qinggong_040_caoying'),
+          asSkillId('skill_hard_050_tiebu'),
+        ],
+      }),
+      enemy,
+      rng: createSeededRng(21),
+    })
+
+    expect(plainResult.winnerId).toBe(enemy.id)
+    expect(formedResult.winnerId).toBe(playerCore.id)
+  })
 })

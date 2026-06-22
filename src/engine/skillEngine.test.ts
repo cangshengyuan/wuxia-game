@@ -19,7 +19,7 @@ import { asSkillId } from '../types/id'
 describe('skillEngine', () => {
   it('loads and validates skill catalog from JSON', () => {
     const all = listAllSkills()
-    expect(all.length).toBeGreaterThanOrEqual(11)
+    expect(all.length).toBeGreaterThanOrEqual(21)
   })
 
   it('getSkillById finds huntuan gong', () => {
@@ -38,7 +38,7 @@ describe('skillEngine', () => {
 
   it('getSkillsByCategory filters internal skills', () => {
     const internal = getSkillsByCategory('internal')
-    expect(internal.length).toBe(4)
+    expect(internal.length).toBe(6)
     expect(internal.every((s) => s.category === 'internal')).toBe(true)
   })
 

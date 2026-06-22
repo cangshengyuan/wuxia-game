@@ -4,5 +4,17 @@
     "name": "村口剑客",
     "sceneId": "scene_001_village",
     "description": "曾在江湖行走的老剑客，愿意指点新人。"
+  },
+  {
+    "id": "npc_002_village_trainer",
+    "name": "武馆教头",
+    "sceneId": "scene_001_village",
+    "description": "经营村中小武馆，愿意传授基础掌法。"
+  },
+  {
+    "id": "npc_003_village_hermit",
+    "name": "隐居异士",
+    "sceneId": "scene_001_village",
+    "description": "深谙蛇系剑路，乐于点拨勤学之人。"
   }
 ]

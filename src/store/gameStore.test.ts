@@ -58,6 +58,27 @@ describe('gameStore', () => {
     expect(player.learnedSkills[0]?.proficiency).toBe(3)
   })
 
+  it('applyBattleResult grants dropped skills through learnSkill flow', () => {
+    const result: BattleResult = {
+      winnerId: 'player_001',
+      events: [],
+      finalPlayerHp: 100,
+      finalPlayerQi: 40,
+      finalEnemyHp: 0,
+      finalEnemyQi: 0,
+      proficiencyGains: [],
+      skillRewards: [asSkillId('skill_qinggong_040_caoying')],
+    }
+
+    useGameStore.getState().applyBattleResult(result)
+
+    expect(
+      useGameStore.getState().player.learnedSkills.some(
+        (skill) => skill.skillId === asSkillId('skill_qinggong_040_caoying'),
+      ),
+    ).toBe(true)
+  })
+
   it('unlocks new move when proficiency reaches threshold', () => {
     useGameStore.setState({
       player: {
@@ -192,7 +213,7 @@ describe('gameStore', () => {
 
   it('getSceneNpcs lists village npcs', () => {
     const npcs = useGameStore.getState().getSceneNpcs()
-    expect(npcs).toHaveLength(1)
+    expect(npcs).toHaveLength(3)
     expect(npcs[0]?.name).toBe('村口剑客')
   })
 
@@ -236,6 +257,45 @@ describe('gameStore', () => {
       primaryActionLabel: '继续',
       message: '「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」',
     })
+  })
+
+  it('npc teaching flow grants trainer skill and inherited sheying after qingmang is maxed', () => {
+    expect(
+      useGameStore.getState().getNpcDialogDisplay('npc_002_village_trainer'),
+    ).toMatchObject({
+      primaryActionLabel: '请教掌法',
+    })
+
+    useGameStore.getState().performNpcDialogAction('npc_002_village_trainer')
+    expect(
+      useGameStore.getState().player.learnedSkills.some(
+        (skill) => skill.skillId === asSkillId('skill_external_060_kaishan'),
+      ),
+    ).toBe(true)
+
+    useGameStore.setState({
+      player: {
+        ...useGameStore.getState().player,
+        learnedSkills: useGameStore.getState().player.learnedSkills.map((skill) =>
+          skill.skillId === asSkillId('skill_sword_010_qingmang')
+            ? { ...skill, proficiency: 30, unlockedMoveIds: ['move_qingmang_01', 'move_qingmang_02', 'move_qingmang_03'] }
+            : skill,
+        ),
+      },
+    })
+
+    expect(
+      useGameStore.getState().getNpcDialogDisplay('npc_003_village_hermit'),
+    ).toMatchObject({
+      primaryActionLabel: '请教剑谱',
+    })
+
+    useGameStore.getState().performNpcDialogAction('npc_003_village_hermit')
+
+    const sheying = useGameStore
+      .getState()
+      .player.learnedSkills.find((skill) => skill.skillId === asSkillId('skill_sword_020_sheying'))
+    expect(sheying?.proficiency).toBeGreaterThan(0)
   })
 
   it('explore in village does not trigger battle', () => {

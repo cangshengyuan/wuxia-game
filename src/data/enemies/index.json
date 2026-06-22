@@ -29,6 +29,7 @@
       "constitution": 12
     },
     "equippedSkillIds": ["skill_sword_010_qingmang", "skill_sword_011_baihong"],
+    "skillRewards": ["skill_hard_050_tiebu"],
     "speed": 11
   },
   {
@@ -45,6 +46,7 @@
       "constitution": 8
     },
     "equippedSkillIds": ["skill_sword_013_songfeng"],
+    "skillRewards": ["skill_qinggong_040_caoying"],
     "speed": 14
   }
 ]
