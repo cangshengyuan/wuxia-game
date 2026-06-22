@@ -18,6 +18,6 @@ describe('App skeleton', () => {
     expect(screen.getByRole('heading', { name: '主城新手村' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '村口剑客' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '探索' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: '前往村外野径' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '村外野径' })).toBeInTheDocument()
   })
 })

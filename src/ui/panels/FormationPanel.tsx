@@ -10,10 +10,19 @@
 import { useGameStore } from '../../store/gameStore'
 
 export function FormationPanel() {
+  const formation = useGameStore((state) => state.player.formation)
+  const learnedSkills = useGameStore((state) => state.player.learnedSkills)
+  const weaponType = useGameStore((state) => state.player.weaponType)
+  const equippedSkillIds = useGameStore((state) => state.player.equippedSkillIds)
   const getFormationSlots = useGameStore((state) => state.getFormationSlots)
   const getFormationSkillOptions = useGameStore((state) => state.getFormationSkillOptions)
   const equipSkill = useGameStore((state) => state.equipSkill)
   const unequipSkill = useGameStore((state) => state.unequipSkill)
+
+  void formation
+  void learnedSkills
+  void weaponType
+  void equippedSkillIds
 
   const slots = getFormationSlots()
   const options = getFormationSkillOptions()

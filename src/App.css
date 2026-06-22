@@ -1,42 +1,273 @@
 .app-shell {
-  max-width: 860px;
+  max-width: 460px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: 12px 12px 32px;
 }
 
 .subtitle {
-  margin: 0 0 20px;
+  margin: 0 0 12px;
   color: var(--text);
+  font-size: 14px;
 }
 
 .panel {
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  margin-bottom: 10px;
+  background: var(--panel-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .panel h2 {
-  margin-top: 0;
+  margin: 0 0 8px;
+  font-size: 18px;
 }
 
-.counter {
+.panel h3 {
+  margin: 0 0 6px;
   font-size: 15px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.counter,
+.scene-menu__button,
+.scene-layout__warp-button,
+.scene-layout__npc-button {
+  font-size: 14px;
+  padding: 7px 10px;
   border: 1px solid var(--accent-border);
+  border-radius: 0;
+  color: var(--text-h);
+  background: var(--accent-bg);
   cursor: pointer;
 }
 
-.counter:hover {
-  filter: brightness(1.06);
+.counter:hover,
+.scene-menu__button:hover,
+.scene-layout__warp-button:hover,
+.scene-layout__npc-button:hover {
+  background: var(--accent-bg-strong);
+}
+
+.counter:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .counter--secondary {
-  margin-left: 8px;
+  background: var(--panel-bg);
+}
+
+.scene-layout {
+  display: grid;
+  gap: 0;
+}
+
+.scene-summary__identity {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.scene-summary__avatar {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-strong);
+  background: rgba(255, 248, 220, 0.8);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.scene-summary__identity-text h2 {
+  margin-bottom: 4px;
+}
+
+.scene-summary__identity-text p + p {
+  margin-top: 2px;
+}
+
+.scene-summary__meters {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scene-summary__meter {
+  display: grid;
+  gap: 4px;
+}
+
+.scene-summary__meter-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.scene-summary__meter-track {
+  height: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.scene-summary__meter-fill {
+  height: 100%;
+}
+
+.scene-summary__meter-fill--hp {
+  background: linear-gradient(90deg, #8c3f35, #bf6b4b);
+}
+
+.scene-summary__meter-fill--qi {
+  background: linear-gradient(90deg, #44635f, #6e8f84);
+}
+
+.scene-layout__description {
+  margin-top: 0;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.scene-layout__action {
+  margin-top: 10px;
+}
+
+.scene-layout__grid {
+  display: grid;
+  gap: 10px;
+}
+
+.scene-layout__block {
+  margin-bottom: 0;
+}
+
+.scene-layout__destinations,
+.scene-layout__npc-list,
+.scene-menu__list,
+.status-panel__list,
+.quest-log__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.scene-layout__destinations {
+  display: grid;
+  gap: 6px;
+}
+
+.scene-layout__warp-button,
+.scene-layout__npc-button,
+.scene-menu__button {
+  width: 100%;
+  text-align: left;
+}
+
+.scene-layout__npc-list {
+  display: grid;
+  gap: 6px;
+}
+
+.scene-layout__empty,
+.scene-layout__placeholder,
+.quest-log__empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.scene-layout__dialog-copy {
+  margin-top: 8px;
+  line-height: 1.7;
+}
+
+.scene-layout__button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scene-menu__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.scene-menu__button--active {
+  background: var(--accent-bg-strong);
+  font-weight: 700;
+}
+
+.scene-layout__menu-content,
+.scene-layout__panel-stack {
+  display: grid;
+  gap: 0;
+}
+
+.status-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 10px;
+  font-size: 14px;
+}
+
+.status-panel__section + .status-panel__section {
+  margin-top: 10px;
+}
+
+.status-panel__list,
+.quest-log__list {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.quest-log__item,
+.skill-panel__item {
+  border: 1px solid var(--border);
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.quest-log__item p {
+  margin-top: 4px;
+}
+
+.skill-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.skill-panel__name {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.skill-panel__proficiency,
+.skill-panel__realm,
+.skill-panel__moves,
+.skill-panel__bonus,
+.skill-panel__breakthrough,
+.skill-panel__synergy {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.save-controls__actions,
+.battle-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .battle-layout__subtitle {
@@ -52,8 +283,8 @@
 
 .battle-layout__outcome {
   font-size: 18px;
-  font-weight: 600;
-  color: var(--accent);
+  font-weight: 700;
+  color: var(--text-h);
   margin: 0 0 12px;
 }
 
@@ -66,18 +297,17 @@
 }
 
 .hp-bar__label {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hp-bar__values {
   color: var(--text);
-  opacity: 0.85;
 }
 
 .hp-bar__track {
   height: 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
   overflow: hidden;
 }
 
@@ -88,16 +318,15 @@
 
 .hp-bar__fill {
   height: 100%;
-  border-radius: inherit;
   transition: width 0.25s ease;
 }
 
 .hp-bar__fill--hp {
-  background: linear-gradient(90deg, #8b1e1e, #d64545);
+  background: linear-gradient(90deg, #8c3f35, #bf6b4b);
 }
 
 .hp-bar__fill--qi {
-  background: linear-gradient(90deg, #1e4a8b, #4586d6);
+  background: linear-gradient(90deg, #44635f, #6e8f84);
 }
 
 .event-log {
@@ -107,13 +336,12 @@
   max-height: 280px;
   overflow-y: auto;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .event-log__item {
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border);
   font-size: 14px;
 }
 
@@ -121,111 +349,27 @@
   border-bottom: none;
 }
 
-.battle-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.scene-layout__description {
-  margin-top: 0;
-  color: var(--text);
-}
-
-.scene-layout__section {
-  margin-top: 16px;
-}
-
-.scene-layout__section h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
-}
-
-.scene-layout__destinations {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.scene-layout__destinations .counter--secondary {
-  margin-left: 0;
-}
-
-.scene-layout__npc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.scene-layout__npc-button {
-  width: 100%;
-  text-align: left;
-  font-size: 14px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--accent);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  cursor: pointer;
-}
-
-.scene-layout__npc-button:hover {
-  filter: brightness(1.06);
-}
-
-.scene-layout__empty,
-.scene-layout__placeholder {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text);
-  opacity: 0.85;
-}
-
-.skill-panel__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 12px;
-}
-
-.skill-panel__item {
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.12);
-}
-
-.skill-panel__name {
-  margin: 0 0 6px;
-  font-weight: 600;
-}
-
-.skill-panel__proficiency,
-.skill-panel__moves {
-  margin: 0 0 4px;
-  font-size: 14px;
-  color: var(--text);
-}
-
 .unlock-toast-container {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   display: grid;
   gap: 8px;
   z-index: 1000;
-  max-width: 320px;
+  max-width: 280px;
 }
 
 .unlock-toast {
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 10px 12px;
   border: 1px solid var(--accent-border);
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background: var(--accent-bg-strong);
+  color: var(--text-h);
+  font-size: 13px;
+  box-shadow: var(--shadow);
+}
+
+@media (min-width: 720px) {
+  .scene-layout__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
