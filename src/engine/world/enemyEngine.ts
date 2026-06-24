@@ -15,6 +15,11 @@ import { asEnemyId, asSkillId } from '../../types/id'
 import type { EnemyId } from '../../types/id'
 import type { CharacterState } from '../../types/character'
 import type { EnemyDefinition } from '../../types/world'
+import type { WeaponRequirement } from '../../types/skill'
+
+function isWeaponRequirement(value: unknown): value is WeaponRequirement {
+  return value === 'sword' || value === 'unarmed'
+}
 
 function isCharacterAttributes(value: unknown): boolean {
   if (!value || typeof value !== 'object') {
@@ -44,7 +49,8 @@ function isEnemyDefinition(value: unknown): value is EnemyDefinition {
     typeof e.maxQi !== 'number' ||
     typeof e.speed !== 'number' ||
     !isCharacterAttributes(e.attributes) ||
-    !Array.isArray(e.equippedSkillIds)
+    !Array.isArray(e.equippedSkillIds) ||
+    !isWeaponRequirement(e.weaponType)
   ) {
     return false
   }
@@ -71,6 +77,7 @@ function normalizeEnemy(raw: Record<string, unknown>): EnemyDefinition {
       ? { skillRewards: (raw.skillRewards as string[]).map(asSkillId) }
       : {}),
     speed: raw.speed as number,
+    weaponType: raw.weaponType as WeaponRequirement,
   }
 }
 
@@ -104,7 +111,7 @@ export function buildEnemyState(enemyId: EnemyId | string): CharacterState | und
     }),
     speed: def.speed,
     formation: inferFormationFromEquippedSkills(def.equippedSkillIds),
-    weaponType: 'sword',
+    weaponType: def.weaponType,
     equippedSkillIds: [...def.equippedSkillIds],
   }
 }

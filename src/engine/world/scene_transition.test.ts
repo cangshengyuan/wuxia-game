@@ -24,13 +24,14 @@ describe('scene_transition', () => {
     expect(getSceneExits(asSceneId('scene_999_unknown'))).toEqual([])
   })
 
-  it('canEnter always returns true in M5', () => {
+  it('canEnter only allows declared adjacent scenes', () => {
     const a = asSceneId('scene_001_village')
     const b = asSceneId('scene_002_outskirts')
     const c = asSceneId('scene_999_unknown')
 
     expect(canEnter(a, b)).toBe(true)
     expect(canEnter(b, a)).toBe(true)
-    expect(canEnter(c, a)).toBe(true)
+    expect(canEnter(c, a)).toBe(false)
+    expect(canEnter(a, c)).toBe(false)
   })
 })

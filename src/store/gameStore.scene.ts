@@ -14,6 +14,7 @@ import { getSceneById } from '../engine/world/sceneEngine'
 import { canEnter, getSceneExits } from '../engine/world/scene_transition'
 import { asSceneId } from '../types/id'
 import type { SceneDestination, GameStoreSlice, GameStoreState } from './gameStore.types'
+import type { ProgressState } from '../types/world'
 
 type SceneSliceState = Pick<
   GameStoreState,
@@ -21,6 +22,14 @@ type SceneSliceState = Pick<
 >
 import { useBattleStore } from './battleStore'
 import { useUiStore } from './uiStore'
+
+function buildProgressState(state: GameStoreState): ProgressState {
+  return {
+    activeQuests: state.activeQuests,
+    completedQuests: state.completedQuests,
+    learnedSkills: state.player.learnedSkills,
+  }
+}
 
 export const createSceneSlice: GameStoreSlice<SceneSliceState> = (set, get) => ({
   getCurrentScene: () => {
@@ -45,7 +54,10 @@ export const createSceneSlice: GameStoreSlice<SceneSliceState> = (set, get) => (
   },
 
   getSceneDestinations: () => {
-    return getSceneExits(get().currentSceneId)
+    const state = get()
+    const progress = buildProgressState(state)
+    return getSceneExits(state.currentSceneId)
+      .filter((sceneId) => canEnter(state.currentSceneId, sceneId, progress))
       .map((sceneId) => {
         const scene = getSceneById(sceneId)
         if (!scene) {
@@ -57,8 +69,9 @@ export const createSceneSlice: GameStoreSlice<SceneSliceState> = (set, get) => (
   },
 
   enterScene: (sceneId) => {
+    const state = get()
     const targetId = typeof sceneId === 'string' ? asSceneId(sceneId) : sceneId
-    if (!canEnter(get().currentSceneId, targetId)) {
+    if (!canEnter(state.currentSceneId, targetId, buildProgressState(state))) {
       return
     }
     if (!getSceneById(targetId)) {

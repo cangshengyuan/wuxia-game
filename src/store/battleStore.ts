@@ -11,6 +11,7 @@ import { create } from 'zustand'
 import { buildBattleReadyCharacter } from '../engine/character/attributes'
 import { startBattle as runCombat } from '../engine/combat/combat_runner'
 import { formatBattleEvent } from '../engine/combat/event_format'
+import { getDefaultBattleEnemyId } from '../engine/config/gameConfig'
 import {
   applyEventToSnapshots,
   createSnapshotsFromCombatants,
@@ -42,36 +43,37 @@ interface BattleStoreState {
   formatEvent: (event: BattleEvent) => string
 }
 
-const fallbackEnemy: CharacterState = {
-  id: 'enemy_001_bandit_grunt',
-  name: '山贼喽啰',
-  level: 1,
-  hp: 96,
-  maxHp: 96,
-  qi: 30,
-  maxQi: 30,
+const EMPTY_ENEMY_ID = 'enemy_placeholder'
+
+const emptyEnemy: CharacterState = {
+  id: EMPTY_ENEMY_ID,
+  name: '未选择对手',
+  level: 0,
+  hp: 1,
+  maxHp: 1,
+  qi: 0,
+  maxQi: 0,
   attributes: {
-    armStrength: 10,
-    agility: 9,
-    constitution: 10,
+    armStrength: 0,
+    agility: 0,
+    constitution: 0,
   },
   learnedSkills: [],
-  speed: 9,
+  speed: 0,
   formation: {
     external: [],
   },
-  weaponType: 'sword',
+  weaponType: 'unarmed',
   equippedSkillIds: [],
 }
 
-const defaultEnemy = buildEnemyState('enemy_001_bandit_grunt') ?? fallbackEnemy
-const initialSnapshots = createSnapshotsFromCombatants(defaultPlayer, defaultEnemy)
+const initialSnapshots = createSnapshotsFromCombatants(defaultPlayer, emptyEnemy)
 
 export const useBattleStore = create<BattleStoreState>((set, get) => ({
   status: 'idle',
   events: [],
   playbackIndex: -1,
-  enemy: defaultEnemy,
+  enemy: emptyEnemy,
   playerSnapshot: initialSnapshots.player,
   enemySnapshot: initialSnapshots.enemy,
   result: undefined,
@@ -79,7 +81,7 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
 
   prepareBattle: (enemyId) => {
     const player = buildBattleReadyCharacter(useGameStore.getState().player)
-    const enemy = buildEnemyState(enemyId) ?? fallbackEnemy
+    const enemy = buildEnemyState(enemyId) ?? emptyEnemy
     const snapshots = createSnapshotsFromCombatants(player, enemy)
 
     set({
@@ -173,7 +175,8 @@ export const useBattleStore = create<BattleStoreState>((set, get) => ({
   },
 
   reset: () => {
-    get().prepareBattle(get().enemy.id)
+    const enemyId = get().enemy.id === EMPTY_ENEMY_ID ? getDefaultBattleEnemyId() : get().enemy.id
+    get().prepareBattle(enemyId)
   },
 
   formatEvent: (event) => formatBattleEvent(event),

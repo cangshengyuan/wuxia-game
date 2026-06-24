@@ -7,11 +7,8 @@
  * @depends types
  * @forbidden 禁止 import React、禁止访问 store
  */
-import { asEnemyId } from '../../types/id'
 import type { GameEvent } from '../../types/event'
 import type { ActiveQuest, QuestDefinition } from '../../types/world'
-
-const PLAYER_ID = 'player_001'
 
 function matchesObjective(
   objective: QuestDefinition['objectives'][number],
@@ -26,8 +23,8 @@ function matchesObjective(
     case 'defeat_enemy':
       return (
         event.type === 'BattleEnded' &&
-        event.winnerId === PLAYER_ID &&
-        event.enemyId === asEnemyId(objective.targetId)
+        event.winnerId.startsWith('player_') &&
+        event.enemyId === objective.targetId
       )
     default:
       return false

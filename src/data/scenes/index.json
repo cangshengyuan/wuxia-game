@@ -3,7 +3,10 @@
     "id": "scene_001_village",
     "name": "主城新手村",
     "description": "宁静的村落，江湖传闻的起点。",
-    "encounters": []
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_002_outskirts" }
+    ]
   },
   {
     "id": "scene_002_outskirts",
@@ -13,6 +16,9 @@
       { "enemyId": "enemy_001_bandit_grunt", "weight": 5 },
       { "enemyId": "enemy_002_bandit_boss", "weight": 2 },
       { "enemyId": "enemy_003_wild_wolf", "weight": 4 }
+    ],
+    "exits": [
+      { "toSceneId": "scene_001_village" }
     ]
   }
 ]

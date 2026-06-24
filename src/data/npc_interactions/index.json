@@ -1,0 +1,102 @@
+[
+  {
+    "npcId": "npc_001_village_swordsman",
+    "states": [
+      {
+        "conditions": [
+          { "type": "quest_completed", "questId": "quest_main_001_first_blood" }
+        ],
+        "message": "「江湖路远，多加小心。」"
+      },
+      {
+        "conditions": [
+          { "type": "quest_inactive", "questId": "quest_main_001_first_blood" }
+        ],
+        "message": "离开新手村，在村外野径击败山贼喽啰，证明你有行走江湖的资格。",
+        "primaryActionLabel": "接受任务",
+        "actions": [
+          { "type": "accept_quest", "questId": "quest_main_001_first_blood" }
+        ],
+        "closeDialogOnAction": false
+      },
+      {
+        "conditions": [
+          {
+            "type": "current_quest_objective_type",
+            "questId": "quest_main_001_first_blood",
+            "objectiveType": "talk_to_npc"
+          }
+        ],
+        "message": "「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」",
+        "primaryActionLabel": "继续",
+        "actions": [
+          { "type": "emit_dialog_closed" }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "current_quest_objective_type",
+            "questId": "quest_main_001_first_blood",
+            "objectiveType": "return_to_npc"
+          }
+        ],
+        "message": "「不错，你已经有了行走江湖的底气。这套白虹剑法，你且收下。」",
+        "primaryActionLabel": "交付任务",
+        "actions": [
+          { "type": "emit_dialog_closed" }
+        ]
+      },
+      {
+        "message": "「……」"
+      }
+    ]
+  },
+  {
+    "npcId": "npc_002_village_trainer",
+    "states": [
+      {
+        "conditions": [
+          { "type": "has_skill", "skillId": "skill_external_060_kaishan" }
+        ],
+        "message": "「开山掌讲究先立身，再发力。」"
+      },
+      {
+        "message": "「你若愿学一门副外功，我可传你开山掌。」",
+        "primaryActionLabel": "请教掌法",
+        "actions": [
+          { "type": "learn_skill", "skillId": "skill_external_060_kaishan" }
+        ]
+      }
+    ]
+  },
+  {
+    "npcId": "npc_003_village_hermit",
+    "states": [
+      {
+        "conditions": [
+          { "type": "has_skill", "skillId": "skill_sword_020_sheying" }
+        ],
+        "message": "「你已得蛇影剑谱，接下来重在把连携练活。」"
+      },
+      {
+        "conditions": [
+          {
+            "type": "skill_proficiency_at_least",
+            "skillId": "skill_sword_010_qingmang",
+            "proficiency": 30
+          },
+          { "type": "missing_skill", "skillId": "skill_sword_020_sheying" }
+        ],
+        "message": "「青蟒根基已成，我可将蛇影剑谱传你。」",
+        "primaryActionLabel": "请教剑谱",
+        "actions": [
+          { "type": "learn_skill", "skillId": "skill_sword_020_sheying" }
+        ]
+      },
+      {
+        "message": "「先把青蟒剑法练满三十重熟练，再来谈更高一层的蛇系剑路。」"
+      }
+    ]
+  }
+]

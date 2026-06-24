@@ -13,7 +13,8 @@
       "constitution": 10
     },
     "equippedSkillIds": ["skill_sword_013_songfeng"],
-    "speed": 9
+    "speed": 9,
+    "weaponType": "sword"
   },
   {
     "id": "enemy_002_bandit_boss",
@@ -30,7 +31,8 @@
     },
     "equippedSkillIds": ["skill_sword_010_qingmang", "skill_sword_011_baihong"],
     "skillRewards": ["skill_hard_050_tiebu"],
-    "speed": 11
+    "speed": 11,
+    "weaponType": "sword"
   },
   {
     "id": "enemy_003_wild_wolf",
@@ -47,6 +49,7 @@
     },
     "equippedSkillIds": ["skill_sword_013_songfeng"],
     "skillRewards": ["skill_qinggong_040_caoying"],
-    "speed": 14
+    "speed": 14,
+    "weaponType": "sword"
   }
 ]

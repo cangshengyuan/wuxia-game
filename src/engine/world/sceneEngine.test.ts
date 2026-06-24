@@ -20,11 +20,13 @@ describe('sceneEngine', () => {
     const scene = getSceneById(asSceneId('scene_001_village'))
     expect(scene?.name).toBe('主城新手村')
     expect(scene?.encounters).toEqual([])
+    expect(scene?.exits).toEqual([{ toSceneId: asSceneId('scene_002_outskirts') }])
   })
 
   it('outskirts scene references enemies', () => {
     const scene = getSceneById('scene_002_outskirts')
     expect(scene?.encounters.length).toBe(3)
     expect(scene?.encounters[0]?.enemyId).toBeDefined()
+    expect(scene?.exits[0]?.toSceneId).toBe(asSceneId('scene_001_village'))
   })
 })

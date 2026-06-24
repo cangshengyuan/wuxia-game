@@ -8,6 +8,7 @@
  * @forbidden 禁止 import React、禁止访问 store、禁止 mutate 入参
  */
 import { getSkillById } from '../skillEngine'
+import { getGameBalanceConfig } from '../config/gameConfig'
 import type { SkillFormation, SkillRuntime } from '../../types/character'
 import type { SkillCategory, SkillDefinition } from '../../types/skill'
 import type { SkillId } from '../../types/id'
@@ -20,7 +21,7 @@ export interface FormationEligibility {
   reason?: string
 }
 
-const HIGH_TIER_MIN_REALM = 2
+const formationBalance = getGameBalanceConfig().formation
 
 export function createEmptyFormation(): SkillFormation {
   return { external: [] }
@@ -54,7 +55,7 @@ export function canEquipSkill(
   if (skillDef.weaponRequirement && weaponType && skillDef.weaponRequirement !== weaponType) {
     return { canEquip: false, slot, reason: `需要${skillDef.weaponRequirement}武器` }
   }
-  if (skillDef.tier === 'high' && runtime.realmLevel < HIGH_TIER_MIN_REALM) {
+  if (skillDef.tier === 'high' && runtime.realmLevel < formationBalance.highTierMinRealm) {
     return { canEquip: false, slot, reason: '高阶功法需至少二重境界' }
   }
   return { canEquip: true, slot }
@@ -76,7 +77,7 @@ export function equipSkillInFormation(
   if (eligibility.slot === 'external') {
     next.external = next.external.filter((id) => id !== runtime.skillId)
     next.external.unshift(runtime.skillId)
-    next.external = next.external.slice(0, 2)
+    next.external = next.external.slice(0, formationBalance.maxExternalSkills)
     return next
   }
 
@@ -113,7 +114,7 @@ export function inferFormationFromEquippedSkills(skillIds: SkillId[]): SkillForm
     }
     const slot = getFormationSlot(skillDef.category)
     if (slot === 'external') {
-      if (formation.external.length < 2) {
+      if (formation.external.length < formationBalance.maxExternalSkills) {
         formation.external.push(skillId)
       }
       continue

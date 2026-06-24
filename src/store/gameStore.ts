@@ -65,7 +65,7 @@ const gameStorage = {
 export const useGameStore = create<GameStoreState>()(
   persist(
     (set, get, api) => ({
-      player: defaultPlayer,
+      player: structuredClone(defaultPlayer),
       currentSceneId: defaultSceneId,
       completedQuests: [],
       activeQuests: [],

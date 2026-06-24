@@ -7,8 +7,9 @@
  * @depends types
  * @forbidden 禁止 import React、禁止访问 store、禁止访问 ui
  */
-import { asQuestId, asSceneId, asSkillId } from '../../types/id'
+import { asQuestId } from '../../types/id'
 import { inferFormationFromEquippedSkills } from '../character/formation'
+import { createDefaultPlayerState, getDefaultSceneId } from '../config/gameConfig'
 import type { QuestId, SceneId } from '../../types/id'
 import type { CharacterAttributes, CharacterState, SkillRuntime } from '../../types/character'
 import type { ActiveQuest } from '../../types/world'
@@ -48,50 +49,12 @@ export interface SaveV4 {
 
 export type SaveData = SaveV4
 
-const defaultSceneId = asSceneId('scene_001_village')
-
-const defaultPlayer: CharacterState = {
-  id: 'player_001',
-  name: '无名侠客',
-  level: 1,
-  hp: 120,
-  maxHp: 120,
-  qi: 60,
-  maxQi: 60,
-  attributes: {
-    armStrength: 14,
-    agility: 12,
-    constitution: 13,
-  },
-  learnedSkills: [
-    {
-      skillId: asSkillId('skill_sword_010_qingmang'),
-      proficiency: 0,
-      realmLevel: 1,
-      insight: 0,
-      unlockedMoveIds: ['move_qingmang_01'],
-    },
-    {
-      skillId: asSkillId('skill_internal_001_huntuan'),
-      proficiency: 0,
-      realmLevel: 1,
-      insight: 0,
-      unlockedMoveIds: ['move_huntuan_01'],
-    },
-  ],
-  speed: 12,
-  formation: {
-    external: [asSkillId('skill_sword_010_qingmang')],
-    internal: asSkillId('skill_internal_001_huntuan'),
-  },
-  weaponType: 'sword',
-  equippedSkillIds: [asSkillId('skill_sword_010_qingmang')],
-}
+const defaultSceneId = getDefaultSceneId()
 
 export function createDefaultSave(): SaveV4 {
   return {
     version: SAVE_VERSION,
-    player: structuredClone(defaultPlayer),
+    player: createDefaultPlayerState(),
     currentSceneId: defaultSceneId,
     completedQuests: [],
     activeQuests: [],

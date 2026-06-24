@@ -48,6 +48,7 @@ describe('rollEncounter', () => {
         { enemyId: asEnemyId('enemy_b'), weight: 2 },
         { enemyId: asEnemyId('enemy_c'), weight: 4 },
       ],
+      exits: [],
     }
 
     const counts = { enemy_a: 0, enemy_b: 0, enemy_c: 0 }

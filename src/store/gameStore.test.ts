@@ -241,6 +241,11 @@ describe('gameStore', () => {
     expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
   })
 
+  it('enterScene rejects undeclared destinations', () => {
+    useGameStore.getState().enterScene('scene_999_unknown')
+    expect(useGameStore.getState().currentSceneId).toBe(defaultSceneId)
+  })
+
   it('getNpcDialogDisplay reflects quest dialog state for the village swordsman', () => {
     expect(
       useGameStore.getState().getNpcDialogDisplay('npc_001_village_swordsman'),

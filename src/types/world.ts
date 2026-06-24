@@ -5,12 +5,37 @@
  * @forbidden 禁止在 types 层 import engine/store/ui
  */
 
-import type { CharacterAttributes } from './character'
+import type { CharacterAttributes, SkillRuntime } from './character'
 import type { EnemyId, NpcId, QuestId, SceneId, SkillId } from './id'
+import type { WeaponRequirement } from './skill'
 
 export interface EncounterEntry {
   enemyId: EnemyId
   weight?: number
+}
+
+export type ProgressCondition =
+  | { type: 'quest_active'; questId: QuestId }
+  | { type: 'quest_completed'; questId: QuestId }
+  | { type: 'quest_inactive'; questId: QuestId }
+  | { type: 'has_skill'; skillId: SkillId }
+  | { type: 'missing_skill'; skillId: SkillId }
+  | { type: 'skill_proficiency_at_least'; skillId: SkillId; proficiency: number }
+  | {
+      type: 'current_quest_objective_type'
+      questId: QuestId
+      objectiveType: QuestObjectiveType
+    }
+
+export interface ProgressState {
+  activeQuests: ActiveQuest[]
+  completedQuests: QuestId[]
+  learnedSkills: SkillRuntime[]
+}
+
+export interface SceneExit {
+  toSceneId: SceneId
+  requirements?: ProgressCondition[]
 }
 
 export interface SceneDefinition {
@@ -18,6 +43,7 @@ export interface SceneDefinition {
   name: string
   description?: string
   encounters: EncounterEntry[]
+  exits: SceneExit[]
 }
 
 export interface EnemyDefinition {
@@ -32,6 +58,7 @@ export interface EnemyDefinition {
   equippedSkillIds: SkillId[]
   skillRewards?: SkillId[]
   speed: number
+  weaponType: WeaponRequirement
 }
 
 export interface NpcDefinition {
@@ -70,4 +97,22 @@ export interface ActiveQuest {
   questId: QuestId
   currentStepIndex: number
   status: 'active' | 'ready_to_complete'
+}
+
+export type NpcInteractionAction =
+  | { type: 'learn_skill'; skillId: SkillId }
+  | { type: 'accept_quest'; questId: QuestId }
+  | { type: 'emit_dialog_closed' }
+
+export interface NpcInteractionState {
+  conditions?: ProgressCondition[]
+  message: string
+  primaryActionLabel?: string
+  actions?: NpcInteractionAction[]
+  closeDialogOnAction?: boolean
+}
+
+export interface NpcInteractionDefinition {
+  npcId: NpcId
+  states: NpcInteractionState[]
 }

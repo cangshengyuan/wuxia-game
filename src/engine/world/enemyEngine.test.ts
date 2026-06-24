@@ -26,5 +26,6 @@ describe('enemyEngine', () => {
     expect(state?.formation?.external).toEqual([state?.equippedSkillIds[0]])
     expect(state?.hp).toBe(state?.maxHp)
     expect(state?.equippedSkillIds.length).toBeGreaterThan(0)
+    expect(state?.weaponType).toBe('sword')
   })
 })
