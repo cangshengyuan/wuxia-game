@@ -13,6 +13,8 @@ import { UnlockToast } from './ui/components/UnlockToast'
 import { BattlePage } from './ui/pages/BattlePage'
 import { HomePage } from './ui/pages/HomePage'
 import { ScenePage } from './ui/pages/ScenePage'
+import { SceneSubPage } from './ui/pages/SceneSubPage'
+import { isSceneSubPage } from './store/uiStore'
 
 function App() {
   const currentPage = useUiStore((state) => state.currentPage)
@@ -22,6 +24,7 @@ function App() {
       {currentPage === 'home' ? <HomePage /> : null}
       {currentPage === 'scene' ? <ScenePage /> : null}
       {currentPage === 'battle' ? <BattlePage /> : null}
+      {isSceneSubPage(currentPage) ? <SceneSubPage /> : null}
       <UnlockToast />
     </main>
   )

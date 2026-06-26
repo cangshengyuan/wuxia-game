@@ -13,7 +13,11 @@ import {
   grantSkill,
   upgradeSkill as upgradeSkillEngine,
 } from '../engine/character/skill_runtime'
-import { calculateSkillAttributeBonuses } from '../engine/character/attributes'
+import {
+  advanceMeditation as advanceMeditationEngine,
+  setMeditationActive as setMeditationActiveEngine,
+} from '../engine/character/meditation'
+import { buildBattleReadyCharacter, calculateSkillAttributeBonuses } from '../engine/character/attributes'
 import {
   canEquipSkill,
   createEmptyFormation,
@@ -39,6 +43,7 @@ import type {
 
 type CharacterSliceState = Pick<
   GameStoreState,
+  | 'getDisplayPlayer'
   | 'canUpgradeSkill'
   | 'upgradeSkill'
   | 'getSkillDisplay'
@@ -48,6 +53,8 @@ type CharacterSliceState = Pick<
   | 'equipSkill'
   | 'unequipSkill'
   | 'learnSkill'
+  | 'setMeditationActive'
+  | 'advanceMeditation'
 >
 import { nextUnlockNoticeId } from './gameStore.battle'
 
@@ -206,6 +213,10 @@ function buildFormationSkillOptions(state: GameStoreState): FormationSkillOption
 }
 
 export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, get) => ({
+  getDisplayPlayer: () => {
+    return buildBattleReadyCharacter(get().player)
+  },
+
   canUpgradeSkill: (skillId) => {
     const runtime = get().player.learnedSkills.find((entry) => entry.skillId === skillId)
     const skillDef = getSkillById(skillId)
@@ -289,6 +300,29 @@ export const createCharacterSlice: GameStoreSlice<CharacterSliceState> = (set, g
         formation: nextFormation,
         equippedSkillIds: flattenFormation(nextFormation),
       },
+    })
+  },
+
+  setMeditationActive: (isActive) => {
+    const { player } = get()
+    set({
+      player: setMeditationActiveEngine(player, isActive),
+    })
+  },
+
+  advanceMeditation: (elapsedMs) => {
+    const { player } = get()
+    const result = advanceMeditationEngine(player, elapsedMs)
+    if (
+      result.character.hp === player.hp &&
+      result.character.qi === player.qi &&
+      result.character.meditation?.accumulatedMs === player.meditation?.accumulatedMs
+    ) {
+      return
+    }
+
+    set({
+      player: result.character,
     })
   },
 

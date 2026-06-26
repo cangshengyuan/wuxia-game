@@ -10,7 +10,31 @@
     "realm": { "minLevel": 1, "maxLevel": 3, "breakthroughProficiency": [10, 22], "insightThresholds": [2, 4], "similarSkillRequired": [1, 2] },
     "attributeGrowth": { "maxQi": { "perProficiency": 0.45, "perRealm": 2, "maxBonus": 12 }, "constitution": { "perProficiency": 0.08, "perRealm": 1, "maxBonus": 4 } },
     "growthCurve": { "proficiencyMultiplier": 1, "battleGainMultiplier": 1, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.35 },
-    "moves": [{ "id": "move_huntuan_01", "name": "混元运气", "cd": 5, "qiCost": 8, "powerRatio": 0.8, "unlockProficiency": 0 }]
+    "moves": [
+      {
+        "id": "move_huntuan_01",
+        "name": "混元运气",
+        "cd": 5,
+        "qiCost": 4,
+        "powerRatio": 0,
+        "unlockProficiency": 0,
+        "effects": [
+          {
+            "kind": "applyBuff",
+            "target": "self",
+            "buff": {
+              "id": "buff_huntuan_inner_breath",
+              "name": "混元内息",
+              "duration": 150,
+              "modifiers": {
+                "outgoingDamagePercent": 0.25,
+                "qiCostPercent": -0.4
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "skill_internal_002_tuna",

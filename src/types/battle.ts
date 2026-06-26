@@ -5,6 +5,7 @@
  * @forbidden 禁止在 types 层 import engine/store/ui
  */
 import type { MoveId, SkillId } from './id'
+import type { SkillBuffModifiers } from './skill'
 
 export interface BattleAction {
   actorId: string
@@ -26,6 +27,12 @@ export interface CombatantSnapshot {
   maxHp: number
   qi: number
   maxQi: number
+  activeBuffs: CombatBuffSnapshot[]
+}
+
+export interface CombatBuffSnapshot {
+  buffId: string
+  buffName: string
 }
 
 export interface SkillReadyEvent {
@@ -51,6 +58,31 @@ export interface DamageDealtEvent {
   moveId?: MoveId
 }
 
+export interface AttackMissedEvent {
+  type: 'AttackMissed'
+  sourceId: string
+  targetId: string
+  moveId?: MoveId
+}
+
+export interface BuffAppliedEvent {
+  type: 'BuffApplied'
+  sourceId: string
+  targetId: string
+  buffId: string
+  buffName: string
+  duration: number
+  modifiers: SkillBuffModifiers
+  moveId?: MoveId
+}
+
+export interface BuffExpiredEvent {
+  type: 'BuffExpired'
+  targetId: string
+  buffId: string
+  buffName: string
+}
+
 export interface BattleEndedEvent {
   type: 'BattleEnded'
   winnerId: string
@@ -60,6 +92,9 @@ export type BattleEvent =
   | SkillReadyEvent
   | SkillExecutedEvent
   | DamageDealtEvent
+  | AttackMissedEvent
+  | BuffAppliedEvent
+  | BuffExpiredEvent
   | BattleEndedEvent
 
 export interface DamageResult {

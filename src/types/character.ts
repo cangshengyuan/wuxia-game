@@ -28,6 +28,11 @@ export interface SkillFormation {
   hard?: SkillId
 }
 
+export interface MeditationState {
+  isActive: boolean
+  accumulatedMs: number
+}
+
 export interface CharacterState {
   id: string
   name: string
@@ -42,4 +47,5 @@ export interface CharacterState {
   formation?: SkillFormation
   weaponType?: WeaponRequirement
   equippedSkillIds: SkillId[]
+  meditation?: MeditationState
 }

@@ -154,6 +154,23 @@ describe('gameStore', () => {
     expect(display?.nextBreakthroughSummary).toContain('突破条件')
   })
 
+  it('getDisplayPlayer returns derived max qi from internal skill bonuses', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        learnedSkills: defaultPlayer.learnedSkills.map((skill) =>
+          skill.skillId === asSkillId('skill_internal_001_huntuan')
+            ? { ...skill, proficiency: 20 }
+            : skill,
+        ),
+      },
+    })
+
+    const displayPlayer = useGameStore.getState().getDisplayPlayer()
+    expect(displayPlayer.maxQi).toBe(69)
+    expect(displayPlayer.qi).toBe(60)
+  })
+
   it('equipSkill and unequipSkill update formation slots through store actions', () => {
     useGameStore.setState({
       player: {
@@ -475,5 +492,43 @@ describe('gameStore', () => {
   it('learnSkill does not duplicate existing skill', () => {
     useGameStore.getState().learnSkill('skill_sword_010_qingmang')
     expect(useGameStore.getState().player.learnedSkills).toHaveLength(2)
+  })
+
+  it('advanceMeditation restores hp and qi every ten seconds', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        hp: 110,
+        qi: 50,
+        learnedSkills: defaultPlayer.learnedSkills.map((skill) =>
+          skill.skillId === asSkillId('skill_internal_001_huntuan')
+            ? { ...skill, proficiency: 20 }
+            : skill,
+        ),
+      },
+    })
+
+    useGameStore.getState().setMeditationActive(true)
+    useGameStore.getState().advanceMeditation(10_000)
+
+    const { player } = useGameStore.getState()
+    expect(player.hp).toBe(114)
+    expect(player.qi).toBe(54)
+    expect(player.meditation).toEqual({
+      isActive: true,
+      accumulatedMs: 0,
+    })
+  })
+
+  it('enterScene stops active meditation', () => {
+    useGameStore.getState().setMeditationActive(true)
+    useGameStore.getState().advanceMeditation(3_000)
+
+    useGameStore.getState().enterScene('scene_002_outskirts')
+
+    expect(useGameStore.getState().player.meditation).toEqual({
+      isActive: false,
+      accumulatedMs: 0,
+    })
   })
 })

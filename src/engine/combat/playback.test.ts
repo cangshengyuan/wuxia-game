@@ -43,8 +43,20 @@ const enemy: CharacterState = {
 describe('playback', () => {
   it('creates snapshots from combatants', () => {
     const snapshots = createSnapshotsFromCombatants(player, enemy)
-    expect(snapshots.player).toEqual({ hp: 120, maxHp: 120, qi: 60, maxQi: 60 })
-    expect(snapshots.enemy).toEqual({ hp: 96, maxHp: 96, qi: 30, maxQi: 30 })
+    expect(snapshots.player).toEqual({
+      hp: 120,
+      maxHp: 120,
+      qi: 60,
+      maxQi: 60,
+      activeBuffs: [],
+    })
+    expect(snapshots.enemy).toEqual({
+      hp: 96,
+      maxHp: 96,
+      qi: 30,
+      maxQi: 30,
+      activeBuffs: [],
+    })
   })
 
   it('applies DamageDealt to target snapshot', () => {
@@ -91,5 +103,45 @@ describe('playback', () => {
     )
 
     expect(next).toEqual({ player: playerSnapshot, enemy: enemySnapshot })
+  })
+
+  it('tracks buff apply and expire on snapshots', () => {
+    const { player: playerSnapshot, enemy: enemySnapshot } = createSnapshotsFromCombatants(
+      player,
+      enemy,
+    )
+
+    const withBuff = applyEventToSnapshots(
+      {
+        type: 'BuffApplied',
+        sourceId: player.id,
+        targetId: enemy.id,
+        buffId: 'buff_armor_break',
+        buffName: '裂甲',
+        duration: 120,
+        modifiers: { incomingDamagePercent: 0.15 },
+      },
+      player.id,
+      enemy.id,
+      playerSnapshot,
+      enemySnapshot,
+    )
+
+    expect(withBuff.enemy.activeBuffs).toEqual([{ buffId: 'buff_armor_break', buffName: '裂甲' }])
+
+    const expired = applyEventToSnapshots(
+      {
+        type: 'BuffExpired',
+        targetId: enemy.id,
+        buffId: 'buff_armor_break',
+        buffName: '裂甲',
+      },
+      player.id,
+      enemy.id,
+      withBuff.player,
+      withBuff.enemy,
+    )
+
+    expect(expired.enemy.activeBuffs).toEqual([])
   })
 })

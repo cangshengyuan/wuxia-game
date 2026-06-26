@@ -15,8 +15,13 @@ import swordSkills from '../data/skills/sword/index.json'
 import { asMoveId, asSkillId } from '../types/id'
 import type { MoveId, SkillId } from '../types/id'
 import type {
+  ApplyBuffEffect,
   AttributeGrowthEntry,
+  MeditationRecoveryProfile,
+  MoveEffect,
   SkillAttributeGrowth,
+  SkillBuffDefinition,
+  SkillBuffModifiers,
   SkillCategory,
   SkillDefinition,
   SkillGrowthCurve,
@@ -39,6 +44,10 @@ const ATTRIBUTE_GROWTH_KEYS: (keyof SkillAttributeGrowth)[] = [
 
 function isNonNegativeNumber(value: unknown): value is number {
   return typeof value === 'number' && value >= 0
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value)
 }
 
 function isAttributeGrowthEntry(value: unknown): value is AttributeGrowthEntry {
@@ -105,6 +114,75 @@ function isSkillRealmDefinition(value: unknown): value is SkillRealmDefinition {
   )
 }
 
+function isMeditationRecoveryProfile(value: unknown): value is MeditationRecoveryProfile {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const profile = value as Record<string, unknown>
+  return (
+    isNonNegativeNumber(profile.baseRecovery) &&
+    isNonNegativeNumber(profile.proficiencyScale) &&
+    isNonNegativeNumber(profile.hpWeight) &&
+    isNonNegativeNumber(profile.qiWeight)
+  )
+}
+
+function isSkillBuffModifiers(value: unknown): value is SkillBuffModifiers {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const modifiers = value as Record<string, unknown>
+  const numericKeys: (keyof Omit<SkillBuffModifiers, 'stunned'>)[] = [
+    'outgoingDamageFlat',
+    'outgoingDamagePercent',
+    'incomingDamageFlat',
+    'incomingDamagePercent',
+    'hitChance',
+    'dodgeChance',
+    'speedFlat',
+    'speedPercent',
+    'qiCostFlat',
+    'qiCostPercent',
+  ]
+
+  return (
+    numericKeys.every((key) => modifiers[key] === undefined || isNumber(modifiers[key])) &&
+    (modifiers.stunned === undefined || typeof modifiers.stunned === 'boolean')
+  )
+}
+
+function isSkillBuffDefinition(value: unknown): value is SkillBuffDefinition {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const buff = value as Record<string, unknown>
+  return (
+    typeof buff.id === 'string' &&
+    buff.id.length > 0 &&
+    typeof buff.name === 'string' &&
+    buff.name.length > 0 &&
+    isNonNegativeNumber(buff.duration) &&
+    isSkillBuffModifiers(buff.modifiers)
+  )
+}
+
+function isApplyBuffEffect(value: unknown): value is ApplyBuffEffect {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const effect = value as Record<string, unknown>
+  return (
+    effect.kind === 'applyBuff' &&
+    (effect.target === 'self' || effect.target === 'target') &&
+    (effect.chance === undefined || (isNumber(effect.chance) && effect.chance >= 0 && effect.chance <= 1)) &&
+    isSkillBuffDefinition(effect.buff)
+  )
+}
+
+function isMoveEffect(value: unknown): value is MoveEffect {
+  return isApplyBuffEffect(value)
+}
+
 function isSkillMove(value: unknown): value is SkillMove {
   if (!value || typeof value !== 'object') {
     return false
@@ -125,6 +203,12 @@ function isSkillMove(value: unknown): value is SkillMove {
     return false
   }
   if (move.tag !== undefined && typeof move.tag !== 'string') {
+    return false
+  }
+  if (
+    move.effects !== undefined &&
+    (!Array.isArray(move.effects) || !move.effects.every(isMoveEffect))
+  ) {
     return false
   }
   return true
@@ -152,6 +236,9 @@ function isSkillDefinition(value: unknown): value is SkillDefinition {
   ) {
     return false
   }
+  if (skill.meditationRecovery !== undefined && !isMeditationRecoveryProfile(skill.meditationRecovery)) {
+    return false
+  }
   if (
     skill.weaponRequirement !== undefined &&
     !WEAPON_REQUIREMENTS.includes(skill.weaponRequirement as WeaponRequirement)
@@ -165,6 +252,17 @@ function normalizeSkill(raw: Record<string, unknown>): SkillDefinition {
   const moves = (raw.moves as Record<string, unknown>[]).map((move) => ({
     ...move,
     id: asMoveId(move.id as string),
+    ...(move.effects !== undefined
+      ? {
+          effects: (move.effects as MoveEffect[]).map((effect) => ({
+            ...effect,
+            buff: {
+              ...effect.buff,
+              modifiers: { ...effect.buff.modifiers },
+            },
+          })),
+        }
+      : {}),
   })) as SkillMove[]
 
   return {
@@ -178,6 +276,9 @@ function normalizeSkill(raw: Record<string, unknown>): SkillDefinition {
     realm: raw.realm as SkillRealmDefinition,
     attributeGrowth: raw.attributeGrowth as SkillAttributeGrowth,
     growthCurve: raw.growthCurve as SkillGrowthCurve,
+    ...(raw.meditationRecovery !== undefined
+      ? { meditationRecovery: raw.meditationRecovery as MeditationRecoveryProfile }
+      : {}),
     ...(raw.weaponRequirement !== undefined
       ? { weaponRequirement: raw.weaponRequirement as WeaponRequirement }
       : {}),

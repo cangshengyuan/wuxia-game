@@ -11,8 +11,51 @@
     "attributeGrowth": { "armStrength": { "perProficiency": 0.1, "perRealm": 1, "maxBonus": 5 }, "constitution": { "perProficiency": 0.05, "perRealm": 1, "maxBonus": 2 } },
     "growthCurve": { "proficiencyMultiplier": 1, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1, "inheritanceCapRatio": 0.35 },
     "moves": [
-      { "id": "move_kaishan_01", "name": "劈山断石", "cd": 3, "qiCost": 7, "powerRatio": 1.05, "unlockProficiency": 0 },
-      { "id": "move_kaishan_02", "name": "震岳开碑", "cd": 5, "qiCost": 11, "powerRatio": 1.2, "unlockProficiency": 12 }
+      {
+        "id": "move_kaishan_01",
+        "name": "劈山断石",
+        "cd": 3,
+        "qiCost": 7,
+        "powerRatio": 1.05,
+        "unlockProficiency": 0,
+        "effects": [
+          {
+            "kind": "applyBuff",
+            "target": "target",
+            "buff": {
+              "id": "buff_kaishan_armor_break",
+              "name": "开山裂甲",
+              "duration": 120,
+              "modifiers": {
+                "incomingDamagePercent": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "move_kaishan_02",
+        "name": "震岳开碑",
+        "cd": 5,
+        "qiCost": 11,
+        "powerRatio": 1.2,
+        "unlockProficiency": 12,
+        "effects": [
+          {
+            "kind": "applyBuff",
+            "target": "target",
+            "chance": 0.35,
+            "buff": {
+              "id": "buff_kaishan_stagger",
+              "name": "震退",
+              "duration": 80,
+              "modifiers": {
+                "stunned": true
+              }
+            }
+          }
+        ]
+      }
     ]
   }
 ]

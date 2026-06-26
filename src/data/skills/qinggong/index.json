@@ -11,7 +11,29 @@
     "attributeGrowth": { "speed": { "perProficiency": 0.14, "perRealm": 1, "maxBonus": 6 }, "agility": { "perProficiency": 0.09, "perRealm": 1, "maxBonus": 4 } },
     "growthCurve": { "proficiencyMultiplier": 1.05, "battleGainMultiplier": 1.05, "breakthroughCostMultiplier": 1, "insightChanceMultiplier": 1.05, "inheritanceCapRatio": 0.35 },
     "moves": [
-      { "id": "move_caoying_01", "name": "草梢借步", "cd": 2, "qiCost": 5, "powerRatio": 0.75, "unlockProficiency": 0 },
+      {
+        "id": "move_caoying_01",
+        "name": "草梢借步",
+        "cd": 2,
+        "qiCost": 2,
+        "powerRatio": 0,
+        "unlockProficiency": 0,
+        "effects": [
+          {
+            "kind": "applyBuff",
+            "target": "self",
+            "buff": {
+              "id": "buff_caoying_swiftness",
+              "name": "草影轻身",
+              "duration": 140,
+              "modifiers": {
+                "speedPercent": 0.3,
+                "dodgeChance": 0.18
+              }
+            }
+          }
+        ]
+      },
       { "id": "move_caoying_02", "name": "影里穿身", "cd": 3, "qiCost": 7, "powerRatio": 0.9, "unlockProficiency": 10 }
     ]
   },

@@ -7,10 +7,14 @@
 
 export type {
   BattleAction,
+  AttackMissedEvent,
   BattleEndedEvent,
   BattleEvent,
   BattleResult,
   BattleSnapshot,
+  CombatBuffSnapshot,
+  BuffAppliedEvent,
+  BuffExpiredEvent,
   CombatantSnapshot,
   DamageDealtEvent,
   DamageResult,
@@ -46,7 +50,11 @@ export type { ItemDefinition } from './item'
 export type { UnlockNotice } from './notice'
 export type {
   AttributeGrowthEntry,
+  ApplyBuffEffect,
+  MoveEffect,
   SkillAttributeGrowth,
+  SkillBuffDefinition,
+  SkillBuffModifiers,
   SkillCategory,
   SkillDefinition,
   SkillGrowthCurve,

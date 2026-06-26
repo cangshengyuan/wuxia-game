@@ -29,10 +29,29 @@ const mockEvents: BattleResult['events'] = [
     moveId: asMoveId('move_qingmang_01'),
   },
   {
+    type: 'BuffApplied',
+    sourceId: 'player_001',
+    targetId: 'player_001',
+    buffId: 'buff_huntuan_inner_breath',
+    buffName: '混元内息',
+    duration: 150,
+    modifiers: {
+      outgoingDamagePercent: 0.25,
+      qiCostPercent: -0.4,
+    },
+    moveId: asMoveId('move_huntuan_01'),
+  },
+  {
     type: 'DamageDealt',
     sourceId: 'player_001',
     targetId: 'enemy_001_bandit_grunt',
     amount: 15,
+  },
+  {
+    type: 'BuffExpired',
+    targetId: 'player_001',
+    buffId: 'buff_huntuan_inner_breath',
+    buffName: '混元内息',
   },
   {
     type: 'BattleEnded',
@@ -77,7 +96,14 @@ describe('BattlePage', () => {
     expect(screen.getByText(/施展/)).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(400)
+    const playerBuffPanel = screen.getByLabelText(/无名侠客 当前状态/)
+    expect(playerBuffPanel).toHaveTextContent('混元内息')
+
+    await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/造成 15 点伤害/)).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(400)
+    expect(playerBuffPanel).not.toHaveTextContent('混元内息')
 
     await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/战斗结束/)).toBeInTheDocument()

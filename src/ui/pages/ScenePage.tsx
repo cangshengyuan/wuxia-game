@@ -7,20 +7,14 @@
  * @depends store, ui/panels
  * @forbidden 禁止 import engine、禁止在组件内计算任务推进规则、禁止直接修改全局状态
  */
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { FeaturePlaceholderPanel } from '../panels/FeaturePlaceholderPanel'
-import { FormationPanel } from '../panels/FormationPanel'
+import { useUiStore, type SceneSubPage } from '../../store/uiStore'
 import { NpcList } from '../panels/NpcList'
-import { QuestLog } from '../panels/QuestLog'
-import { SaveControls } from '../panels/SaveControls'
-import { SkillPanel } from '../panels/SkillPanel'
-import { StatusPanel } from '../panels/StatusPanel'
 
 type SceneDialogState = 'main' | 'dialog'
-type SceneUtilityPanel = 'status' | 'skills' | 'inventory' | 'quests' | 'shop' | 'save'
 
-const MENU_ITEMS: Array<{ id: SceneUtilityPanel; label: string }> = [
+const MENU_ITEMS: Array<{ id: SceneSubPage; label: string }> = [
   { id: 'status', label: '状态' },
   { id: 'skills', label: '功法' },
   { id: 'inventory', label: '背包' },
@@ -30,7 +24,8 @@ const MENU_ITEMS: Array<{ id: SceneUtilityPanel; label: string }> = [
 ]
 
 export function ScenePage() {
-  const player = useGameStore((state) => state.player)
+  const rawPlayer = useGameStore((state) => state.player)
+  const getDisplayPlayer = useGameStore((state) => state.getDisplayPlayer)
   const currentSceneId = useGameStore((state) => state.currentSceneId)
   const activeQuests = useGameStore((state) => state.activeQuests)
   const getCurrentQuestName = useGameStore((state) => state.getCurrentQuestName)
@@ -41,17 +36,38 @@ export function ScenePage() {
   const enterScene = useGameStore((state) => state.enterScene)
   const explore = useGameStore((state) => state.explore)
   const performNpcDialogAction = useGameStore((state) => state.performNpcDialogAction)
+  const setMeditationActive = useGameStore((state) => state.setMeditationActive)
+  const advanceMeditation = useGameStore((state) => state.advanceMeditation)
+  const setPage = useUiStore((state) => state.setPage)
   const questName = activeQuests.length > 0 ? getCurrentQuestName() : '暂无'
+  void rawPlayer
+  const player = getDisplayPlayer()
+  const meditation = player.meditation ?? { isActive: false, accumulatedMs: 0 }
 
   const scene = currentSceneId ? getCurrentScene() : undefined
   const npcs = currentSceneId ? getSceneNpcs() : []
   const destinations = currentSceneId ? getSceneDestinations() : []
+  const nextSettleSeconds = useMemo(() => {
+    if (!meditation.isActive) {
+      return 10
+    }
+    return Math.max(1, Math.ceil((10_000 - meditation.accumulatedMs) / 1000))
+  }, [meditation.accumulatedMs, meditation.isActive])
 
   const [dialogState, setDialogState] = useState<SceneDialogState>('main')
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null)
-  const [activePanel, setActivePanel] = useState<SceneUtilityPanel | null>(null)
 
   const dialog = selectedNpcId ? getNpcDialogDisplay(selectedNpcId) : undefined
+
+  useEffect(() => {
+    if (!meditation.isActive) {
+      return undefined
+    }
+    const timerId = window.setInterval(() => {
+      advanceMeditation(1000)
+    }, 1000)
+    return () => window.clearInterval(timerId)
+  }, [advanceMeditation, meditation.isActive])
 
   const handleSelectNpc = (npcId: string) => {
     setSelectedNpcId(npcId)
@@ -70,35 +86,6 @@ export function ScenePage() {
     const shouldCloseDialog = performNpcDialogAction(selectedNpcId)
     if (shouldCloseDialog) {
       handleBackToMain()
-    }
-  }
-
-  const renderMenuContent = () => {
-    switch (activePanel) {
-      case 'status':
-        return <StatusPanel />
-      case 'skills':
-        return (
-          <div className="scene-layout__panel-stack">
-            <FormationPanel />
-            <SkillPanel />
-          </div>
-        )
-      case 'quests':
-        return <QuestLog />
-      case 'inventory':
-        return <FeaturePlaceholderPanel title="背包" />
-      case 'shop':
-        return <FeaturePlaceholderPanel title="商城" />
-      case 'save':
-        return <SaveControls />
-      default:
-        return (
-          <section className="panel">
-            <h2>功能栏目</h2>
-            <p className="scene-layout__placeholder">请选择下方栏目。</p>
-          </section>
-        )
     }
   }
 
@@ -153,15 +140,28 @@ export function ScenePage() {
         <h2>{scene?.name ?? '场景'}</h2>
         <p className="scene-layout__description">{scene?.description ?? '未知场景。'}</p>
         {scene ? (
-          <button
-            type="button"
-            className="counter scene-layout__action"
-            onClick={() => explore()}
-            disabled={!scene.canExplore}
-          >
-            探索
-          </button>
+          <div className="scene-layout__button-row">
+            <button
+              type="button"
+              className="counter scene-layout__action-button"
+              onClick={() => explore()}
+              disabled={!scene.canExplore}
+            >
+              探索
+            </button>
+            <button
+              type="button"
+              className="counter scene-layout__action-button"
+              onClick={() => setMeditationActive(!meditation.isActive)}
+            >
+              {meditation.isActive ? '收功' : '打坐'}
+            </button>
+          </div>
         ) : null}
+        <p className="scene-layout__description">
+          调息状态：
+          {meditation.isActive ? `打坐中，每 10 秒结算一次，下次结算约 ${nextSettleSeconds} 秒后。` : '未在打坐。'}
+        </p>
       </section>
 
       {dialogState === 'dialog' && dialog ? (
@@ -213,13 +213,12 @@ export function ScenePage() {
         <h2>功能</h2>
         <div className="scene-menu__list">
           {MENU_ITEMS.map((item) => {
-            const isActive = activePanel === item.id
             return (
               <button
                 key={item.id}
                 type="button"
-                className={`scene-menu__button${isActive ? ' scene-menu__button--active' : ''}`}
-                onClick={() => setActivePanel((current) => (current === item.id ? null : item.id))}
+                className="scene-menu__button"
+                onClick={() => setPage(item.id)}
               >
                 {item.label}
               </button>
@@ -227,8 +226,6 @@ export function ScenePage() {
           })}
         </div>
       </section>
-
-      <div className="scene-layout__menu-content">{renderMenuContent()}</div>
     </section>
   )
 }

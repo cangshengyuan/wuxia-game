@@ -7,9 +7,11 @@
  * @depends test, store, ui/pages
  * @forbidden 禁止在测试中绕过 store 直接修改 UI 内部状态
  */
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defaultPlayer, defaultSceneId, useGameStore } from '../../store/gameStore'
+import { useUiStore } from '../../store/uiStore'
+import App from '../../App'
 import { ScenePage } from './ScenePage'
 
 function resetGameStore(): void {
@@ -25,12 +27,20 @@ function resetGameStore(): void {
   })
 }
 
+function resetUiStore(): void {
+  useUiStore.setState({ currentPage: 'scene' })
+}
+
 describe('ScenePage', () => {
   beforeEach(() => {
+    vi.useFakeTimers()
     resetGameStore()
+    resetUiStore()
   })
 
   afterEach(() => {
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
     cleanup()
   })
 
@@ -46,14 +56,12 @@ describe('ScenePage', () => {
     expect(screen.getByRole('button', { name: '探索' })).not.toBeDisabled()
   })
 
-  it('opens the status panel without triggering a render loop', () => {
+  it('switches to the status subpage when clicking the menu button', () => {
     render(<ScenePage />)
 
     fireEvent.click(screen.getByRole('button', { name: '状态' }))
 
-    expect(screen.getByRole('heading', { name: '状态' })).toBeInTheDocument()
-    expect(screen.getByText('姓名：无名侠客')).toBeInTheDocument()
-    expect(screen.getByText('当前编成')).toBeInTheDocument()
+    expect(useUiStore.getState().currentPage).toBe('status')
   })
 
   it('keeps the npc dialog open after accepting the first quest', () => {
@@ -66,10 +74,12 @@ describe('ScenePage', () => {
     expect(screen.getByText('「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」')).toBeInTheDocument()
   })
 
-  it('refreshes the skill management view immediately after unequipping and re-equipping', () => {
-    render(<ScenePage />)
+  it('refreshes the skill management subpage immediately after unequipping and re-equipping', () => {
+    render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: '功法' }))
+
+    expect(screen.getByRole('heading', { name: '功法总览' })).toBeInTheDocument()
 
     const externalSlot = screen.getByText('外功槽一').closest('li')
     expect(externalSlot).not.toBeNull()
@@ -85,5 +95,31 @@ describe('ScenePage', () => {
 
     fireEvent.click(equipButton)
     expect(within(externalSlot!).getByText('青蟒剑法')).toBeInTheDocument()
+  })
+
+  it('settles meditation recovery on the scene page timer', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        hp: 110,
+        qi: 50,
+        learnedSkills: defaultPlayer.learnedSkills.map((skill) =>
+          skill.skillId === 'skill_internal_001_huntuan'
+            ? { ...skill, proficiency: 20 }
+            : skill,
+        ),
+      },
+    })
+
+    render(<ScenePage />)
+
+    fireEvent.click(screen.getByRole('button', { name: '打坐' }))
+    act(() => {
+      vi.advanceTimersByTime(10_000)
+    })
+
+    expect(screen.getByText((content) => content.includes('114') && content.includes('/120'))).toBeInTheDocument()
+    expect(screen.getByText((content) => content.includes('54') && content.includes('/69'))).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '收功' })).toBeInTheDocument()
   })
 })

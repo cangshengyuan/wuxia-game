@@ -11,7 +11,12 @@ import { asQuestId } from '../../types/id'
 import { inferFormationFromEquippedSkills } from '../character/formation'
 import { createDefaultPlayerState, getDefaultSceneId } from '../config/gameConfig'
 import type { QuestId, SceneId } from '../../types/id'
-import type { CharacterAttributes, CharacterState, SkillRuntime } from '../../types/character'
+import type {
+  CharacterAttributes,
+  CharacterState,
+  MeditationState,
+  SkillRuntime,
+} from '../../types/character'
 import type { ActiveQuest } from '../../types/world'
 
 export const SAVE_VERSION = 4 as const
@@ -92,6 +97,17 @@ function isSkillRuntime(value: unknown): value is SkillRuntime {
   return runtime.unlockedMoveIds.every((moveId) => typeof moveId === 'string')
 }
 
+function isMeditationState(value: unknown): value is MeditationState {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const meditation = value as Record<string, unknown>
+  return (
+    typeof meditation.isActive === 'boolean' &&
+    typeof meditation.accumulatedMs === 'number'
+  )
+}
+
 function isCharacterState(value: unknown): value is CharacterState {
   if (!value || typeof value !== 'object') {
     return false
@@ -131,6 +147,9 @@ function isCharacterState(value: unknown): value is CharacterState {
     }
   }
   if (player.weaponType !== undefined && player.weaponType !== 'sword' && player.weaponType !== 'unarmed') {
+    return false
+  }
+  if (player.meditation !== undefined && !isMeditationState(player.meditation)) {
     return false
   }
   return true
@@ -247,6 +266,10 @@ function enrichPlayerRuntime(player: CharacterState): CharacterState {
     })),
     formation: player.formation ?? inferFormationFromEquippedSkills(player.equippedSkillIds),
     weaponType: player.weaponType ?? 'sword',
+    meditation: player.meditation ?? {
+      isActive: false,
+      accumulatedMs: 0,
+    },
   }
 }
 

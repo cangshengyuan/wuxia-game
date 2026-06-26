@@ -81,6 +81,10 @@ export const createBattleSlice: GameStoreSlice<BattleSliceState> = (set, get) =>
         hp: result.finalPlayerHp,
         qi: result.finalPlayerQi,
         learnedSkills: updatedLearnedSkills,
+        meditation: {
+          isActive: false,
+          accumulatedMs: 0,
+        },
       },
       recentUnlocks: [...get().recentUnlocks, ...newUnlocks],
     })

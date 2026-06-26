@@ -10,10 +10,17 @@
 import { useGameStore } from '../../store/gameStore'
 
 export function StatusPanel() {
-  const player = useGameStore((state) => state.player)
+  const rawPlayer = useGameStore((state) => state.player)
+  const getDisplayPlayer = useGameStore((state) => state.getDisplayPlayer)
   const getFormationSlots = useGameStore((state) => state.getFormationSlots)
 
+  void rawPlayer
+  const player = getDisplayPlayer()
   const slots = getFormationSlots()
+  const meditation = player.meditation ?? { isActive: false, accumulatedMs: 0 }
+  const nextSettleSeconds = meditation.isActive
+    ? Math.max(1, Math.ceil((10_000 - meditation.accumulatedMs) / 1000))
+    : null
 
   return (
     <section className="panel">
@@ -30,6 +37,7 @@ export function StatusPanel() {
         </p>
         <p>速度：{player.speed}</p>
         <p>兵器：{player.weaponType ?? '空手'}</p>
+        <p>调息：{meditation.isActive ? `打坐中（${nextSettleSeconds} 秒后结算）` : '未打坐'}</p>
       </div>
 
       <section className="status-panel__section">

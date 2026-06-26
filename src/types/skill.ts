@@ -41,6 +41,43 @@ export interface SkillRealmDefinition {
   similarSkillRequired: number[]
 }
 
+export interface MeditationRecoveryProfile {
+  baseRecovery: number
+  proficiencyScale: number
+  hpWeight: number
+  qiWeight: number
+}
+
+export interface SkillBuffModifiers {
+  outgoingDamageFlat?: number
+  outgoingDamagePercent?: number
+  incomingDamageFlat?: number
+  incomingDamagePercent?: number
+  hitChance?: number
+  dodgeChance?: number
+  speedFlat?: number
+  speedPercent?: number
+  qiCostFlat?: number
+  qiCostPercent?: number
+  stunned?: boolean
+}
+
+export interface SkillBuffDefinition {
+  id: string
+  name: string
+  duration: number
+  modifiers: SkillBuffModifiers
+}
+
+export interface ApplyBuffEffect {
+  kind: 'applyBuff'
+  target: 'self' | 'target'
+  chance?: number
+  buff: SkillBuffDefinition
+}
+
+export type MoveEffect = ApplyBuffEffect
+
 export interface SkillMove {
   id: MoveId
   name: string
@@ -50,6 +87,7 @@ export interface SkillMove {
   unlockProficiency: number
   element?: string
   tag?: string
+  effects?: MoveEffect[]
 }
 
 export interface SkillDefinition {
@@ -64,5 +102,6 @@ export interface SkillDefinition {
   attributeGrowth: SkillAttributeGrowth
   growthCurve: SkillGrowthCurve
   weaponRequirement?: WeaponRequirement
+  meditationRecovery?: MeditationRecoveryProfile
   moves: SkillMove[]
 }

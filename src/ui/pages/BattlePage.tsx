@@ -16,6 +16,22 @@ import { BattleControls } from '../panels/BattleControls'
 
 const PLAYBACK_INTERVAL_MS = 400
 
+function renderBuffList(buffNames: string[]) {
+  if (buffNames.length === 0) {
+    return <p className="battle-layout__buff-empty">暂无状态</p>
+  }
+
+  return (
+    <ul className="battle-layout__buff-list">
+      {buffNames.map((buffName) => (
+        <li key={buffName} className="battle-layout__buff-item">
+          {buffName}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export function BattlePage() {
   const player = useGameStore((state) => state.player)
   const getFormationSlots = useGameStore((state) => state.getFormationSlots)
@@ -53,20 +69,32 @@ export function BattlePage() {
       <p className="battle-layout__subtitle">对手：{enemy.name}</p>
 
       <div className="battle-layout__combatants">
-        <HpBar
-          label={player.name}
-          hp={playerSnapshot.hp}
-          maxHp={playerSnapshot.maxHp}
-          qi={playerSnapshot.qi}
-          maxQi={playerSnapshot.maxQi}
-        />
-        <HpBar
-          label={enemy.name}
-          hp={enemySnapshot.hp}
-          maxHp={enemySnapshot.maxHp}
-          qi={enemySnapshot.qi}
-          maxQi={enemySnapshot.maxQi}
-        />
+        <div className="battle-layout__combatant-card">
+          <HpBar
+            label={player.name}
+            hp={playerSnapshot.hp}
+            maxHp={playerSnapshot.maxHp}
+            qi={playerSnapshot.qi}
+            maxQi={playerSnapshot.maxQi}
+          />
+          <div className="battle-layout__buff-panel" aria-label={`${player.name} 当前状态`}>
+            <p className="battle-layout__buff-title">当前状态</p>
+            {renderBuffList(playerSnapshot.activeBuffs.map((buff) => buff.buffName))}
+          </div>
+        </div>
+        <div className="battle-layout__combatant-card">
+          <HpBar
+            label={enemy.name}
+            hp={enemySnapshot.hp}
+            maxHp={enemySnapshot.maxHp}
+            qi={enemySnapshot.qi}
+            maxQi={enemySnapshot.maxQi}
+          />
+          <div className="battle-layout__buff-panel" aria-label={`${enemy.name} 当前状态`}>
+            <p className="battle-layout__buff-title">当前状态</p>
+            {renderBuffList(enemySnapshot.activeBuffs.map((buff) => buff.buffName))}
+          </div>
+        </div>
       </div>
 
       <ul className="event-log" aria-label="参战功法">

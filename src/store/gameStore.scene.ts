@@ -77,7 +77,16 @@ export const createSceneSlice: GameStoreSlice<SceneSliceState> = (set, get) => (
     if (!getSceneById(targetId)) {
       return
     }
-    set({ currentSceneId: targetId })
+    set({
+      currentSceneId: targetId,
+      player: {
+        ...state.player,
+        meditation: {
+          isActive: false,
+          accumulatedMs: 0,
+        },
+      },
+    })
     gameEventBus.emit({ type: 'SceneEntered', sceneId: targetId })
   },
 
@@ -90,6 +99,15 @@ export const createSceneSlice: GameStoreSlice<SceneSliceState> = (set, get) => (
     if (!enemyId) {
       return
     }
+    set({
+      player: {
+        ...get().player,
+        meditation: {
+          isActive: false,
+          accumulatedMs: 0,
+        },
+      },
+    })
     useBattleStore.getState().prepareBattle(enemyId)
     useUiStore.getState().setPage('battle')
   },

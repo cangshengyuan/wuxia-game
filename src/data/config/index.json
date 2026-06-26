@@ -37,7 +37,11 @@
         "internal": "skill_internal_001_huntuan"
       },
       "weaponType": "sword",
-      "equippedSkillIds": ["skill_sword_010_qingmang"]
+      "equippedSkillIds": ["skill_sword_010_qingmang"],
+      "meditation": {
+        "isActive": false,
+        "accumulatedMs": 0
+      }
     }
   },
   "balance": {

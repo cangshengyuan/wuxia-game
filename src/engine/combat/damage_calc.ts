@@ -26,6 +26,10 @@ export function calcDamage({
   move,
   damageMultiplier = 1,
 }: CalcDamageInput): DamageResult {
+  if (move.powerRatio <= 0) {
+    return { amount: 0, isCritical: false }
+  }
+
   const attackPower = attacker.attributes.armStrength * 2 + attacker.speed * 0.6
   const defenseReduction = defender.attributes.constitution * 0.7
   const amount = Math.max(

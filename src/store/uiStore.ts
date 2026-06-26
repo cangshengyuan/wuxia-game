@@ -9,7 +9,10 @@
  */
 import { create } from 'zustand'
 
-export type Page = 'home' | 'battle' | 'scene'
+export const sceneSubPages = ['status', 'skills', 'inventory', 'quests', 'shop', 'save'] as const
+
+export type SceneSubPage = (typeof sceneSubPages)[number]
+export type Page = 'home' | 'battle' | 'scene' | SceneSubPage
 
 interface UiStoreState {
   currentPage: Page
@@ -20,3 +23,7 @@ export const useUiStore = create<UiStoreState>((set) => ({
   currentPage: 'scene',
   setPage: (page) => set({ currentPage: page }),
 }))
+
+export function isSceneSubPage(page: Page): page is SceneSubPage {
+  return sceneSubPages.includes(page as SceneSubPage)
+}

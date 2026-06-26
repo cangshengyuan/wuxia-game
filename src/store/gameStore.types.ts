@@ -92,6 +92,7 @@ export interface GameStoreState extends PersistedGameState {
   canUpgradeSkill: (skillId: SkillId | string) => boolean
   upgradeSkill: (skillId: SkillId | string) => void
   dismissUnlockNotice: (id: string) => void
+  getDisplayPlayer: () => CharacterState
   getSkillDisplay: (skillId: SkillId | string) => SkillDisplay | undefined
   getLearnedSkillDisplays: () => SkillDisplay[]
   getCurrentScene: () => SceneDisplay | undefined
@@ -104,6 +105,8 @@ export interface GameStoreState extends PersistedGameState {
   getFormationSkillOptions: () => FormationSkillOptionDisplay[]
   equipSkill: (skillId: SkillId | string) => void
   unequipSkill: (skillId: SkillId | string) => void
+  setMeditationActive: (isActive: boolean) => void
+  advanceMeditation: (elapsedMs: number) => void
   acceptQuest: (questId: QuestId | string) => void
   performNpcDialogAction: (npcId: NpcId | string) => boolean
   handleGameEvent: (event: GameEvent) => void

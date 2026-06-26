@@ -11,13 +11,20 @@ import { createScopedBus } from '../event_bus'
 import { getSynergySources } from '../skill_relation_engine'
 import { getMoveById, getSkillById } from '../skillEngine'
 import { createSeededRng, type Rng } from '../util/rng'
+import {
+  applyBuff,
+  createBuffState,
+  expireBuffsAtTime,
+  getLatestStunExpireAt,
+  getModifiersAtTime,
+} from './buffs'
 import { calcDamage } from './damage_calc'
 import { calcProficiencyGains } from './loot'
 import { PriorityQueue } from './priority_queue'
 import type { QueuePayload } from './types'
 import type { BattleEvent, BattleResult } from '../../types/battle'
 import type { CharacterState, SkillRuntime } from '../../types/character'
-import type { SkillMove } from '../../types/skill'
+import type { ApplyBuffEffect, SkillMove } from '../../types/skill'
 import type { SkillId } from '../../types/id'
 
 const MAX_TICKS = 10_000
@@ -88,14 +95,22 @@ function resolveSkillChoice(
   skillId: SkillId,
   currentQi: number,
   rng: Rng,
+  currentTime: number,
+  buffState: ReturnType<typeof createBuffState>,
 ): SkillMove | undefined {
   const moves = resolveUnlockedMoves(character, skillId)
   if (moves.length === 0) {
     return undefined
   }
 
-  const affordable = moves.filter((move) => move.qiCost <= currentQi)
-  const cheapestMove = [...moves].sort((left, right) => left.qiCost - right.qiCost)[0]
+  const moveCosts = moves.map((move) => ({
+    move,
+    cost: getModifiedQiCost(move, character.id, currentTime, buffState),
+  }))
+  const affordable = moveCosts
+    .filter((entry) => entry.cost <= currentQi)
+    .map((entry) => entry.move)
+  const cheapestMove = [...moveCosts].sort((left, right) => left.cost - right.cost)[0]?.move
   if (affordable.length === 0) {
     return cheapestMove
   }
@@ -114,6 +129,28 @@ function calcTriggerDelay(move: SkillMove, speed: number): number {
   return Math.max(1, move.cd * (100 / speed))
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max)
+}
+
+function getModifiedQiCost(move: SkillMove, actorId: string, currentTime: number, buffState: ReturnType<typeof createBuffState>): number {
+  const modifiers = getModifiersAtTime(buffState, actorId, currentTime)
+  return Math.max(
+    0,
+    Math.round(move.qiCost * (1 + modifiers.qiCostPercent) + modifiers.qiCostFlat),
+  )
+}
+
+function getModifiedSpeed(
+  baseSpeed: number,
+  actorId: string,
+  currentTime: number,
+  buffState: ReturnType<typeof createBuffState>,
+): number {
+  const modifiers = getModifiersAtTime(buffState, actorId, currentTime)
+  return Math.max(1, Math.round(baseSpeed * (1 + modifiers.speedPercent) + modifiers.speedFlat))
+}
+
 function getDamageMultiplier(character: CharacterState, skillId: SkillId): number {
   return getSynergySources(skillId).reduce((multiplier, relation) => {
     const sourceRuntime = getRuntime(character, relation.sourceSkillId)
@@ -124,6 +161,51 @@ function getDamageMultiplier(character: CharacterState, skillId: SkillId): numbe
   }, 1)
 }
 
+function getBuffEffects(move: SkillMove, target: 'self' | 'target'): ApplyBuffEffect[] {
+  return (move.effects ?? []).filter(
+    (effect): effect is ApplyBuffEffect => effect.kind === 'applyBuff' && effect.target === target,
+  )
+}
+
+function applyDamageModifiers(
+  baseDamage: number,
+  attackerId: string,
+  defenderId: string,
+  currentTime: number,
+  buffState: ReturnType<typeof createBuffState>,
+): number {
+  if (baseDamage <= 0) {
+    return 0
+  }
+
+  const attackerModifiers = getModifiersAtTime(buffState, attackerId, currentTime)
+  const defenderModifiers = getModifiersAtTime(buffState, defenderId, currentTime)
+  const withFlatBonuses =
+    baseDamage + attackerModifiers.outgoingDamageFlat + defenderModifiers.incomingDamageFlat
+  const withOutgoingPercent = withFlatBonuses * (1 + attackerModifiers.outgoingDamagePercent)
+  const withIncomingPercent = withOutgoingPercent * (1 + defenderModifiers.incomingDamagePercent)
+
+  return Math.max(1, Math.round(withIncomingPercent))
+}
+
+function calcHitChance(
+  attacker: CombatantState,
+  defender: CombatantState,
+  currentTime: number,
+  buffState: ReturnType<typeof createBuffState>,
+): number {
+  const attackerModifiers = getModifiersAtTime(buffState, attacker.id, currentTime)
+  const defenderModifiers = getModifiersAtTime(buffState, defender.id, currentTime)
+  const baseHitChance =
+    0.9 + (attacker.source.attributes.agility - defender.source.attributes.agility) * 0.015
+
+  return clamp(
+    baseHitChance + attackerModifiers.hitChance - defenderModifiers.dodgeChance,
+    0.05,
+    0.98,
+  )
+}
+
 export function startBattle({
   player,
   enemy,
@@ -131,6 +213,7 @@ export function startBattle({
 }: StartBattleInput): BattleResult {
   scheduleCounter = 0
   const bus = createScopedBus()
+  const buffState = createBuffState()
   const queue = new PriorityQueue()
   const events: BattleEvent[] = []
   const combatants = new Map<string, CombatantState>([
@@ -155,7 +238,17 @@ export function startBattle({
   ): void => {
     queue.push({
       id: nextScheduleId(actor.id),
-      triggerAt: atTime + calcTriggerDelay(move, actor.speed),
+      triggerAt:
+        atTime +
+        calcTriggerDelay(move, getModifiedSpeed(actor.speed, actor.id, atTime, buffState)),
+      payload,
+    })
+  }
+
+  const schedulePayloadAt = (payload: QueuePayload, triggerAt: number): void => {
+    queue.push({
+      id: nextScheduleId(payload.actorId),
+      triggerAt,
       payload,
     })
   }
@@ -171,7 +264,7 @@ export function startBattle({
 
   const enqueueInitial = (actor: CombatantState, targetId: string): void => {
     for (const skillId of getEquippedSkillIds(actor.source)) {
-      const move = resolveSkillChoice(actor.source, skillId, actor.qi, rng)
+      const move = resolveSkillChoice(actor.source, skillId, actor.qi, rng, currentTime, buffState)
       if (!move) {
         continue
       }
@@ -188,7 +281,9 @@ export function startBattle({
     }
 
     const actor = combatants.get(event.actorId)
-    const target = combatants.get(event.actorId === player.id ? enemy.id : player.id)
+    const target = combatants.get(
+      event.actorId === player.id ? enemy.id : player.id,
+    )
     const move = getMoveById(event.moveId)?.move
     if (!actor || !target || !move) {
       return
@@ -200,12 +295,13 @@ export function startBattle({
       skillId: event.skillId,
     }
 
-    if (actor.qi < move.qiCost) {
+    const qiCost = getModifiedQiCost(move, actor.id, currentTime, buffState)
+    if (actor.qi < qiCost) {
       scheduleSkill(actor, payload, move, currentTime)
       return
     }
 
-    actor.qi -= move.qiCost
+    actor.qi -= qiCost
     recordEmit({
       type: 'SkillExecuted',
       actorId: event.actorId,
@@ -213,21 +309,77 @@ export function startBattle({
       moveId: event.moveId,
     })
 
-    const damage = calcDamage({
+    for (const effect of getBuffEffects(move, 'self')) {
+      if (effect.chance !== undefined && rng.next() > effect.chance) {
+        continue
+      }
+      recordEmit(
+        applyBuff(
+          buffState,
+          {
+            ownerId: actor.id,
+            sourceId: actor.id,
+            skillId: event.skillId,
+            moveId: event.moveId,
+            currentTime,
+          },
+          effect.buff,
+        ),
+      )
+    }
+
+    const baseDamage = calcDamage({
       attacker: actor.source,
       defender: target.source,
       move,
       damageMultiplier: getDamageMultiplier(actor.source, event.skillId),
     }).amount
+    const hasTargetEffects = getBuffEffects(move, 'target').length > 0
+    const requiresHitCheck = baseDamage > 0 || hasTargetEffects
+    const hitSucceeded =
+      !requiresHitCheck || rng.next() <= calcHitChance(actor, target, currentTime, buffState)
 
-    target.hp = Math.max(0, target.hp - damage)
-    recordEmit({
-      type: 'DamageDealt',
-      sourceId: event.actorId,
-      targetId: target.id,
-      amount: damage,
-      moveId: event.moveId,
-    })
+    if (!hitSucceeded) {
+      recordEmit({
+        type: 'AttackMissed',
+        sourceId: event.actorId,
+        targetId: target.id,
+        moveId: event.moveId,
+      })
+      scheduleSkill(actor, payload, move, currentTime)
+      return
+    }
+
+    for (const effect of getBuffEffects(move, 'target')) {
+      if (effect.chance !== undefined && rng.next() > effect.chance) {
+        continue
+      }
+      recordEmit(
+        applyBuff(
+          buffState,
+          {
+            ownerId: target.id,
+            sourceId: actor.id,
+            skillId: event.skillId,
+            moveId: event.moveId,
+            currentTime,
+          },
+          effect.buff,
+        ),
+      )
+    }
+
+    const damage = applyDamageModifiers(baseDamage, actor.id, target.id, currentTime, buffState)
+    if (damage > 0) {
+      target.hp = Math.max(0, target.hp - damage)
+      recordEmit({
+        type: 'DamageDealt',
+        sourceId: event.actorId,
+        targetId: target.id,
+        amount: damage,
+        moveId: event.moveId,
+      })
+    }
 
     if (target.hp <= 0) {
       endBattle(actor.id)
@@ -249,12 +401,30 @@ export function startBattle({
     if (!actor) {
       continue
     }
-    const move = resolveSkillChoice(actor.source, node.payload.skillId, actor.qi, rng)
+
+    currentTime = node.triggerAt
+    for (const event of expireBuffsAtTime(buffState, currentTime)) {
+      recordEmit(event)
+    }
+
+    const stunExpireAt = getLatestStunExpireAt(buffState, actor.id, currentTime)
+    if (stunExpireAt !== undefined) {
+      schedulePayloadAt(node.payload, stunExpireAt)
+      continue
+    }
+
+    const move = resolveSkillChoice(
+      actor.source,
+      node.payload.skillId,
+      actor.qi,
+      rng,
+      currentTime,
+      buffState,
+    )
     if (!move) {
       continue
     }
 
-    currentTime = node.triggerAt
     recordEmit({
       type: 'SkillReady',
       actorId: node.payload.actorId,

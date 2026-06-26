@@ -9,7 +9,12 @@
  */
 import configData from '../../data/config/index.json'
 import { asEnemyId, asSceneId, asSkillId } from '../../types/id'
-import type { CharacterAttributes, CharacterState, SkillRuntime } from '../../types/character'
+import type {
+  CharacterAttributes,
+  CharacterState,
+  MeditationState,
+  SkillRuntime,
+} from '../../types/character'
 import type {
   FormationBalanceConfig,
   GameBalanceConfig,
@@ -52,6 +57,17 @@ function isSkillRuntime(value: unknown): value is SkillRuntime {
   return runtime.unlockedMoveIds.every((moveId) => typeof moveId === 'string')
 }
 
+function isMeditationState(value: unknown): value is MeditationState {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const meditation = value as Record<string, unknown>
+  return (
+    typeof meditation.isActive === 'boolean' &&
+    typeof meditation.accumulatedMs === 'number'
+  )
+}
+
 function isCharacterState(value: unknown): value is CharacterState {
   if (!value || typeof value !== 'object') {
     return false
@@ -91,6 +107,9 @@ function isCharacterState(value: unknown): value is CharacterState {
     if (formation.hard !== undefined && typeof formation.hard !== 'string') {
       return false
     }
+  }
+  if (player.meditation !== undefined && !isMeditationState(player.meditation)) {
+    return false
   }
   return player.weaponType === undefined || isWeaponRequirement(player.weaponType)
 }
@@ -153,6 +172,15 @@ function normalizePlayer(raw: CharacterState): CharacterState {
         }
       : undefined,
     equippedSkillIds: raw.equippedSkillIds.map((skillId) => asSkillId(skillId)),
+    meditation: raw.meditation
+      ? {
+          isActive: raw.meditation.isActive,
+          accumulatedMs: raw.meditation.accumulatedMs,
+        }
+      : {
+          isActive: false,
+          accumulatedMs: 0,
+        },
   }
 }
 

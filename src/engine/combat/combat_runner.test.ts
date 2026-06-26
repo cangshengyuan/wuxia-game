@@ -206,6 +206,81 @@ describe('combat_runner', () => {
     expect(sturdyResult.finalPlayerHp).toBeGreaterThan(plainResult.finalPlayerHp)
   })
 
+  it('allows internal skill moves to apply self buff before damage skills', () => {
+    const player = buildBattleReadyCharacter({
+      ...testPlayer,
+      formation: {
+        external: [asSkillId('skill_sword_010_qingmang')],
+        internal: asSkillId('skill_internal_001_huntuan'),
+      },
+      equippedSkillIds: [
+        asSkillId('skill_sword_010_qingmang'),
+        asSkillId('skill_internal_001_huntuan'),
+      ],
+    })
+    const result = startBattle({
+      player,
+      enemy: buildEnemyState('enemy_001_bandit_grunt')!,
+      rng: createSeededRng(5),
+    })
+
+    const firstBuffIndex = result.events.findIndex(
+      (event) =>
+        event.type === 'BuffApplied' &&
+        event.targetId === player.id &&
+        event.buffId === 'buff_huntuan_inner_breath',
+    )
+    const firstPlayerDamageIndex = result.events.findIndex(
+      (event) => event.type === 'DamageDealt' && event.sourceId === player.id,
+    )
+    const playerDamageAfterBuff = result.events.findIndex(
+      (event, index) =>
+        index > firstBuffIndex && event.type === 'DamageDealt' && event.sourceId === player.id,
+    )
+
+    expect(firstBuffIndex).toBeGreaterThanOrEqual(0)
+    expect(firstPlayerDamageIndex).toBeGreaterThanOrEqual(0)
+    expect(playerDamageAfterBuff).toBeGreaterThan(firstBuffIndex)
+  })
+
+  it('allows hard skill support move to apply guard buff', () => {
+    const player = buildBattleReadyCharacter({
+      ...testPlayer,
+      learnedSkills: [
+        ...testPlayer.learnedSkills,
+        {
+          skillId: asSkillId('skill_hard_050_tiebu'),
+          proficiency: 8,
+          realmLevel: 1,
+          insight: 0,
+          unlockedMoveIds: ['move_tiebu_01'],
+        },
+      ],
+      formation: {
+        external: [asSkillId('skill_sword_010_qingmang')],
+        hard: asSkillId('skill_hard_050_tiebu'),
+      },
+      equippedSkillIds: [
+        asSkillId('skill_sword_010_qingmang'),
+        asSkillId('skill_hard_050_tiebu'),
+      ],
+    })
+    const result = startBattle({
+      player,
+      enemy: buildEnemyState('enemy_001_bandit_grunt')!,
+      rng: createSeededRng(9),
+    })
+
+    expect(
+      result.events.some(
+        (event) =>
+          event.type === 'BuffApplied' &&
+          event.targetId === player.id &&
+          event.buffId === 'buff_tiebu_guard',
+      ),
+    ).toBe(true)
+  })
+
   it('can change battle winner through pre-battle formation choices', () => {
     const enemy = buildEnemyState('enemy_002_bandit_boss')!
     const playerCore: CharacterState = {

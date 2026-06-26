@@ -44,4 +44,24 @@ describe('event_format', () => {
 
     expect(message).toBe('战斗结束，玩家 获胜')
   })
+
+  it('formats BuffApplied', () => {
+    const message = formatBattleEvent({
+      type: 'BuffApplied',
+      sourceId: 'player_001',
+      targetId: 'player_001',
+      buffId: 'buff_huntuan_inner_breath',
+      buffName: '混元内息',
+      duration: 150,
+      modifiers: {
+        outgoingDamagePercent: 0.25,
+        qiCostPercent: -0.4,
+      },
+      moveId: asMoveId('move_huntuan_01'),
+    })
+
+    expect(message).toContain('混元内息')
+    expect(message).toContain('伤害+25%')
+    expect(message).toContain('耗气-40%')
+  })
 })

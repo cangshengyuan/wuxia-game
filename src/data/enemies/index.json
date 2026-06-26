@@ -13,6 +13,7 @@
       "constitution": 10
     },
     "equippedSkillIds": ["skill_sword_013_songfeng"],
+    "skillRewards": ["skill_sword_013_songfeng"],
     "speed": 9,
     "weaponType": "sword"
   },
