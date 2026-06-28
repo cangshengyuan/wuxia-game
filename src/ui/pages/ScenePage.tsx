@@ -7,7 +7,7 @@
  * @depends store, ui/panels
  * @forbidden 禁止 import engine、禁止在组件内计算任务推进规则、禁止直接修改全局状态
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { useUiStore, type SceneSubPage } from '../../store/uiStore'
 import { NpcList } from '../panels/NpcList'
@@ -37,7 +37,6 @@ export function ScenePage() {
   const explore = useGameStore((state) => state.explore)
   const performNpcDialogAction = useGameStore((state) => state.performNpcDialogAction)
   const setMeditationActive = useGameStore((state) => state.setMeditationActive)
-  const advanceMeditation = useGameStore((state) => state.advanceMeditation)
   const setPage = useUiStore((state) => state.setPage)
   const questName = activeQuests.length > 0 ? getCurrentQuestName() : '暂无'
   void rawPlayer
@@ -58,16 +57,6 @@ export function ScenePage() {
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null)
 
   const dialog = selectedNpcId ? getNpcDialogDisplay(selectedNpcId) : undefined
-
-  useEffect(() => {
-    if (!meditation.isActive) {
-      return undefined
-    }
-    const timerId = window.setInterval(() => {
-      advanceMeditation(1000)
-    }, 1000)
-    return () => window.clearInterval(timerId)
-  }, [advanceMeditation, meditation.isActive])
 
   const handleSelectNpc = (npcId: string) => {
     setSelectedNpcId(npcId)

@@ -111,7 +111,7 @@ describe('ScenePage', () => {
       },
     })
 
-    render(<ScenePage />)
+    render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: '打坐' }))
     act(() => {
@@ -121,5 +121,32 @@ describe('ScenePage', () => {
     expect(screen.getByText((content) => content.includes('114') && content.includes('/120'))).toBeInTheDocument()
     expect(screen.getByText((content) => content.includes('54') && content.includes('/69'))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '收功' })).toBeInTheDocument()
+  })
+
+  it('keeps meditation running after entering a scene subpage', () => {
+    useGameStore.setState({
+      player: {
+        ...defaultPlayer,
+        hp: 110,
+        qi: 50,
+        learnedSkills: defaultPlayer.learnedSkills.map((skill) =>
+          skill.skillId === 'skill_internal_001_huntuan'
+            ? { ...skill, proficiency: 20 }
+            : skill,
+        ),
+      },
+    })
+
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: '打坐' }))
+    fireEvent.click(screen.getByRole('button', { name: '状态' }))
+
+    act(() => {
+      vi.advanceTimersByTime(10_000)
+    })
+
+    expect(screen.getByText('内力：54/69')).toBeInTheDocument()
+    expect(screen.getByText('气血：114/120')).toBeInTheDocument()
   })
 })

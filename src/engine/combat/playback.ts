@@ -9,6 +9,7 @@
  */
 import type { BattleEvent, CombatBuffSnapshot, CombatantSnapshot } from '../../types/battle'
 import type { CharacterState } from '../../types/character'
+import { getMoveById } from '../skillEngine'
 
 function applyBuffSnapshot(
   activeBuffs: CombatBuffSnapshot[],
@@ -58,6 +59,11 @@ export function applyEventToSnapshots(
     hp: Math.max(0, snapshot.hp - amount),
   })
 
+  const nextQi = (snapshot: CombatantSnapshot, amount: number): CombatantSnapshot => ({
+    ...snapshot,
+    qi: Math.max(0, snapshot.qi - amount),
+  })
+
   const nextWithBuff = (
     snapshot: CombatantSnapshot,
     buff: CombatBuffSnapshot,
@@ -70,6 +76,45 @@ export function applyEventToSnapshots(
     ...snapshot,
     activeBuffs: removeBuffSnapshot(snapshot.activeBuffs, buffId),
   })
+
+  const getModifiedQiCost = (snapshot: CombatantSnapshot, moveId: string): number => {
+    const move = getMoveById(moveId)?.move
+    if (!move) {
+      return 0
+    }
+
+    const modifiers = snapshot.activeBuffs.reduce(
+      (totals, buff) => ({
+        qiCostFlat: totals.qiCostFlat + (buff.modifiers.qiCostFlat ?? 0),
+        qiCostPercent: totals.qiCostPercent + (buff.modifiers.qiCostPercent ?? 0),
+      }),
+      { qiCostFlat: 0, qiCostPercent: 0 },
+    )
+
+    return Math.max(
+      0,
+      Math.round(move.qiCost * (1 + modifiers.qiCostPercent) + modifiers.qiCostFlat),
+    )
+  }
+
+  if (event.type === 'SkillExecuted') {
+    const qiCost =
+      event.actorId === playerId
+        ? getModifiedQiCost(player, event.moveId)
+        : event.actorId === enemyId
+          ? getModifiedQiCost(enemy, event.moveId)
+          : 0
+
+    if (event.actorId === playerId) {
+      return { player: nextQi(player, qiCost), enemy }
+    }
+
+    if (event.actorId === enemyId) {
+      return { player, enemy: nextQi(enemy, qiCost) }
+    }
+
+    return { player, enemy }
+  }
 
   if (event.type === 'DamageDealt') {
     if (event.targetId === playerId) {
@@ -87,6 +132,7 @@ export function applyEventToSnapshots(
     const buff = {
       buffId: event.buffId,
       buffName: event.buffName,
+      modifiers: { ...event.modifiers },
     }
 
     if (event.targetId === playerId) {

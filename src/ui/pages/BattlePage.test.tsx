@@ -12,7 +12,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { asMoveId, asSkillId } from '../../types/id'
 import type { BattleResult } from '../../types/battle'
 import { useBattleStore } from '../../store/battleStore'
-import { BattlePage } from './BattlePage'
+import { useUiStore } from '../../store/uiStore'
+import App from '../../App'
 
 const mockEvents: BattleResult['events'] = [
   {
@@ -80,6 +81,7 @@ describe('BattlePage', () => {
       pendingResult: mockBattleResult,
       result: undefined,
     })
+    useUiStore.setState({ currentPage: 'battle' })
   })
 
   afterEach(() => {
@@ -87,13 +89,14 @@ describe('BattlePage', () => {
   })
 
   it('renders battle log events in order during playback', async () => {
-    render(<BattlePage />)
+    render(<App />)
 
     await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/准备/)).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/施展/)).toBeInTheDocument()
+    expect(screen.getByText((content) => content.includes('内力 50/60'))).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(400)
     const playerBuffPanel = screen.getByLabelText(/无名侠客 当前状态/)
@@ -107,6 +110,6 @@ describe('BattlePage', () => {
 
     await vi.advanceTimersByTimeAsync(400)
     expect(screen.getByText(/战斗结束/)).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('胜利')
+    expect(screen.getByText('胜利')).toBeInTheDocument()
   })
 })

@@ -5,7 +5,7 @@
  * @forbidden 禁止在 types 层 import engine/store/ui
  */
 import type { MoveId, SkillId } from './id'
-import type { SkillBuffModifiers } from './skill'
+import type { SkillBuffDefinition, SkillBuffModifiers } from './skill'
 
 export interface BattleAction {
   actorId: string
@@ -33,6 +33,7 @@ export interface CombatantSnapshot {
 export interface CombatBuffSnapshot {
   buffId: string
   buffName: string
+  modifiers: SkillBuffDefinition['modifiers']
 }
 
 export interface SkillReadyEvent {

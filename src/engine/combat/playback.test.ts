@@ -127,7 +127,13 @@ describe('playback', () => {
       enemySnapshot,
     )
 
-    expect(withBuff.enemy.activeBuffs).toEqual([{ buffId: 'buff_armor_break', buffName: '裂甲' }])
+    expect(withBuff.enemy.activeBuffs).toEqual([
+      {
+        buffId: 'buff_armor_break',
+        buffName: '裂甲',
+        modifiers: { incomingDamagePercent: 0.15 },
+      },
+    ])
 
     const expired = applyEventToSnapshots(
       {
@@ -143,5 +149,44 @@ describe('playback', () => {
     )
 
     expect(expired.enemy.activeBuffs).toEqual([])
+  })
+
+  it('deducts qi immediately on SkillExecuted with active buff modifiers', () => {
+    const { player: playerSnapshot, enemy: enemySnapshot } = createSnapshotsFromCombatants(
+      player,
+      enemy,
+    )
+
+    const withDiscountBuff = applyEventToSnapshots(
+      {
+        type: 'BuffApplied',
+        sourceId: player.id,
+        targetId: player.id,
+        buffId: 'buff_huntuan_inner_breath',
+        buffName: '混元内息',
+        duration: 120,
+        modifiers: { qiCostPercent: -0.4 },
+        moveId: asMoveId('move_huntuan_01'),
+      },
+      player.id,
+      enemy.id,
+      playerSnapshot,
+      enemySnapshot,
+    )
+
+    const next = applyEventToSnapshots(
+      {
+        type: 'SkillExecuted',
+        actorId: player.id,
+        skillId: asSkillId('skill_sword_010_qingmang'),
+        moveId: asMoveId('move_qingmang_01'),
+      },
+      player.id,
+      enemy.id,
+      withDiscountBuff.player,
+      withDiscountBuff.enemy,
+    )
+
+    expect(next.player.qi).toBe(54)
   })
 })

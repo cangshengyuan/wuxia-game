@@ -7,14 +7,11 @@
  * @depends store, ui/components, ui/panels
  * @forbidden 禁止 import engine、禁止在组件内计算伤害/CD/概率、禁止直接修改全局状态
  */
-import { useEffect } from 'react'
 import { useBattleStore } from '../../store/battleStore'
 import { useGameStore } from '../../store/gameStore'
 import { EventLogItem } from '../components/EventLogItem'
 import { HpBar } from '../components/HpBar'
 import { BattleControls } from '../panels/BattleControls'
-
-const PLAYBACK_INTERVAL_MS = 400
 
 function renderBuffList(buffNames: string[]) {
   if (buffNames.length === 0) {
@@ -42,22 +39,7 @@ export function BattlePage() {
   const playerSnapshot = useBattleStore((state) => state.playerSnapshot)
   const enemySnapshot = useBattleStore((state) => state.enemySnapshot)
   const result = useBattleStore((state) => state.result)
-  const tickPlayback = useBattleStore((state) => state.tickPlayback)
   const formatEvent = useBattleStore((state) => state.formatEvent)
-
-  useEffect(() => {
-    if (status !== 'running') {
-      return
-    }
-
-    const timerId = window.setInterval(() => {
-      tickPlayback()
-    }, PLAYBACK_INTERVAL_MS)
-
-    return () => {
-      window.clearInterval(timerId)
-    }
-  }, [status, tickPlayback])
 
   const visibleEvents = playbackIndex >= 0 ? events.slice(0, playbackIndex + 1) : []
   const isVictory = result?.winnerId === player.id

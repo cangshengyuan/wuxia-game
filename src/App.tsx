@@ -14,6 +14,7 @@ import { BattlePage } from './ui/pages/BattlePage'
 import { HomePage } from './ui/pages/HomePage'
 import { ScenePage } from './ui/pages/ScenePage'
 import { SceneSubPage } from './ui/pages/SceneSubPage'
+import { GameLoop } from './ui/system/GameLoop'
 import { isSceneSubPage } from './store/uiStore'
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <main className="app-shell">
+      <GameLoop />
       {currentPage === 'home' ? <HomePage /> : null}
       {currentPage === 'scene' ? <ScenePage /> : null}
       {currentPage === 'battle' ? <BattlePage /> : null}
