@@ -218,26 +218,94 @@ describe('gameStore', () => {
     expect(useGameStore.getState().recentUnlocks).toHaveLength(0)
   })
 
-  it('getCurrentScene returns village with explore disabled', () => {
+  it('getCurrentScene returns hangzhou city hub with explore disabled', () => {
     const scene = useGameStore.getState().getCurrentScene()
     expect(scene).toEqual({
       sceneId: asSceneId('scene_001_village'),
-      name: '主城新手村',
-      description: '宁静的村落，江湖传闻的起点。',
+      areaId: 'area_hangzhou',
+      areaName: '杭州城',
+      name: '杭州城中',
+      kind: 'city_hub',
+      safety: 'safe',
+      description: '杭州城内人来人往，药铺、市场、武馆与驿站都可从此散行前往。',
       canExplore: false,
     })
   })
 
-  it('getSceneNpcs lists village npcs', () => {
+  it('getSceneNpcs lists the current city hub npcs', () => {
     const npcs = useGameStore.getState().getSceneNpcs()
-    expect(npcs).toHaveLength(3)
-    expect(npcs[0]?.name).toBe('村口剑客')
+    expect(npcs).toHaveLength(1)
+    expect(npcs[0]?.name).toBe('城门剑客')
   })
 
-  it('getSceneDestinations lists outskirts from village', () => {
+  it('getSceneDestinations lists walkable city points, station, and gate from the city hub', () => {
     const destinations = useGameStore.getState().getSceneDestinations()
     expect(destinations).toEqual([
-      { sceneId: asSceneId('scene_002_outskirts'), name: '村外野径' },
+      {
+        sceneId: asSceneId('scene_003_market'),
+        name: '杭州东市',
+        areaId: 'area_hangzhou',
+        areaName: '杭州城',
+        kind: 'city_poi',
+        safety: 'safe',
+        mode: 'walk',
+        direction: 'west',
+        label: '步行前往东市',
+        travelTimeMinutes: 5,
+        enabled: true,
+      },
+      {
+        sceneId: asSceneId('scene_004_clinic'),
+        name: '回春药铺',
+        areaId: 'area_hangzhou',
+        areaName: '杭州城',
+        kind: 'city_poi',
+        safety: 'safe',
+        mode: 'walk',
+        direction: 'north',
+        label: '步行前往药铺',
+        travelTimeMinutes: 4,
+        enabled: true,
+      },
+      {
+        sceneId: asSceneId('scene_005_dojo'),
+        name: '振威武馆',
+        areaId: 'area_hangzhou',
+        areaName: '杭州城',
+        kind: 'city_poi',
+        safety: 'safe',
+        mode: 'walk',
+        direction: 'east',
+        label: '步行前往武馆',
+        travelTimeMinutes: 6,
+        enabled: true,
+      },
+      {
+        sceneId: asSceneId('scene_006_station'),
+        name: '杭州驿站',
+        areaId: 'area_hangzhou',
+        areaName: '杭州城',
+        kind: 'station',
+        safety: 'safe',
+        mode: 'walk',
+        direction: 'north_east',
+        label: '步行前往驿站',
+        travelTimeMinutes: 7,
+        enabled: true,
+      },
+      {
+        sceneId: asSceneId('scene_007_gate'),
+        name: '清波城门',
+        areaId: 'area_hangzhou',
+        areaName: '杭州城',
+        kind: 'gate',
+        safety: 'guarded',
+        mode: 'walk',
+        direction: 'south',
+        label: '步行前往城门',
+        travelTimeMinutes: 8,
+        enabled: true,
+      },
     ])
   })
 
@@ -248,26 +316,29 @@ describe('gameStore', () => {
       {
         questId: asQuestId('quest_main_001_first_blood'),
         questName: '初战告捷',
-        stepDescription: '与村口剑客交谈',
+        stepDescription: '与城门剑客交谈',
       },
     ])
   })
 
-  it('enterScene switches currentSceneId', () => {
-    useGameStore.getState().enterScene('scene_002_outskirts')
-    expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_002_outskirts'))
+  it('enterScene switches currentSceneId when destination is directly connected', () => {
+    useGameStore.getState().enterScene('scene_007_gate')
+    expect(useGameStore.getState().currentSceneId).toBe(asSceneId('scene_007_gate'))
   })
 
   it('enterScene rejects undeclared destinations', () => {
+    useGameStore.getState().enterScene('scene_002_outskirts')
+    expect(useGameStore.getState().currentSceneId).toBe(defaultSceneId)
+
     useGameStore.getState().enterScene('scene_999_unknown')
     expect(useGameStore.getState().currentSceneId).toBe(defaultSceneId)
   })
 
-  it('getNpcDialogDisplay reflects quest dialog state for the village swordsman', () => {
+  it('getNpcDialogDisplay reflects quest dialog state for the city swordsman', () => {
     expect(
       useGameStore.getState().getNpcDialogDisplay('npc_001_village_swordsman'),
     ).toMatchObject({
-      npcName: '村口剑客',
+      npcName: '城门剑客',
       primaryActionLabel: '接受任务',
     })
 
@@ -277,7 +348,79 @@ describe('gameStore', () => {
       useGameStore.getState().getNpcDialogDisplay('npc_001_village_swordsman'),
     ).toMatchObject({
       primaryActionLabel: '继续',
-      message: '「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」',
+      message: '「清波城门外的官道常有山贼出没，你去击败一名山贼喽啰，再来找我。」',
+    })
+  })
+
+  it('getSceneDestinations shows detailed blocked reasons for station travel', () => {
+    useGameStore.getState().enterScene('scene_006_station')
+
+    expect(useGameStore.getState().getSceneDestinations()).toContainEqual({
+      sceneId: asSceneId('scene_008_suzhou_station'),
+      name: '苏州驿站',
+      areaId: 'area_suzhou',
+      areaName: '苏州',
+      kind: 'station',
+      safety: 'safe',
+      mode: 'station',
+      direction: 'east',
+      label: '乘驿车前往苏州',
+      travelTimeMinutes: 180,
+      silverCost: 25,
+      enabled: false,
+      disabledReason: '需要完成任务《初战告捷》',
+    })
+  })
+
+  it('completed quest unlocks station travel destination', () => {
+    useGameStore.getState().enterScene('scene_006_station')
+    useGameStore.setState({
+      completedQuests: [asQuestId('quest_main_001_first_blood')],
+    })
+
+    expect(useGameStore.getState().getSceneDestinations()).toContainEqual({
+      sceneId: asSceneId('scene_008_suzhou_station'),
+      name: '苏州驿站',
+      areaId: 'area_suzhou',
+      areaName: '苏州',
+      kind: 'station',
+      safety: 'safe',
+      mode: 'station',
+      direction: 'east',
+      label: '乘驿车前往苏州',
+      travelTimeMinutes: 180,
+      silverCost: 25,
+      enabled: true,
+    })
+  })
+
+  it('getCurrentAreaMap returns current area nodes, edges, and external exits', () => {
+    const areaMap = useGameStore.getState().getCurrentAreaMap()
+
+    expect(areaMap?.areaName).toBe('杭州城')
+    expect(areaMap?.nodes).toHaveLength(6)
+    expect(areaMap?.nodes.find((node) => node.sceneId === asSceneId('scene_001_village'))).toMatchObject({
+      x: 0,
+      y: 0,
+      isCurrent: true,
+    })
+    expect(areaMap?.edges).toContainEqual({
+      fromSceneId: asSceneId('scene_001_village'),
+      toSceneId: asSceneId('scene_007_gate'),
+      mode: 'walk',
+    })
+    expect(areaMap?.externalExits).toContainEqual({
+      fromSceneId: asSceneId('scene_006_station'),
+      fromSceneName: '杭州驿站',
+      toSceneId: asSceneId('scene_008_suzhou_station'),
+      toSceneName: '苏州驿站',
+      toAreaName: '苏州',
+      mode: 'station',
+      label: '乘驿车前往苏州',
+      travelTimeMinutes: 180,
+      silverCost: 25,
+      enabled: false,
+      disabledReason: '需要完成任务《初战告捷》',
     })
   })
 
@@ -320,7 +463,7 @@ describe('gameStore', () => {
     expect(sheying?.proficiency).toBeGreaterThan(0)
   })
 
-  it('explore in village does not trigger battle', () => {
+  it('explore in safe city hub does not trigger battle', () => {
     const prepareBattle = vi.spyOn(useBattleStore.getState(), 'prepareBattle')
     const setPage = vi.spyOn(useUiStore.getState(), 'setPage')
 
@@ -332,7 +475,8 @@ describe('gameStore', () => {
     setPage.mockRestore()
   })
 
-  it('explore in outskirts triggers battle and switches to battle page', () => {
+  it('explore in dangerous outskirts triggers battle and switches to battle page', () => {
+    useGameStore.getState().enterScene('scene_007_gate')
     useGameStore.getState().enterScene('scene_002_outskirts')
     const prepareBattle = vi.spyOn(useBattleStore.getState(), 'prepareBattle')
     const setPage = vi.spyOn(useUiStore.getState(), 'setPage')
@@ -380,6 +524,7 @@ describe('gameStore', () => {
   })
 
   it('saveGame writes the current progress to storage', () => {
+    useGameStore.getState().enterScene('scene_007_gate')
     useGameStore.getState().enterScene('scene_002_outskirts')
     useGameStore.getState().upgradeSkill('skill_sword_010_qingmang')
     useGameStore.getState().acceptQuest('quest_main_001_first_blood')
@@ -441,6 +586,7 @@ describe('gameStore', () => {
   })
 
   it('clearSave resets to default player and learned skills', () => {
+    useGameStore.getState().enterScene('scene_007_gate')
     useGameStore.getState().enterScene('scene_002_outskirts')
     useGameStore.getState().upgradeSkill('skill_sword_010_qingmang')
     useGameStore.getState().acceptQuest('quest_main_001_first_blood')
@@ -465,6 +611,7 @@ describe('gameStore', () => {
     })
     expect(useGameStore.getState().activeQuests[0]?.currentStepIndex).toBe(1)
 
+    useGameStore.getState().enterScene('scene_007_gate')
     useGameStore.getState().enterScene('scene_002_outskirts')
     expect(useGameStore.getState().activeQuests[0]?.currentStepIndex).toBe(2)
 
@@ -524,7 +671,7 @@ describe('gameStore', () => {
     useGameStore.getState().setMeditationActive(true)
     useGameStore.getState().advanceMeditation(3_000)
 
-    useGameStore.getState().enterScene('scene_002_outskirts')
+    useGameStore.getState().enterScene('scene_007_gate')
 
     expect(useGameStore.getState().player.meditation).toEqual({
       isActive: false,

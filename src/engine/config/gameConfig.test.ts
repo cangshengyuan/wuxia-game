@@ -20,7 +20,7 @@ import { getSceneById } from '../world/sceneEngine'
 
 describe('gameConfig', () => {
   it('loads default start scene and battle enemy from config data', () => {
-    expect(getSceneById(getDefaultSceneId())?.name).toBe('主城新手村')
+    expect(getSceneById(getDefaultSceneId())?.name).toBe('杭州城中')
     expect(getEnemyById(getDefaultBattleEnemyId())?.name).toBe('山贼喽啰')
   })
 

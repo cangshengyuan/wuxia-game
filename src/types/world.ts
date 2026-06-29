@@ -6,13 +6,31 @@
  */
 
 import type { CharacterAttributes, SkillRuntime } from './character'
-import type { EnemyId, NpcId, QuestId, SceneId, SkillId } from './id'
+import type { AreaId, EnemyId, NpcId, QuestId, SceneId, SkillId } from './id'
 import type { WeaponRequirement } from './skill'
 
 export interface EncounterEntry {
   enemyId: EnemyId
   weight?: number
 }
+
+export type SceneKind = 'city_hub' | 'city_poi' | 'gate' | 'station' | 'road' | 'wilderness' | 'dungeon'
+
+export type SafetyLevel = 'safe' | 'guarded' | 'dangerous'
+
+export type TravelMode = 'walk' | 'gate' | 'station'
+
+export type ExitDirection =
+  | 'north'
+  | 'north_east'
+  | 'east'
+  | 'south_east'
+  | 'south'
+  | 'south_west'
+  | 'west'
+  | 'north_west'
+
+export type AreaKind = 'city' | 'outskirts' | 'travel_hub'
 
 export type ProgressCondition =
   | { type: 'quest_active'; questId: QuestId }
@@ -35,15 +53,31 @@ export interface ProgressState {
 
 export interface SceneExit {
   toSceneId: SceneId
+  mode: TravelMode
+  direction?: ExitDirection
+  label?: string
+  travelTimeMinutes?: number
+  silverCost?: number
   requirements?: ProgressCondition[]
 }
 
 export interface SceneDefinition {
   id: SceneId
   name: string
+  areaId?: AreaId
+  kind: SceneKind
+  safety: SafetyLevel
   description?: string
   encounters: EncounterEntry[]
   exits: SceneExit[]
+}
+
+export interface AreaDefinition {
+  id: AreaId
+  name: string
+  kind: AreaKind
+  description?: string
+  hubSceneId: SceneId
 }
 
 export interface EnemyDefinition {

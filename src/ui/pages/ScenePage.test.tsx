@@ -47,13 +47,14 @@ describe('ScenePage', () => {
   it('updates the visible scene immediately after switching maps', () => {
     render(<ScenePage />)
 
-    expect(screen.getByRole('heading', { name: '主城新手村' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '杭州城中' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '探索' })).toBeDisabled()
 
-    fireEvent.click(screen.getByRole('button', { name: '村外野径' }))
+    fireEvent.click(screen.getByRole('button', { name: '清波城门' }))
 
-    expect(screen.getByRole('heading', { name: '村外野径' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '探索' })).not.toBeDisabled()
+    expect(screen.getByRole('heading', { name: '清波城门' })).toBeInTheDocument()
+    expect(screen.getByText('区域状态：戒备区')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '探索' })).toBeDisabled()
   })
 
   it('switches to the status subpage when clicking the menu button', () => {
@@ -67,11 +68,11 @@ describe('ScenePage', () => {
   it('keeps the npc dialog open after accepting the first quest', () => {
     render(<ScenePage />)
 
-    fireEvent.click(screen.getByRole('button', { name: '村口剑客' }))
+    fireEvent.click(screen.getByRole('button', { name: '城门剑客' }))
     fireEvent.click(screen.getByRole('button', { name: '接受任务' }))
 
-    expect(screen.getByRole('heading', { name: '村口剑客' })).toBeInTheDocument()
-    expect(screen.getByText('「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '城门剑客' })).toBeInTheDocument()
+    expect(screen.getByText('「清波城门外的官道常有山贼出没，你去击败一名山贼喽啰，再来找我。」')).toBeInTheDocument()
   })
 
   it('refreshes the skill management subpage immediately after unequipping and re-equipping', () => {

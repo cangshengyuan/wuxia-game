@@ -17,11 +17,24 @@ type SceneDialogState = 'main' | 'dialog'
 const MENU_ITEMS: Array<{ id: SceneSubPage; label: string }> = [
   { id: 'status', label: '状态' },
   { id: 'skills', label: '功法' },
+  { id: 'map', label: '地图' },
   { id: 'inventory', label: '背包' },
   { id: 'quests', label: '任务' },
   { id: 'shop', label: '商城' },
   { id: 'save', label: '存档' },
 ]
+
+const SAFETY_LABELS = {
+  safe: '安全区',
+  guarded: '戒备区',
+  dangerous: '非安全区',
+} as const
+
+const DESTINATION_GROUPS = [
+  { mode: 'walk', title: '城内步行' },
+  { mode: 'gate', title: '城门通路' },
+  { mode: 'station', title: '驿站远行' },
+] as const
 
 export function ScenePage() {
   const rawPlayer = useGameStore((state) => state.player)
@@ -46,6 +59,14 @@ export function ScenePage() {
   const scene = currentSceneId ? getCurrentScene() : undefined
   const npcs = currentSceneId ? getSceneNpcs() : []
   const destinations = currentSceneId ? getSceneDestinations() : []
+  const groupedDestinations = useMemo(
+    () =>
+      DESTINATION_GROUPS.map((group) => ({
+        ...group,
+        destinations: destinations.filter((destination) => destination.mode === group.mode),
+      })).filter((group) => group.destinations.length > 0),
+    [destinations],
+  )
   const nextSettleSeconds = useMemo(() => {
     if (!meditation.isActive) {
       return 10
@@ -78,6 +99,25 @@ export function ScenePage() {
     }
   }
 
+  const renderDestinationHint = (
+    destination: ReturnType<typeof getSceneDestinations>[number],
+  ): string => {
+    const parts: string[] = [SAFETY_LABELS[destination.safety]]
+    if (destination.travelTimeMinutes !== undefined) {
+      parts.push(`约 ${destination.travelTimeMinutes} 分钟`)
+    }
+    if (destination.silverCost !== undefined) {
+      parts.push(`花费 ${destination.silverCost} 两`)
+    }
+    if (destination.label) {
+      parts.unshift(destination.label)
+    }
+    if (!destination.enabled && destination.disabledReason) {
+      parts.push(destination.disabledReason)
+    }
+    return parts.join(' · ')
+  }
+
   return (
     <section className="scene-layout">
       <section className="panel scene-summary">
@@ -88,6 +128,7 @@ export function ScenePage() {
           <div className="scene-summary__identity-text">
             <h2>{player.name}</h2>
             <p>当前地点：{scene?.name ?? '未知地带'}</p>
+            <p>所在区域：{scene?.areaName ?? '未知区域'}</p>
             <p>当前任务：{questName}</p>
           </div>
         </div>
@@ -128,6 +169,9 @@ export function ScenePage() {
       <section className="panel scene-map">
         <h2>{scene?.name ?? '场景'}</h2>
         <p className="scene-layout__description">{scene?.description ?? '未知场景。'}</p>
+        <p className="scene-layout__description">
+          区域状态：{scene ? SAFETY_LABELS[scene.safety] : '未知'}
+        </p>
         {scene ? (
           <div className="scene-layout__button-row">
             <button
@@ -178,17 +222,25 @@ export function ScenePage() {
 
           <section className="panel scene-layout__block">
             <h2>可移动地图</h2>
-            {destinations.length > 0 ? (
+            {groupedDestinations.length > 0 ? (
               <div className="scene-layout__destinations">
-                {destinations.map((destination) => (
-                  <button
-                    key={destination.sceneId}
-                    type="button"
-                    className="scene-layout__warp-button"
-                    onClick={() => enterScene(destination.sceneId)}
-                  >
-                    {destination.name}
-                  </button>
+                {groupedDestinations.map((group) => (
+                  <section key={group.mode}>
+                    <h3>{group.title}</h3>
+                    {group.destinations.map((destination) => (
+                      <div key={destination.sceneId}>
+                        <button
+                          type="button"
+                          className="scene-layout__warp-button"
+                          onClick={() => enterScene(destination.sceneId)}
+                          disabled={!destination.enabled}
+                        >
+                          {destination.name}
+                        </button>
+                        <p className="scene-layout__description">{renderDestinationHint(destination)}</p>
+                      </div>
+                    ))}
+                  </section>
                 ))}
               </div>
             ) : (

@@ -211,6 +211,116 @@
   gap: 0;
 }
 
+.map-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.map-panel__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.map-panel__legend-item {
+  padding: 3px 8px;
+  border: 1px solid var(--accent-border);
+  background: rgba(220, 231, 196, 0.6);
+  font-size: 12px;
+  color: var(--text-h);
+}
+
+.map-panel__legend-item--gate {
+  border-color: #7e6b47;
+  background: rgba(216, 198, 154, 0.55);
+}
+
+.map-panel__legend-item--station {
+  border-color: #6f7da3;
+  background: rgba(206, 218, 241, 0.62);
+}
+
+.map-panel__canvas {
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent 80px),
+    rgba(255, 255, 255, 0.34);
+  overflow: auto;
+}
+
+.map-panel__svg {
+  width: 100%;
+  min-width: 420px;
+  display: block;
+}
+
+.area-map__edge {
+  stroke-width: 3;
+  stroke: var(--accent-border);
+}
+
+.area-map__edge--gate {
+  stroke: #7e6b47;
+}
+
+.area-map__edge--station {
+  stroke: #6f7da3;
+  stroke-dasharray: 8 5;
+}
+
+.area-map__node-box {
+  stroke-width: 2;
+  stroke: var(--border-strong);
+  fill: rgba(255, 255, 255, 0.88);
+}
+
+.area-map__node-box--safe {
+  fill: rgba(245, 250, 232, 0.95);
+}
+
+.area-map__node-box--guarded {
+  fill: rgba(244, 232, 206, 0.95);
+}
+
+.area-map__node-box--dangerous {
+  fill: rgba(246, 224, 214, 0.96);
+}
+
+.area-map__node-box--current {
+  stroke: #8c3f35;
+  stroke-width: 3;
+}
+
+.area-map__node-name {
+  font-size: 13px;
+  fill: var(--text-h);
+  font-family: var(--heading);
+}
+
+.area-map__node-meta {
+  font-size: 11px;
+  fill: var(--text);
+}
+
+.map-panel__routes {
+  display: grid;
+  gap: 8px;
+}
+
+.map-panel__route-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.map-panel__route-item {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.45);
+  padding: 8px 10px;
+}
+
 .scene-subpage {
   display: grid;
   gap: 10px;

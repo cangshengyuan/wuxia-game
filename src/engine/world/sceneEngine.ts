@@ -8,9 +8,51 @@
  * @forbidden 禁止 import React、禁止访问 store、禁止修改 data 原始对象
  */
 import scenesData from '../../data/scenes/index.json'
-import { asEnemyId, asSceneId } from '../../types/id'
-import type { SceneId } from '../../types/id'
-import type { EncounterEntry, ProgressCondition, SceneDefinition, SceneExit } from '../../types/world'
+import { asAreaId, asEnemyId, asSceneId } from '../../types/id'
+import type { AreaId, SceneId } from '../../types/id'
+import type {
+  EncounterEntry,
+  ExitDirection,
+  ProgressCondition,
+  SafetyLevel,
+  SceneDefinition,
+  SceneExit,
+  SceneKind,
+  TravelMode,
+} from '../../types/world'
+
+function isSceneKind(value: unknown): value is SceneKind {
+  return (
+    value === 'city_hub' ||
+    value === 'city_poi' ||
+    value === 'gate' ||
+    value === 'station' ||
+    value === 'road' ||
+    value === 'wilderness' ||
+    value === 'dungeon'
+  )
+}
+
+function isSafetyLevel(value: unknown): value is SafetyLevel {
+  return value === 'safe' || value === 'guarded' || value === 'dangerous'
+}
+
+function isTravelMode(value: unknown): value is TravelMode {
+  return value === 'walk' || value === 'gate' || value === 'station'
+}
+
+function isExitDirection(value: unknown): value is ExitDirection {
+  return (
+    value === 'north' ||
+    value === 'north_east' ||
+    value === 'east' ||
+    value === 'south_east' ||
+    value === 'south' ||
+    value === 'south_west' ||
+    value === 'west' ||
+    value === 'north_west'
+  )
+}
 
 function isEncounterEntry(value: unknown): value is EncounterEntry {
   if (!value || typeof value !== 'object') {
@@ -64,6 +106,21 @@ function isSceneExit(value: unknown): value is SceneExit {
   if (typeof exit.toSceneId !== 'string' || !exit.toSceneId.startsWith('scene_')) {
     return false
   }
+  if (!isTravelMode(exit.mode)) {
+    return false
+  }
+  if (exit.direction !== undefined && !isExitDirection(exit.direction)) {
+    return false
+  }
+  if (exit.label !== undefined && typeof exit.label !== 'string') {
+    return false
+  }
+  if (exit.travelTimeMinutes !== undefined && typeof exit.travelTimeMinutes !== 'number') {
+    return false
+  }
+  if (exit.silverCost !== undefined && typeof exit.silverCost !== 'number') {
+    return false
+  }
   if (exit.requirements !== undefined) {
     if (!Array.isArray(exit.requirements) || !exit.requirements.every(isProgressCondition)) {
       return false
@@ -81,8 +138,16 @@ function isSceneDefinition(value: unknown): value is SceneDefinition {
     typeof s.id !== 'string' ||
     !s.id.startsWith('scene_') ||
     typeof s.name !== 'string' ||
+    !isSceneKind(s.kind) ||
+    !isSafetyLevel(s.safety) ||
     !Array.isArray(s.encounters) ||
     !Array.isArray(s.exits)
+  ) {
+    return false
+  }
+  if (
+    s.areaId !== undefined &&
+    (typeof s.areaId !== 'string' || !(s.areaId as string).startsWith('area_'))
   ) {
     return false
   }
@@ -99,6 +164,13 @@ function normalizeScene(raw: Record<string, unknown>): SceneDefinition {
   }))
   const exits = (raw.exits as Record<string, unknown>[]).map((exit) => ({
     toSceneId: asSceneId(exit.toSceneId as string),
+    mode: exit.mode as TravelMode,
+    ...(exit.direction !== undefined ? { direction: exit.direction as ExitDirection } : {}),
+    ...(exit.label !== undefined ? { label: exit.label as string } : {}),
+    ...(exit.travelTimeMinutes !== undefined
+      ? { travelTimeMinutes: exit.travelTimeMinutes as number }
+      : {}),
+    ...(exit.silverCost !== undefined ? { silverCost: exit.silverCost as number } : {}),
     ...(exit.requirements !== undefined
       ? { requirements: exit.requirements as ProgressCondition[] }
       : {}),
@@ -107,6 +179,9 @@ function normalizeScene(raw: Record<string, unknown>): SceneDefinition {
   return {
     id: asSceneId(raw.id as string),
     name: raw.name as string,
+    ...(raw.areaId !== undefined ? { areaId: asAreaId(raw.areaId as string) as AreaId } : {}),
+    kind: raw.kind as SceneKind,
+    safety: raw.safety as SafetyLevel,
     ...(raw.description !== undefined ? { description: raw.description as string } : {}),
     encounters,
     exits,

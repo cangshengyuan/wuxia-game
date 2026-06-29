@@ -8,6 +8,7 @@
 export type SkillId = string & { readonly __brand: 'SkillId' }
 export type MoveId = string & { readonly __brand: 'MoveId' }
 export type SceneId = string & { readonly __brand: 'SceneId' }
+export type AreaId = string & { readonly __brand: 'AreaId' }
 export type EnemyId = string & { readonly __brand: 'EnemyId' }
 export type ItemId = string & { readonly __brand: 'ItemId' }
 export type NpcId = string & { readonly __brand: 'NpcId' }
@@ -23,6 +24,10 @@ export function asMoveId(id: string): MoveId {
 
 export function asSceneId(id: string): SceneId {
   return id as SceneId
+}
+
+export function asAreaId(id: string): AreaId {
+  return id as AreaId
 }
 
 export function asEnemyId(id: string): EnemyId {

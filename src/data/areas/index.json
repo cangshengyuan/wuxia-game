@@ -1,0 +1,23 @@
+[
+  {
+    "id": "area_hangzhou",
+    "name": "杭州城",
+    "kind": "city",
+    "description": "以城中为核心，药铺、市场、武馆、驿站与城门围绕其分布的主城区域。",
+    "hubSceneId": "scene_001_village"
+  },
+  {
+    "id": "area_hangzhou_outskirts",
+    "name": "杭州城郊",
+    "kind": "outskirts",
+    "description": "城门外的官道与野地，是新手最早接触到的危险地带。",
+    "hubSceneId": "scene_002_outskirts"
+  },
+  {
+    "id": "area_suzhou",
+    "name": "苏州",
+    "kind": "city",
+    "description": "以驿站与城中为主要落点的外城区域。",
+    "hubSceneId": "scene_009_suzhou_city"
+  }
+]

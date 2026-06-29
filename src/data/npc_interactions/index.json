@@ -12,7 +12,7 @@
         "conditions": [
           { "type": "quest_inactive", "questId": "quest_main_001_first_blood" }
         ],
-        "message": "离开新手村，在村外野径击败山贼喽啰，证明你有行走江湖的资格。",
+        "message": "从杭州城门出去，在城郊官道击败山贼喽啰，证明你有行走江湖的资格。",
         "primaryActionLabel": "接受任务",
         "actions": [
           { "type": "accept_quest", "questId": "quest_main_001_first_blood" }
@@ -27,7 +27,7 @@
             "objectiveType": "talk_to_npc"
           }
         ],
-        "message": "「村外野径常有山贼出没，你去击败一名山贼喽啰，再来找我。」",
+        "message": "「清波城门外的官道常有山贼出没，你去击败一名山贼喽啰，再来找我。」",
         "primaryActionLabel": "继续",
         "actions": [
           { "type": "emit_dialog_closed" }

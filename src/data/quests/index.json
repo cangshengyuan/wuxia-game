@@ -2,18 +2,18 @@
   {
     "id": "quest_main_001_first_blood",
     "name": "初战告捷",
-    "description": "离开新手村，在村外野径击败山贼喽啰，证明你有行走江湖的资格。",
+    "description": "出杭州城，在城郊官道击败山贼喽啰，证明你有行走江湖的资格。",
     "giverNpcId": "npc_001_village_swordsman",
     "objectives": [
       {
         "type": "talk_to_npc",
         "targetId": "npc_001_village_swordsman",
-        "description": "与村口剑客交谈"
+        "description": "与城门剑客交谈"
       },
       {
         "type": "reach_scene",
         "targetId": "scene_002_outskirts",
-        "description": "前往村外野径"
+        "description": "前往杭州城郊官道"
       },
       {
         "type": "defeat_enemy",
@@ -23,7 +23,7 @@
       {
         "type": "return_to_npc",
         "targetId": "npc_001_village_swordsman",
-        "description": "返回村口剑客复命"
+        "description": "返回城门剑客复命"
       }
     ],
     "rewards": {

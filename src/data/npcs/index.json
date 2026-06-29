@@ -1,20 +1,20 @@
 [
   {
     "id": "npc_001_village_swordsman",
-    "name": "村口剑客",
+    "name": "城门剑客",
     "sceneId": "scene_001_village",
-    "description": "曾在江湖行走的老剑客，愿意指点新人。"
+    "description": "常在杭州城中歇脚的老剑客，愿意指点初入江湖之人。"
   },
   {
     "id": "npc_002_village_trainer",
     "name": "武馆教头",
-    "sceneId": "scene_001_village",
-    "description": "经营村中小武馆，愿意传授基础掌法。"
+    "sceneId": "scene_005_dojo",
+    "description": "坐镇振威武馆，愿意传授基础掌法。"
   },
   {
     "id": "npc_003_village_hermit",
     "name": "隐居异士",
-    "sceneId": "scene_001_village",
-    "description": "深谙蛇系剑路，乐于点拨勤学之人。"
+    "sceneId": "scene_004_clinic",
+    "description": "常在药铺后院歇息，深谙蛇系剑路，乐于点拨勤学之人。"
   }
 ]

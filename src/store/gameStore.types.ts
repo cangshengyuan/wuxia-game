@@ -12,8 +12,8 @@ import type { BattleResult } from '../types/battle'
 import type { CharacterState } from '../types/character'
 import type { GameEvent } from '../types/event'
 import type { UnlockNotice } from '../types/notice'
-import type { NpcId, QuestId, SceneId, SkillId } from '../types/id'
-import type { ActiveQuest } from '../types/world'
+import type { AreaId, NpcId, QuestId, SceneId, SkillId } from '../types/id'
+import type { ActiveQuest, ExitDirection, SafetyLevel, SceneKind, TravelMode } from '../types/world'
 import type { Rng } from '../engine/util/rng'
 
 export interface SkillDisplay {
@@ -33,6 +33,10 @@ export interface SkillDisplay {
 export interface SceneDisplay {
   sceneId: SceneId
   name: string
+  areaId?: AreaId
+  areaName?: string
+  kind: SceneKind
+  safety: SafetyLevel
   description: string
   canExplore: boolean
 }
@@ -46,6 +50,57 @@ export interface NpcDisplay {
 export interface SceneDestination {
   sceneId: SceneId
   name: string
+  areaId?: AreaId
+  areaName?: string
+  kind: SceneKind
+  safety: SafetyLevel
+  mode: TravelMode
+  direction?: ExitDirection
+  label?: string
+  travelTimeMinutes?: number
+  silverCost?: number
+  enabled: boolean
+  disabledReason?: string
+}
+
+export interface AreaMapNodeDisplay {
+  sceneId: SceneId
+  name: string
+  kind: SceneKind
+  safety: SafetyLevel
+  x: number
+  y: number
+  isCurrent: boolean
+}
+
+export interface AreaMapEdgeDisplay {
+  fromSceneId: SceneId
+  toSceneId: SceneId
+  mode: TravelMode
+}
+
+export interface AreaMapExternalExitDisplay {
+  fromSceneId: SceneId
+  fromSceneName: string
+  toSceneId: SceneId
+  toSceneName: string
+  toAreaName?: string
+  mode: TravelMode
+  label?: string
+  travelTimeMinutes?: number
+  silverCost?: number
+  enabled: boolean
+  disabledReason?: string
+}
+
+export interface AreaMapDisplay {
+  areaId: AreaId
+  areaName: string
+  areaDescription: string
+  currentSceneId: SceneId
+  nodes: AreaMapNodeDisplay[]
+  edges: AreaMapEdgeDisplay[]
+  externalExits: AreaMapExternalExitDisplay[]
 }
 
 export interface QuestDisplay {
@@ -98,6 +153,7 @@ export interface GameStoreState extends PersistedGameState {
   getCurrentScene: () => SceneDisplay | undefined
   getSceneNpcs: () => NpcDisplay[]
   getSceneDestinations: () => SceneDestination[]
+  getCurrentAreaMap: () => AreaMapDisplay | undefined
   getActiveQuestDisplays: () => QuestDisplay[]
   getCurrentQuestName: () => string
   getNpcDialogDisplay: (npcId: NpcId | string) => NpcDialogDisplay | undefined

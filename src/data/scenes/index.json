@@ -1,24 +1,131 @@
 [
   {
     "id": "scene_001_village",
-    "name": "主城新手村",
-    "description": "宁静的村落，江湖传闻的起点。",
+    "name": "杭州城中",
+    "areaId": "area_hangzhou",
+    "kind": "city_hub",
+    "safety": "safe",
+    "description": "杭州城内人来人往，药铺、市场、武馆与驿站都可从此散行前往。",
     "encounters": [],
     "exits": [
-      { "toSceneId": "scene_002_outskirts" }
+      { "toSceneId": "scene_003_market", "mode": "walk", "direction": "west", "label": "步行前往东市", "travelTimeMinutes": 5 },
+      { "toSceneId": "scene_004_clinic", "mode": "walk", "direction": "north", "label": "步行前往药铺", "travelTimeMinutes": 4 },
+      { "toSceneId": "scene_005_dojo", "mode": "walk", "direction": "east", "label": "步行前往武馆", "travelTimeMinutes": 6 },
+      { "toSceneId": "scene_006_station", "mode": "walk", "direction": "north_east", "label": "步行前往驿站", "travelTimeMinutes": 7 },
+      { "toSceneId": "scene_007_gate", "mode": "walk", "direction": "south", "label": "步行前往城门", "travelTimeMinutes": 8 }
     ]
   },
   {
     "id": "scene_002_outskirts",
-    "name": "村外野径",
-    "description": "通往山外的土路，时有山贼与野兽出没。",
+    "name": "杭州城郊官道",
+    "areaId": "area_hangzhou_outskirts",
+    "kind": "road",
+    "safety": "dangerous",
+    "description": "出了城门便是官道，行旅与匪徒混杂其间，稍不留神便会生变。",
     "encounters": [
       { "enemyId": "enemy_001_bandit_grunt", "weight": 5 },
       { "enemyId": "enemy_002_bandit_boss", "weight": 2 },
       { "enemyId": "enemy_003_wild_wolf", "weight": 4 }
     ],
     "exits": [
-      { "toSceneId": "scene_001_village" }
+      { "toSceneId": "scene_007_gate", "mode": "gate", "direction": "north", "label": "回杭州城门", "travelTimeMinutes": 8 }
+    ]
+  },
+  {
+    "id": "scene_003_market",
+    "name": "杭州东市",
+    "areaId": "area_hangzhou",
+    "kind": "city_poi",
+    "safety": "safe",
+    "description": "米盐绸缎、兵刃杂货都在此聚集，是打探消息与采买物资的好去处。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_001_village", "mode": "walk", "direction": "east", "label": "返回城中", "travelTimeMinutes": 5 }
+    ]
+  },
+  {
+    "id": "scene_004_clinic",
+    "name": "回春药铺",
+    "areaId": "area_hangzhou",
+    "kind": "city_poi",
+    "safety": "safe",
+    "description": "药香弥漫，掌柜熟识草木药性，往来多是看伤抓药的江湖客。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_001_village", "mode": "walk", "direction": "south", "label": "返回城中", "travelTimeMinutes": 4 }
+    ]
+  },
+  {
+    "id": "scene_005_dojo",
+    "name": "振威武馆",
+    "areaId": "area_hangzhou",
+    "kind": "city_poi",
+    "safety": "safe",
+    "description": "馆中木桩与兵器架整齐陈列，常有新人在此练拳试招。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_001_village", "mode": "walk", "direction": "west", "label": "返回城中", "travelTimeMinutes": 6 }
+    ]
+  },
+  {
+    "id": "scene_006_station",
+    "name": "杭州驿站",
+    "areaId": "area_hangzhou",
+    "kind": "station",
+    "safety": "safe",
+    "description": "车马歇脚、信使换骑之地，若要远行诸城，多半要从此周转。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_001_village", "mode": "walk", "direction": "south_west", "label": "返回城中", "travelTimeMinutes": 7 },
+      {
+        "toSceneId": "scene_008_suzhou_station",
+        "mode": "station",
+        "direction": "east",
+        "label": "乘驿车前往苏州",
+        "travelTimeMinutes": 180,
+        "silverCost": 25,
+        "requirements": [
+          { "type": "quest_completed", "questId": "quest_main_001_first_blood" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scene_007_gate",
+    "name": "清波城门",
+    "areaId": "area_hangzhou",
+    "kind": "gate",
+    "safety": "guarded",
+    "description": "城门守卒往来盘查，内外道路都从此出入，是城内与野外的分界。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_001_village", "mode": "walk", "direction": "north", "label": "回杭州城中", "travelTimeMinutes": 8 },
+      { "toSceneId": "scene_002_outskirts", "mode": "gate", "direction": "south", "label": "出城前往官道", "travelTimeMinutes": 8 }
+    ]
+  },
+  {
+    "id": "scene_008_suzhou_station",
+    "name": "苏州驿站",
+    "areaId": "area_suzhou",
+    "kind": "station",
+    "safety": "safe",
+    "description": "苏州驿站靠近水路与商街，是外地旅人入城后的第一站。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_006_station", "mode": "station", "direction": "west", "label": "乘驿车返回杭州", "travelTimeMinutes": 180, "silverCost": 25 },
+      { "toSceneId": "scene_009_suzhou_city", "mode": "walk", "direction": "south", "label": "步行前往苏州城中", "travelTimeMinutes": 10 }
+    ]
+  },
+  {
+    "id": "scene_009_suzhou_city",
+    "name": "苏州城中",
+    "areaId": "area_suzhou",
+    "kind": "city_hub",
+    "safety": "safe",
+    "description": "河港与街巷交织的繁华城池，初到者多由驿站慢慢熟悉门路。",
+    "encounters": [],
+    "exits": [
+      { "toSceneId": "scene_008_suzhou_station", "mode": "walk", "direction": "north", "label": "返回苏州驿站", "travelTimeMinutes": 10 }
     ]
   }
 ]

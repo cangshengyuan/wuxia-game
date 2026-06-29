@@ -8,16 +8,45 @@
  * @forbidden 禁止在测试中访问 store 或 UI
  */
 import { describe, expect, it } from 'vitest'
-import { canEnter, getSceneExits } from './scene_transition'
-import { asSceneId } from '../../types/id'
+import { canEnter, getEnterFailureReasons, getSceneExits } from './scene_transition'
+import { asQuestId, asSceneId } from '../../types/id'
+import type { ProgressState } from '../../types/world'
+
+const emptyProgress: ProgressState = {
+  activeQuests: [],
+  completedQuests: [],
+  learnedSkills: [],
+}
 
 describe('scene_transition', () => {
-  it('returns bidirectional exits between village and outskirts', () => {
-    const village = asSceneId('scene_001_village')
-    const outskirts = asSceneId('scene_002_outskirts')
+  it('returns typed exits for city hub, gate, and station scenes', () => {
+    const city = asSceneId('scene_001_village')
+    const gate = asSceneId('scene_007_gate')
+    const station = asSceneId('scene_006_station')
 
-    expect(getSceneExits(village)).toEqual([outskirts])
-    expect(getSceneExits(outskirts)).toEqual([village])
+    expect(getSceneExits(city)).toHaveLength(5)
+    expect(getSceneExits(city)[0]?.mode).toBe('walk')
+    expect(getSceneExits(gate)).toEqual([
+      {
+        toSceneId: city,
+        mode: 'walk',
+        direction: 'north',
+        label: '回杭州城中',
+        travelTimeMinutes: 8,
+      },
+      {
+        toSceneId: asSceneId('scene_002_outskirts'),
+        mode: 'gate',
+        direction: 'south',
+        label: '出城前往官道',
+        travelTimeMinutes: 8,
+      },
+    ])
+    expect(getSceneExits(station)[1]).toMatchObject({
+      mode: 'station',
+      direction: 'east',
+      silverCost: 25,
+    })
   })
 
   it('returns empty exits for unknown scenes', () => {
@@ -25,13 +54,35 @@ describe('scene_transition', () => {
   })
 
   it('canEnter only allows declared adjacent scenes', () => {
-    const a = asSceneId('scene_001_village')
-    const b = asSceneId('scene_002_outskirts')
-    const c = asSceneId('scene_999_unknown')
+    const city = asSceneId('scene_001_village')
+    const gate = asSceneId('scene_007_gate')
+    const outskirts = asSceneId('scene_002_outskirts')
+    const station = asSceneId('scene_006_station')
+    const suzhouStation = asSceneId('scene_008_suzhou_station')
+    const unknown = asSceneId('scene_999_unknown')
 
-    expect(canEnter(a, b)).toBe(true)
-    expect(canEnter(b, a)).toBe(true)
-    expect(canEnter(c, a)).toBe(false)
-    expect(canEnter(a, c)).toBe(false)
+    expect(canEnter(city, gate)).toBe(true)
+    expect(canEnter(city, outskirts)).toBe(false)
+    expect(canEnter(gate, outskirts)).toBe(true)
+    expect(canEnter(station, suzhouStation, emptyProgress)).toBe(false)
+    expect(
+      canEnter(station, suzhouStation, {
+        ...emptyProgress,
+        completedQuests: [asQuestId('quest_main_001_first_blood')],
+      }),
+    ).toBe(true)
+    expect(canEnter(city, suzhouStation)).toBe(false)
+    expect(canEnter(unknown, city)).toBe(false)
+    expect(canEnter(city, unknown)).toBe(false)
+  })
+
+  it('returns detailed failure reasons for blocked exits', () => {
+    const station = asSceneId('scene_006_station')
+    const suzhouStation = asSceneId('scene_008_suzhou_station')
+
+    expect(getEnterFailureReasons(station, suzhouStation, emptyProgress)).toEqual([
+      '需要完成任务《初战告捷》',
+    ])
+    expect(getEnterFailureReasons(station, suzhouStation)).toEqual([])
   })
 })

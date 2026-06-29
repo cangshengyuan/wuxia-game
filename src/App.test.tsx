@@ -39,10 +39,11 @@ describe('App skeleton', () => {
   it('renders scene page as default entry', () => {
     render(<App />)
 
-    expect(screen.getByRole('heading', { name: '主城新手村' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '村口剑客' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '杭州城中' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '城门剑客' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '探索' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: '村外野径' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '清波城门' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '杭州驿站' })).toBeInTheDocument()
   })
 
   it('navigates to a scene subpage and back', () => {
@@ -55,6 +56,6 @@ describe('App skeleton', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '返回场景' }))
 
-    expect(screen.getByRole('heading', { name: '主城新手村' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '杭州城中' })).toBeInTheDocument()
   })
 })

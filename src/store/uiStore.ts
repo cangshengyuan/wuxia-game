@@ -9,7 +9,7 @@
  */
 import { create } from 'zustand'
 
-export const sceneSubPages = ['status', 'skills', 'inventory', 'quests', 'shop', 'save'] as const
+export const sceneSubPages = ['status', 'skills', 'map', 'inventory', 'quests', 'shop', 'save'] as const
 
 export type SceneSubPage = (typeof sceneSubPages)[number]
 export type Page = 'home' | 'battle' | 'scene' | SceneSubPage

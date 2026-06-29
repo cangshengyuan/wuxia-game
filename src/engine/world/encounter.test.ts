@@ -16,10 +16,10 @@ import type { SceneDefinition } from '../../types/world'
 
 describe('rollEncounter', () => {
   it('returns null when encounters table is empty', () => {
-    const village = getSceneById(asSceneId('scene_001_village'))
-    expect(village).toBeDefined()
+    const city = getSceneById(asSceneId('scene_001_village'))
+    expect(city).toBeDefined()
     const rng = createSeededRng(1)
-    expect(rollEncounter(village!, rng)).toBeNull()
+    expect(rollEncounter(city!, rng)).toBeNull()
   })
 
   it('returns a weighted enemy for outskirts with seeded rng', () => {
@@ -43,6 +43,8 @@ describe('rollEncounter', () => {
     const scene: SceneDefinition = {
       id: asSceneId('scene_test'),
       name: 'Test',
+      kind: 'wilderness',
+      safety: 'dangerous',
       encounters: [
         { enemyId: asEnemyId('enemy_a'), weight: 5 },
         { enemyId: asEnemyId('enemy_b'), weight: 2 },

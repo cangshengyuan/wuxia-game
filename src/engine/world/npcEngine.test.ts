@@ -12,13 +12,14 @@ import { listNpcsByScene } from './npcEngine'
 import { asSceneId } from '../../types/id'
 
 describe('npcEngine', () => {
-  it('lists village swordsman in newbie village', () => {
+  it('lists the city swordsman in hangzhou city hub', () => {
     const npcs = listNpcsByScene(asSceneId('scene_001_village'))
-    expect(npcs).toHaveLength(3)
-    expect(npcs[0]?.name).toBe('村口剑客')
+    expect(npcs).toHaveLength(1)
+    expect(npcs[0]?.name).toBe('城门剑客')
   })
 
-  it('returns empty list for outskirts', () => {
-    expect(listNpcsByScene('scene_002_outskirts')).toEqual([])
+  it('finds trainer and hermit in their dedicated poi scenes', () => {
+    expect(listNpcsByScene('scene_005_dojo')[0]?.name).toBe('武馆教头')
+    expect(listNpcsByScene('scene_004_clinic')[0]?.name).toBe('隐居异士')
   })
 })

@@ -11,6 +11,7 @@ import { useGameStore } from '../../store/gameStore'
 import { isSceneSubPage, useUiStore } from '../../store/uiStore'
 import { FeaturePlaceholderPanel } from '../panels/FeaturePlaceholderPanel'
 import { FormationPanel } from '../panels/FormationPanel'
+import { MapPanel } from '../panels/MapPanel'
 import { QuestLog } from '../panels/QuestLog'
 import { SaveControls } from '../panels/SaveControls'
 import { SkillPanel } from '../panels/SkillPanel'
@@ -24,6 +25,10 @@ const PAGE_META = {
   skills: {
     title: '功法总览',
     description: '管理已学功法与战前编成。',
+  },
+  map: {
+    title: '区域地图',
+    description: '查看当前区域的只读节点图与跨区通路。',
   },
   inventory: {
     title: '行囊',
@@ -54,6 +59,8 @@ function renderPageContent(page: keyof typeof PAGE_META) {
           <SkillPanel />
         </div>
       )
+    case 'map':
+      return <MapPanel />
     case 'inventory':
       return <FeaturePlaceholderPanel title="背包" />
     case 'quests':
